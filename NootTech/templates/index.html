@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load render_bundle from webpack_loader %}
+
+{% block title_block %}
+    Index
+{% endblock %}
+
+{% block head_block %}
+    {% render_bundle "vendor" "css" %}
+    {% render_bundle "main" "css" %}
+{% endblock %}
+
+{% block body_block %}
+    <div id="app">
+        <demo></demo>
+    </div>
+    {% render_bundle 'main' %}
+{% endblock %}
