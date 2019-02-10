@@ -19,7 +19,7 @@ def get_file_path(instance, filename):
     :param filename: - The name of the file to be added to path
     :return: - String: the complete relative file-path (from Media dir) for an uploaded file
     """
-    return f'FileUploads/{instance.uploader.id}/{filename}'
+    return f'{instance.uploader.id}/{filename}'
 
 
 def get_thumb_path(instance, filename):
