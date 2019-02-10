@@ -36,10 +36,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'admin_reorder',
+    'django_extensions',
+    'easy_thumbnails',
     'rest_framework',
     'backendAPI',
     'webpack_loader',
 ]
+
+THUMBNAIL_SOURCE_GENERATORS = (
+    'easy_thumbnails.source_generators.pil_image',
+    'easy_thumbnails_ffmpeg.source_generators.ffmpeg_frame',
+)
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -49,12 +57,37 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'admin_reorder.middleware.ModelAdminReorder',
 ]
 
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'assets'),
-)
 
+
+ADMIN_REORDER = (
+    # Reorder app models
+    {'app': 'auth', 'label': 'User Management', 'models': (
+        'backendAPI.User',
+        'auth.Group',
+    )},
+
+    {'app': 'auth', 'label': 'Moderation', 'models': (
+        'backendAPI.ReportedFile',
+        'backendAPI.BannedUser'
+    )},
+
+    # models with custom name
+    {'app': 'backendAPI', 'label': 'File Management', 'models': (
+        'backendAPI.File',
+        'backendAPI.Image',
+        'backendAPI.Audio',
+        'backendAPI.Video',
+        'backendAPI.Text',
+    )},
+
+    {'app': 'backendAPI', 'label': 'Extra', 'models': (
+        'backendAPI.URL',
+        'backendAPI.ErrorVideo',
+    )},
+)
 
 WEBPACK_LOADER = {
     'DEFAULT': {
@@ -149,3 +182,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "Media")
