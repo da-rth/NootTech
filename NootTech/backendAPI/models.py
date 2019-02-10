@@ -9,7 +9,6 @@ class User(AbstractUser):
 
     colour = models.CharField(max_length=7, default="#00CCCC")
     upload_key = models.CharField(max_length=26, default=get_upload_key())
-    auto_delete_after = models.IntegerField(null=True)
     warnings = models.IntegerField(default=0)
 
     def __str__(self):
@@ -25,18 +24,6 @@ class BannedUser(models.Model):
     banned_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='banned_by_set')
     date = models.DateTimeField(default=timezone.now)
     reason = models.TextField(blank=False)
-
-
-class URL(models.Model):
-
-    class Meta:
-        verbose_name_plural = 'URLs'
-
-    url = models.URLField()
-    clicks = models.IntegerField(default=0)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    embed_supported = models.BooleanField(default=False)
-    embed_type = models.CharField(max_length=32, blank=True)
 
 
 class File(models.Model):
@@ -108,7 +95,7 @@ class Image(models.Model):
 
     file = models.ForeignKey(File, on_delete=models.CASCADE)
     resolution = models.CharField(max_length=64, null=True, blank=True)
-    bit_colour = models.IntegerField(default=0)
+    bit_depth = models.IntegerField(default=0)
     thumbnail = ThumbnailerImageField(
         upload_to=get_thumb_path,
         blank=True,
