@@ -11,3 +11,41 @@
 
 - [Francesco Perrone](http://mailto:f.perrone.1@research.gla.ac.uk)
 
+
+
+## Important:
+
+Do **not** push directly to the master branch! You may cause conflicts with someone elses work, or even break the project. 
+
+What should you do instead?
+
+```sh
+$ git checkout -b [name_of_your_new_branch]
+$ git commit -m "Your message"
+$ git push origin [name_of_your_branch]
+```
+
+This will create a new branch of the project (with your changes) which we can then merge with the master branch via GitHub after your code has been double-checked by another team member for any conflicts!
+
+
+
+## Setup:
+
+```sh
+# Setup repo and virtual environment
+$ git clone https://github.com/denBot/WAD2-Group-Project.git
+$ cd WAD2-Group-project
+$ virtualenv -p python3 venv
+
+# Activate virtual environment
+$ source venv/bin/activate
+$ .\venv\Scripts\activate.bat
+
+# Configure and run django server
+$ (venv) cd NootTech
+$ (venv) python manage.py makemigrations 
+$ (venv) python manage.py migrate
+$ (venv) python manage.py createsuperuser
+$ (venv) python manage.py runserver
+```
+
