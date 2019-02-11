@@ -60,8 +60,6 @@ MIDDLEWARE = [
     'admin_reorder.middleware.ModelAdminReorder',
 ]
 
-
-
 ADMIN_REORDER = (
     # Reorder app models
     {'app': 'auth', 'label': 'User Management', 'models': (
@@ -91,8 +89,12 @@ ADMIN_REORDER = (
 
 WEBPACK_LOADER = {
     'DEFAULT': {
+        'CACHE': not DEBUG,
         'BUNDLE_DIR_NAME': 'bundles/',
-        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
+        'STATS_FILE': os.path.join(BASE_DIR, 'frontend/webpack-stats.json'),
+        'POLL_INTERVAL': 0.1,
+        'TIMEOUT': None,
+        'IGNORE': ['_+\.hot-update.js', '_+\.map']
     }
 }
 
@@ -184,6 +186,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'frontend/dist'),
 )
 
 MEDIA_URL = '/media/'

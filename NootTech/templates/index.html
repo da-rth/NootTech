@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load render_bundle from webpack_loader %}
 
 {% block title_block %}
     Index
@@ -7,5 +8,7 @@
 
 {% block body_block %}
     <h1>Index Page</h1>
-    <a href="api/list-users/">Check out an example of the API - List all users</a>
+    <div id="app"></div>
+    <script src="{% static 'build.js' %}"></script>
+    {% render_bundle 'main' %}
 {% endblock %}
