@@ -1,7 +1,14 @@
 # Created by https://www.gitignore.io/api/git,vuejs,django,python,pycharm,intellij,visualstudiocode
 # Edit at https://www.gitignore.io/?templates=git,vuejs,django,python,pycharm,intellij,visualstudiocode
 
+venv
+.idea
+*.hot-update.js
+*.hot-update.json
+
 ### Django ###
+*.key
+*.sqlite3
 *.log
 *.pot
 *.pyc
