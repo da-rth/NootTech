@@ -1,7 +1,7 @@
 from django.views.generic import View
 from django.shortcuts import render
 from rest_framework import generics 
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny,IsAuthenticated
 from .models import ErrorVideo ,User
 from . import serializers
 
@@ -24,3 +24,12 @@ class errorVideoView(generics.ListAPIView):
     serializer_class = serializers.errorVideoSerializer
     def get_queryset(self):
         return ErrorVideo.objects.all()
+
+
+
+class SettingsView(generics.ListAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.SettingsSerializer
+    def get_queryset(self):
+        return User.objects.filter(id = self.request.user.id)
+

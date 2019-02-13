@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from .views import ListUsers, errorVideoView
+from .views import ListUsers, errorVideoView, SettingsView
 
 from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify_jwt_token
@@ -20,5 +20,6 @@ urlpatterns = format_suffix_patterns([
     url(r'^token/verify', verify_jwt_token),
     url(r'^list-users', ListUsers.as_view(), name='TestView'),
     url(r'^error-videos', errorVideoView.as_view(), name='Error_Videos'),
+    url(r'^settings', SettingsView.as_view(), name='View-Settings'),
 ])
 
