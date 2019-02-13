@@ -31,7 +31,7 @@ class errorVideoView(generics.ListAPIView):
 class SettingsUpdateView(generics.UpdateAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.SettingsUpdateSerializer
-    def get_queryset(self):
+    def get_object(self):
         return User.objects.filter(id = self.request.user.id)
 
 
@@ -41,4 +41,5 @@ class SettingsView(generics.ListAPIView):
     serializer_class = serializers.SettingsSerializer
     def get_queryset(self):
         return User.objects.filter(id = self.request.user.id)
+
 
