@@ -2,6 +2,7 @@
 # Edit at https://www.gitignore.io/?templates=git,vuejs,django,python,pycharm,intellij,visualstudiocode
 
 venv
+media/*
 .idea
 *.hot-update.js
 *.hot-update.json
