@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from .models import User, ErrorVideo ,File
-
+from .models import User, ErrorVideo ,File , ''py
+from django.contrib.auth.password_validation import validate_password
+from django.core import exceptions
 
 class ListUsersSerializer(serializers.ModelSerializer):
     # Create new field named "is_admin" which uses "is_superuser" as source
@@ -32,10 +33,32 @@ class CreateUserSerializer(serializers.ModelSerializer):
         fields = ('username','email','color','password')
 
     def create(self, validated_data):
-        user = super(CreateUserSerializer, self).create(validated_data)
-        user.set_password(validated_data['password'])
-        user.save()
-        return user
+        email = serializers.CharField(write_only=True)
+        username = serializers.CharField(write_only=True)
+        password = serializers.CharField(write_only=True)
+        colour = serializers.CharField(write_only=True)
+
+        class Meta:
+            model = User
+            fields = ('username', 'email', 'colour', 'password')
+
+        def create(self, validated_data):
+            password = validated_data['password']
+
+            user = User(
+                username=validated_data['username'],
+                email=validated_data['email'],
+                colour=validated_data['colour'],
+            )
+
+            try:
+                validate_password(password=validated_data['password'], user=user)
+            except exceptions.ValidationError as e:
+                raise serializers.ValidationError({'password': list(e.messages)})
+
+            user.set_password(password)
+            user.save()
+            return validated_data
 
 # Choosing what informations to return from the APi
 class ErrorVideoSerializer(serializers.ModelSerializer):

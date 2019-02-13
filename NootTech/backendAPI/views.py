@@ -85,15 +85,12 @@ class CreateUserView(generics.ListCreateAPIView):
     serializer_class = serializers.CreateUserSerializer
 
     def create_user(request):
-        serialized = CreateUserSerializer(data = request.data)
-        if serialized.is_valid():
-            serialized.save()
-            return Response(serialized.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)
+        permission_classes = (AllowAny,)
+        serializer_class = serializers.CreateUserSerializer
+        queryset = User.objects.all()
         '''
-        API for creating a user
-        Process of checking valid data to be reviewed
-        :return:
+            API for creating a user
+            Process of checking valid data to be reviewed
+            :return:
         '''
 
