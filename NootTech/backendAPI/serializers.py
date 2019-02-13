@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User
+from .models import User ,ErrorVideo
 
 class ListUsersSerializer(serializers.ModelSerializer):
 
@@ -10,3 +10,10 @@ class ListUsersSerializer(serializers.ModelSerializer):
 		model = User
 		#fields = '__all__'
 		fields = ('id', 'username', 'email', 'date_joined', 'colour', 'is_admin')
+
+class errorVideoSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = ErrorVideo
+		fields = '__all__'
+		
+	
