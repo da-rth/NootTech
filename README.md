@@ -27,7 +27,9 @@ $ git push origin [name_of_your_branch]
 
 This will create a new branch of the project (with your changes) which we can then merge with the master branch via GitHub after your code has been double-checked by another team member for any conflicts!
 
-
+'''Check Working Branch 
+    git rev-parse --abbrev-ref HEAD
+'''
 
 ## Setup:
 
