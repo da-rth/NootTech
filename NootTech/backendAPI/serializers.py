@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, ErrorVideo
+from .models import User, ErrorVideo ,File
 
 
 class ListUsersSerializer(serializers.ModelSerializer):
@@ -9,6 +9,18 @@ class ListUsersSerializer(serializers.ModelSerializer):
         model = User
         #fields = '__all__'
         fields = ('id', 'username', 'email', 'date_joined', 'colour', 'is_admin')
+
+class ListFilesSerializer(serializers.ModelSerializer):
+    """
+        List All files API, Not working,Ask Later for clarifications.
+        Error:
+            'Got AttributeError when attempting to get a value for field `user` on serializer `ListFilesSerializer`.
+            The serializer field might be named incorrectly and not match any attribute or key on the `User` instance.
+            Original exception text was: 'User' object has no attribute 'user'.'
+    """
+    class Meta:
+        model = File
+        fields = '__all__'
 
 
 # Choosing what informations to return from the APi

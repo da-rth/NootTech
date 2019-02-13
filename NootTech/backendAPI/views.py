@@ -30,6 +30,18 @@ class ErrorVideoView(generics.ListAPIView):
         return ErrorVideo.objects.all()
 
 
+class ListFilesView(generics.ListAPIView):
+    """
+    Returns a list of files belonging to an Authenticated user
+    """
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.ListFilesSerializer
+
+    def get_queryset(self):
+        return User.objects.filter(id = self.request.user.id)
+
+
+
 class SettingsView(generics.ListCreateAPIView):
     """
     Returns a list of settings on GET request for an AUTHENTICATED user
