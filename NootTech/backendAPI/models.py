@@ -17,8 +17,6 @@ Author: 2086380A
 """
 
 
-
-
 class User(AbstractUser):
 
     colour = models.CharField(max_length=7, default="#00CCCC")
