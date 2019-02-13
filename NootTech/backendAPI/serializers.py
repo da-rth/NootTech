@@ -11,13 +11,7 @@ class ListUsersSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'email', 'date_joined', 'colour', 'is_admin')
 
 class ListFilesSerializer(serializers.ModelSerializer):
-    """
-        List All files API, Not working,Ask Later for clarifications.
-        Error:
-            'Got AttributeError when attempting to get a value for field `user` on serializer `ListFilesSerializer`.
-            The serializer field might be named incorrectly and not match any attribute or key on the `User` instance.
-            Original exception text was: 'User' object has no attribute 'user'.'
-    """
+
     uploader_id = serializers.CharField(source='user.id')
     uploader = serializers.CharField(source='user.username')
     class Meta:
