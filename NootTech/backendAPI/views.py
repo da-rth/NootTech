@@ -76,4 +76,24 @@ class SettingsView(generics.ListCreateAPIView):
         u.save()
 
 
+class CreateUserView(generics.ListCreateAPIView):
+    '''
+        This API will Take in  POST request of user informations and create a new User
+    '''
+
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.CreateUserSerializer
+
+    def create_user(request):
+        serialized = CreateUserSerializer(data = request.data)
+        if serialized.is_valid():
+            serialized.save()
+            return Response(serialized.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)
+        '''
+        API for creating a user
+        Process of checking valid data to be reviewed
+        :return:
+        '''
 

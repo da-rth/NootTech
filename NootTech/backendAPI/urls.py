@@ -1,7 +1,7 @@
 from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify_jwt_token
 from django.conf.urls import url
-from .views import ListUsers, ErrorVideoView, SettingsView, ListFilesView
+from .views import ListUsers, ErrorVideoView, SettingsView, ListFilesView , CreateUserView
 
 # user API requests
 # TODO: api/create-user - POST user info (email, username, password, colour) and CREATE new user with it
@@ -37,6 +37,7 @@ urlpatterns = format_suffix_patterns([
     url(r'^error-videos', ErrorVideoView.as_view(), name='get_error_videos'),
     url(r'^settings', SettingsView.as_view(), name='get_post_settings'),
     url(r'^files', ListFilesView.as_view(), name='list-files'),
+    url(r'^create-user', CreateUserView.as_view(), name='list-files'),
 
 ])
 

@@ -18,6 +18,24 @@ class ListFilesSerializer(serializers.ModelSerializer):
         model = File
         fields = '__all__'
 
+class CreateUserSerializer(serializers.ModelSerializer):
+    '''
+    Serializer for the creation of a user
+    '''
+    email = serializers.CharField(write_only= True)
+    username = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True)
+    colour = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = ('username','email','color','password')
+
+    def create(self, validated_data):
+        user = super(CreateUserSerializer, self).create(validated_data)
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
 
 # Choosing what informations to return from the APi
 class ErrorVideoSerializer(serializers.ModelSerializer):
