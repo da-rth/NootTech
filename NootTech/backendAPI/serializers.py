@@ -18,6 +18,8 @@ class ListFilesSerializer(serializers.ModelSerializer):
             The serializer field might be named incorrectly and not match any attribute or key on the `User` instance.
             Original exception text was: 'User' object has no attribute 'user'.'
     """
+    uploader_id = serializers.CharField(source='user.id')
+    uploader = serializers.CharField(source='user.username')
     class Meta:
         model = File
         fields = '__all__'
