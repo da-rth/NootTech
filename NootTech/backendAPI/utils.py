@@ -2,25 +2,27 @@ import base64
 import uuid
 import json
 import os.path
-from os.path import splitext
 from hurry.filesize import size
 from pathlib import Path
 from string import ascii_uppercase, ascii_lowercase
 from django.utils.http import int_to_base36
+
 DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 all_chars = "".join(['1234567890-_=$', ascii_uppercase, ascii_lowercase])
-ID_LENGTH = 9
 
 
 def get_id_gen() -> str:
     """
-    Generates random string whose length is `ID_LENGTH`
-    https://stackoverflow.com/a/53023895
+    :return: Generates a randomly generated upload filename which is 8 chars long
     """
     return int_to_base36(uuid.uuid4().int)[:8]
 
 
 def get_ext(filename):
+    """
+    :param filename: Path to/filename (MyFile.txt)
+    :return: String : file extension (.txt)
+    """
     return "".join(Path(filename).suffixes)
 
 
@@ -30,8 +32,8 @@ def get_upload_key():
     This key is used for authenticating remote uploads (cURL, ShareX) instead of exposing user password.
     :return: String - randomly generate string of 24 characters
     """
-    key = base64.b64encode(uuid.uuid4().bytes).decode("utf-8")
-    return key[:24] if len(key) > 24 else key
+    key = base64.b64encode(uuid.uuid4().bytes).decode("utf-8")[:-2]
+    return key
 
 
 def get_file_path(instance, filename):
@@ -54,6 +56,10 @@ def get_thumb_path(instance, filename):
 
 
 def get_client_ip(request):
+    """
+    :param request: - Object containing POST Request Information
+    :return: String : the IP address of the POST request
+    """
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:
         ip = x_forwarded_for.split(',')[0]
@@ -63,6 +69,10 @@ def get_client_ip(request):
 
 
 def is_websafe(ext):
+    """
+    :param ext: - a file extension (str)
+    :return: - Boolean : if file extension is marked as web-browser compatible
+    """
     web_safe = [
         ".png", ".jpg", ".jpeg", ".gif", ".svg", ".bmp", ".ico",
         ".webm", ".mp4", ".ogg", ".oggv", ".ogga", ".flac", ".wav"
@@ -82,6 +92,11 @@ def get_filesize_str(size_bytes):
 
 
 def get_fontawesome(mimetype, ext):
+    """
+    :param mimetype: - The estimated mime-type of a file (e.g. audio/mp3)
+    :param ext: - The extension of a file (.mp3)
+    :return: String : a string representing the class-name of an icon for FontAwesome's ICON set
+    """
     mimes = json.load(open(os.path.join(DIR, 'backendAPI/utils/fa_mimetypes.json')))
     if ext in mimes["codeTypes"]:
         return "fas fa-code"
@@ -102,11 +117,14 @@ def get_fontawesome(mimetype, ext):
 
 
 def get_syntax_highlighting(ext, mimetype):
+    """
+    :param mimetype: - The estimated mime-type of a file (e.g. text/plain)
+    :param ext: - The extension of a file (.py)
+    :return: String : the highlighting language used for highlightjs
+    """
     ext = ext.split(".")[-1]
     hljs = json.load(open(os.path.join(DIR, 'backendAPI/utils/hljs.json')))
-    print(hljs)
     ftype = mimetype.split("/")[1].lower()
-    print(ext, ftype)
 
     if ext.lower() in hljs:
         return hljs[ext.lower()]
@@ -117,6 +135,10 @@ def get_syntax_highlighting(ext, mimetype):
 
 
 def get_chars_lines(filename):
+    """
+    :param filename: - The path to a text-file
+    :return: Tuple : number of characters and lines in the text file
+    """
     with open(filename) as f:
         fr = f.readlines()
         chars = sum([len(i) - 1 for i in fr])

@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.conf import settings
 
 
+
 class IndexView(View):
     def get(self, request, *args):
         return render(request, 'index.html', {"debug": getattr(settings, "PRIVATE_DIR", None)})
