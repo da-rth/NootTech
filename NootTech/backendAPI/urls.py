@@ -4,7 +4,6 @@ from django.conf.urls import url
 from .views import ListUsers, ErrorVideoView, SettingsView, ListFilesView , CreateUserView
 
 # user API requests
-# TODO: api/create-user - POST user info (email, username, password, colour) and CREATE new user with it
 # TODO: api/file        - POST a uploader id and generated_filename (of a file) and respond with the file's info
 # TODO: apo/reports     - GET list of reports; POST
 # TODO: api/favourites  - GET list of Favourites (files); POST create new Favourite; DELETE file from Favourites
@@ -27,6 +26,7 @@ COMPLETE APIs
 -api/files/ - Display Files belonging to a user
 - api/error-videos/ - GET a list of error videos
 - api/settings/ - GET an authenticated user's settings and POST changes to settings (if request.user is authenticated)
+-api/create-user - POST User Info and CREATE new User with it
 """
 
 urlpatterns = format_suffix_patterns([
