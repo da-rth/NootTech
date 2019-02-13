@@ -27,6 +27,15 @@ class errorVideoView(generics.ListAPIView):
 
 
 
+
+class SettingsUpdateView(generics.UpdateAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.SettingsUpdateSerializer
+    def get_queryset(self):
+        return User.objects.filter(id = self.request.user.id)
+
+
+
 class SettingsView(generics.ListAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.SettingsSerializer
