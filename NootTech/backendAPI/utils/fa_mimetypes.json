@@ -1,0 +1,82 @@
+{
+  "codeTypes": [
+    ".src", ".cs", ".c", ".cpp", ".h", ".vb", ".swift", ".json",
+    ".csv", ".yaml", ".rb", ".pyc", ".rs", ".rlib", ".svg", ".rss",
+    ".xml", "cgi", ".shtml", ".rhtml", ".asp", ".aspx", ".asx"
+  ],
+  "otherTypes": {
+    ".vue": "vuejs",
+    ".jsx": "react",
+    ".scss": "sass",
+    ".app": "app-store",
+    ".deb": "linux",
+    ".rpm": "linux"
+  },
+  "fontTypes": [
+    ".otf",".ttf", ".woff", ".woff2"
+  ],
+  "audio": "fas fa-file-audio",
+  "video": "fas fa-file-video",
+  "image": "fas fa-image",
+
+  "application": {
+    "html": "fab fa-html5",
+    "xhtml+xml": "fab fa-html5",
+    "jar-archive": "fab fab fa-java",
+    "java-vm": "fab fab fa-java",
+    "javascript": "fab fa-js",
+    "x-shockwave-flash": "fas fa-code",
+    "x-python-code": "fab fa-python",
+    "mp4": "file-video",
+    "pdf": "file-pdf",
+    "pgp-encrypted": "fas fa-lock",
+    "pgp-signature": "fas fa-lock",
+    "mac-binary": "fas fa-terminal",
+    "x-csh": "fas fa-terminal",
+    "x-sh": "fas fa-terminal",
+    "bat": "fas fa-terminal",
+    "vnd.efi.iso": "fas fa-compact-disc",
+    "x-apple-diskimage": "fas fa-compact-disc",
+    "vnd.android.package-archive": "fab fa-android",
+    "vnd.oasis.opendocument.database": "fas fa-database",
+    "sql": "fas fa-database",
+    "sqlite3": "fas fa-database",
+    "php": "fab fa-php",
+    "x-php": "fab fa-php",
+    "x-httpd-php": "fab fa-php",
+    "x-httpd-php-source": "fab fa-php",
+    "vnd.microsoft.portable-executable": "fab fa-windows",
+    "x-msdos-program": "fab fa-windows",
+    "x-msdownload": "fab fa-windows",
+    "x-bzip-2": "fas fa-file-archive",
+    "x-bzip": "fas fa-file-archive",
+    "x-rar-compressed": "fas fa-file-archive",
+    "x-tar": "fas fa-file-archive",
+    "zip": "fas fa-file-archive",
+    "x-7z-compressed": "fas fa-file-archive",
+    "rtf": "fas fa-file-word",
+    "x-iwork-pages-sffpages": "fas fa-file-word",
+    "msword": "fas fa-file-word",
+    "vnd.oasis.opendocument.text": "fas fa-file-word",
+    "vnd.openxmlformats-officedocument.wordprocessingml.document": "fas fa-file-word",
+    "vnd.oasis.opendocument.presentation": "fas fa-file-powerpoint",
+    "vnd.ms-powerpoint": "fas fa-file-powerpoint",
+    "vnd.openxmlformats-officedocument.presentationml.presentation": "fas fa-file-powerpoint",
+    "vnd.oasis.opendocument.spreadsheet": "fas fa-table",
+    "vnd.openxmlformats-officedocument.spreadsheetml.sheet": "fas fa-table"
+  },
+  "font": {
+    "otf": "fas fa-font",
+    "ttf": "fas fa-font",
+    "woff": "fas fa-font",
+    "woff2": "fas fa-font"
+  },
+  "text": {
+    "css": "fab fa-css33",
+    "text": "fas fa-file-alt",
+    "x-java-source.java": "fab fab fa-java",
+    "x-python": "fab fa-python",
+    "x-php": "fab fa-php",
+    "php": "fab fa-php"
+  }
+}

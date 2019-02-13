@@ -6,19 +6,24 @@
     </H3>
 
     <ul v-if="users && users.length">
+
       <li v-for="user of users">
         <p><strong>{{user.username}}</strong><br/>
         Joined: {{ user.date_joined }}<br/>
         Colour: <span v-bind:style="{ color: user.colour }">{{ user.colour }}</span><br/>
         Admin: {{ user.is_admin }}</p>
       </li>
+
     </ul>
 
     <ul v-if="errors && errors.length">
+
       <li v-for="error of errors">
         {{error.message}}
       </li>
+
     </ul>
+
   </div>
 </template>
 

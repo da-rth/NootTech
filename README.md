@@ -47,5 +47,14 @@ $ (venv) python manage.py makemigrations
 $ (venv) python manage.py migrate
 $ (venv) python manage.py createsuperuser
 $ (venv) python manage.py runserver
+
+# Start VueJS dev server or build it
+$ (venv) cd frontend
+$ (venv) npm install
+$ (venv) npm run dev (or npm run build)
+
+Visit localhost:8000 
+???????
+Profit
 ```
 
