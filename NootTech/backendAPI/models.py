@@ -1,4 +1,4 @@
-from .utils import get_upload_key, get_file_path, get_thumb_path, get_id_gen, get_ext, get_filesize_str, get_fontawesome, get_syntax_highlighting, get_chars_lines, is_websafe
+from .utils import get_upload_key, get_id_gen, get_ext, get_filesize_str, get_fontawesome, get_syntax_highlighting, get_chars_lines, is_websafe
 from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -17,6 +17,12 @@ Author: 2086380A
 """
 
 
+def thumb_path(instance, filename):
+    return 'Thumbnails/{0}/{1}__{2}'.format(instance.user.id, instance.generated_filename, instance.original_filename)
+
+
+def file_path(instance, filename):
+    return 'Uploads/{0}/{1}__{2}'.format(instance.user.id, instance.generated_filename, instance.original_filename)
 
 
 class User(AbstractUser):
@@ -55,17 +61,16 @@ class File(models.Model):
     is_deleted = models.BooleanField(default=False)
 
     generated_filename = models.CharField(max_length=16, default=get_id_gen(), unique=True)
-    original_filename = models.CharField(blank=True, max_length=256)
+    original_filename = models.CharField(blank=True, max_length=300)
 
-    file_content = models.FileField(upload_to=get_file_path, null=True, blank=True, unique=True)
+    file_content = models.FileField(upload_to=file_path, null=True, blank=True, unique=True)
     file_ext = models.CharField(max_length=24, blank=True)
     file_mime_type = models.CharField(max_length=64, default="text/plain")
     file_size_bytes = models.BigIntegerField(default=0)
     file_size_str = models.CharField(max_length=12, default="0 Bytes")
     thumbnail = ThumbnailerImageField(
-        upload_to=get_thumb_path,
-        blank=True,
-        null=True,
+        upload_to=thumb_path,
+        null=True, blank=True,
         resize_source=dict(size=(200, 113), sharpen=True, crop=True, quality=70)
     )
 
@@ -107,12 +112,29 @@ class ReportedFile(models.Model):
     class Meta:
         verbose_name_plural = 'Reported Files'
 
+    def __str__(self):
+        return f'File: {self.reported_file.generated_filename}{self.reported_file.file_ext} Reported by: {self.reported_by.username}'
+
     reported_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reported_user_set')
     reported_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reported_by_set')
     reported_file = models.ForeignKey(File, on_delete=models.CASCADE)
     date = models.DateTimeField(default=timezone.now)
     reason_title = models.CharField(max_length=128)
     reason_body = models.TextField()
+
+
+class FavouritedFile(models.Model):
+
+    class Meta:
+        verbose_name_plural = 'Favourites'
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    file = models.ForeignKey(File, on_delete=models.CASCADE)
+    date = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        orig = self.file.original_filename[:36]+"..." if len(str(self.file.original_filename)) > 36 else self.file.original_filename
+        return f'{self.user.username} | {self.file.generated_filename} - {orig}'
 
 
 class Image(models.Model):

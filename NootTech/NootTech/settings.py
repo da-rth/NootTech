@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'admin_reorder',
+    'corsheaders',
     'django_extensions',
     'easy_thumbnails',
     'rest_framework',
@@ -52,6 +53,7 @@ THUMBNAIL_SOURCE_GENERATORS = (
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -59,6 +61,15 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'admin_reorder.middleware.ModelAdminReorder',
 ]
+# r'^(https?://)?://noot.tech:8000$',
+CORS_ORIGIN_REGEX_WHITELIST = (
+    r'^http://localhost:8080$',
+    r'^http://localhost:8000$',
+    r'^http://127.0.0.1:8080$',
+    r'^https://127.0.0.1:8000$',
+    r'^http://noot.tech:8000$',
+    r'^https://noot.tech:8080$',
+)
 
 ADMIN_REORDER = (
     # Reorder app models
@@ -75,6 +86,7 @@ ADMIN_REORDER = (
     # models with custom name
     {'app': 'backendAPI', 'label': 'File Management', 'models': (
         'backendAPI.File',
+        'backendAPI.FavouritedFile',
         'backendAPI.Image',
         'backendAPI.Audio',
         'backendAPI.Video',
@@ -139,6 +151,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS' : {
+            "min_length" : 8,
+        }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -146,6 +161,18 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+    {
+        'NAME': 'backendAPI.validators.NumberValidator',
+    },
+    {
+        'NAME': 'backendAPI.validators.UppercaseValidator',
+    },
+    {
+        'NAME': 'backendAPI.validators.LowercaseValidator',
+    },
+
+
+
 ]
 
 AUTH_USER_MODEL = 'backendAPI.User'
@@ -190,4 +217,4 @@ STATICFILES_DIRS = (
 )
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, "Media")
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
