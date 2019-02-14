@@ -349,3 +349,6 @@ docs/_book
 test/
 
 # End of https://www.gitignore.io/api/git,vuejs,django,python,pycharm,intellij,visualstudiocode
+# migrations should not be kept in the main repo
+# see https://stackoverflow.com/questions/28035119/should-i-be-adding-the-django-migration-files-in-the-gitignore-file
+migrations/
