@@ -1,6 +1,5 @@
 from rest_framework import generics
 from rest_framework.permissions import AllowAny,IsAuthenticated
-from django.contrib.auth.hashers import check_password
 from .models import ErrorVideo, User, File, FavouritedFile
 from .utils import get_upload_key
 from . import serializers
@@ -39,7 +38,6 @@ class ListFilesView(generics.ListAPIView):
 
     def get_queryset(self):
         return File.objects.filter(user = self.request.user,is_deleted = False)
-
 
 
 class SettingsView(generics.ListCreateAPIView):
