@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, ErrorVideo, File, FavouritedFile
+from .models import User, ErrorVideo, File, FavouritedFile, ReportedFile
 from django.contrib.auth.password_validation import validate_password
 from django.core import exceptions
 
@@ -55,7 +55,7 @@ class CreateUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username','email','color','password')
+        fields = ('username','email','colour','password')
 
     def create(self, validated_data):
         password = validated_data['password']
@@ -89,6 +89,18 @@ class SettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('colour', 'email', 'warnings', 'upload_key', 'gen_upload_key')
+
+
+class ReportList(serializers.ModelSerializer):
+    class Mete:
+        model = ReportedFile
+        fields = '__all__'
+
+
+class ReportAdd(serializers.ModelSerializer):
+    class Mete:
+        model = ReportedFile
+        fields = '__all__'
 
 
 

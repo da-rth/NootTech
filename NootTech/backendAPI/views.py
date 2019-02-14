@@ -1,6 +1,6 @@
 from rest_framework import generics
-from rest_framework.permissions import AllowAny,IsAuthenticated
-from .models import ErrorVideo, User, File, FavouritedFile
+from rest_framework.permissions import AllowAny,IsAuthenticated ,IsAdminUser
+from .models import ErrorVideo, User, File, FavouritedFile, ReportedFile
 from .utils import get_upload_key
 from . import serializers
 
@@ -115,3 +115,16 @@ class DeleteFavouriteView(generics.DestroyAPIView):
 
     def get_queryset(self):
         return FavouritedFile.objects.filter(user=self.request.user)
+
+
+class ReportListView(generics.ListCreateAPIView):
+    permission_class = IsAdminUser
+    serializer_class = serializers.ReportList
+    queryset = ReportedFile.objects.all()
+
+
+class ReportAddView(generics.ListCreateAPIView):
+    permission_class = IsAdminUser
+    serializer_class = serializers.ReportAdd
+    queryset = ReportedFile.objects.all()
+

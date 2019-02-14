@@ -1,7 +1,7 @@
 from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify_jwt_token
 from django.conf.urls import url
-from .views import ListUsers, ErrorVideoView, SettingsView, ListFilesView , CreateUserView, FavouriteView, DeleteFavouriteView, AddFavouriteView
+from .views import ListUsers, ErrorVideoView, SettingsView, ListFilesView , CreateUserView, FavouriteView, DeleteFavouriteView, AddFavouriteView, ReportListView, ReportAddView
 
 # user API requests
 # TODO: api/file        - POST a uploader id and generated_filename (of a file) and respond with the file's info
@@ -41,7 +41,7 @@ urlpatterns = format_suffix_patterns([
     url(r'^favourite/list', FavouriteView.as_view(), name='list-favourites'),
     url(r'^favourite/add', AddFavouriteView.as_view(), name='add-favourites'),
     url(r'^favourite/delete/(?P<pk>\d+)/$', DeleteFavouriteView.as_view(), name='delete-favourite'),
-    url(r'^report', DeleteFavouriteView.as_view(), name='delete-favourite'),
-
+    url(r'^report/add', ReportAddView.as_view(), name='add-report'),
+    url(r'^report/list', ReportListView.as_view(), name='list-report'),
 ])
 
