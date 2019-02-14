@@ -1,12 +1,11 @@
 from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify_jwt_token
 from django.conf.urls import url
-from .views import ListUsers, ErrorVideoView, SettingsView, ListFilesView , CreateUserView, FavouriteView, CreateDeleteFavouriteView
+from .views import ListUsers, ErrorVideoView, SettingsView, ListFilesView , CreateUserView, FavouriteView, DeleteFavouriteView, AddFavouriteView
 
 # user API requests
 # TODO: api/file        - POST a uploader id and generated_filename (of a file) and respond with the file's info
 # TODO: apo/reports     - GET list of reports; POST
-# TODO: api/favourites  - GET list of Favourites (files); POST create new Favourite; DELETE file from Favourites
 # TODO: api/report      - POST a report of offending user id, file id, reportee id, title, reason
 # TODO: validation for api/settings/ POST request
 
@@ -23,6 +22,7 @@ COMPLETE APIs
 - api/token/verify
 
 # Other
+- api/favourites - GET list of Favourites (files); POST create new Favourite; DELETE file from Favourites
 - api/files/ - Display Files belonging to a user
 - api/error-videos/ - GET a list of error videos
 - api/settings/ - GET an authenticated user's settings and POST changes to settings (if request.user is authenticated)
@@ -38,8 +38,10 @@ urlpatterns = format_suffix_patterns([
     url(r'^settings', SettingsView.as_view(), name='get_post_settings'),
     url(r'^files', ListFilesView.as_view(), name='list-files'),
     url(r'^create-user', CreateUserView.as_view(), name='list-files'),
-    url(r'^favourites', FavouriteView.as_view(), name='list-favourites'),
-    url(r'^favourite', CreateDeleteFavouriteView.as_view(), name='list-favourites'),
+    url(r'^favourite/list', FavouriteView.as_view(), name='list-favourites'),
+    url(r'^favourite/add', AddFavouriteView.as_view(), name='add-favourites'),
+    url(r'^favourite/delete/(?P<pk>\d+)/$', DeleteFavouriteView.as_view(), name='delete-favourite'),
+    url(r'^report', DeleteFavouriteView.as_view(), name='delete-favourite'),
 
 ])
 
