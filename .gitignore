@@ -445,3 +445,7 @@ typings/
 # migrations should not be kept in the main repo
 # see https://stackoverflow.com/questions/28035119/should-i-be-adding-the-django-migration-files-in-the-gitignore-file
 migrations/
+
+# remove webpack
+webpack-stats.json
+
