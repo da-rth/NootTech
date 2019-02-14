@@ -94,3 +94,12 @@ class CreateUserView(generics.ListCreateAPIView):
             :return:
         '''
 
+class FavouriteView(generics.ListCreateAPIView):
+    '''
+        This API Will POST the files favourite by a user, Create new favourites, delete already favourite files
+        Needs tweeking
+    '''
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.FavouriteFiles
+    def get_queryset(self):
+        return File.objects.filter(user = self.request.user,is_deleted = False,is_favourite = True)

@@ -20,6 +20,16 @@ class ListFilesSerializer(serializers.ModelSerializer):
         model = File
         fields = '__all__'
 
+class FavouriteFiles(serializers.ModelSerializer):
+    '''
+    Serializer for favourite files
+    '''
+    uploader_id = serializers.CharField(source='user.id')
+    uploader = serializers.CharField(source='user.username')
+
+    class Meta:
+        model = File
+        field = '__all__'
 
 class CreateUserSerializer(serializers.ModelSerializer):
 

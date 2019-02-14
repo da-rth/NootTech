@@ -1,7 +1,7 @@
 from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify_jwt_token
 from django.conf.urls import url
-from .views import ListUsers, ErrorVideoView, SettingsView, ListFilesView , CreateUserView
+from .views import ListUsers, ErrorVideoView, SettingsView, ListFilesView , CreateUserView, FavouriteView
 
 # user API requests
 # TODO: api/file        - POST a uploader id and generated_filename (of a file) and respond with the file's info
@@ -23,7 +23,7 @@ COMPLETE APIs
 - api/token/verify
 
 # Other
--api/files/ - Display Files belonging to a user
+- api/files/ - Display Files belonging to a user
 - api/error-videos/ - GET a list of error videos
 - api/settings/ - GET an authenticated user's settings and POST changes to settings (if request.user is authenticated)
 -api/create-user - POST User Info and CREATE new User with it
@@ -38,6 +38,7 @@ urlpatterns = format_suffix_patterns([
     url(r'^settings', SettingsView.as_view(), name='get_post_settings'),
     url(r'^files', ListFilesView.as_view(), name='list-files'),
     url(r'^create-user', CreateUserView.as_view(), name='list-files'),
+    url(r'^favourites', FavouriteView.as_view(), name='list-favourites'),
 
 ])
 
