@@ -4,6 +4,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from easy_thumbnails.fields import ThumbnailerImageField
 from django.db import models
+from .models import File
 from django.utils import timezone
 from mimetypes import MimeTypes
 from moviepy.editor import VideoFileClip, AudioFileClip
@@ -36,6 +37,16 @@ class BannedUser(models.Model):
     banned_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='banned_by_set')
     date = models.DateTimeField(default=timezone.now)
     reason = models.TextField(blank=False)
+
+
+class FavouritedFile(models.Model):
+
+    class Meta:
+        verbose_name_plural = 'Favourites'
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    file = models.ForeignKey(File, on_delete=models.CASCADE)
+    date = models.DateTimeField(default=timezone.now)
 
 
 class File(models.Model):
