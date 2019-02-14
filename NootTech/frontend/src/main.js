@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import BootstrapVue from 'bootstrap-vue'
+import 'babel-polyfill'
 
 
 Vue.prototype.$api_url = 'http://localhost:8000/api';
