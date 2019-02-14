@@ -4,7 +4,6 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from easy_thumbnails.fields import ThumbnailerImageField
 from django.db import models
-from .models import File
 from django.utils import timezone
 from mimetypes import MimeTypes
 from moviepy.editor import VideoFileClip, AudioFileClip
@@ -47,6 +46,8 @@ class FavouritedFile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     file = models.ForeignKey(File, on_delete=models.CASCADE)
     date = models.DateTimeField(default=timezone.now)
+
+
 
 
 class File(models.Model):

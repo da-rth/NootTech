@@ -1,7 +1,7 @@
 from rest_framework import generics
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from django.contrib.auth.hashers import check_password
-from .models import ErrorVideo, User ,File
+from .models import ErrorVideo, User ,File, FavouritedFile
 from .utils import get_upload_key
 from . import serializers
 
@@ -102,6 +102,16 @@ class FavouriteView(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.FavouriteFiles
     def get_queryset(self):
-        return File.objects.filter(user = self.request.user,is_deleted = False,is_favourite = True)
+        return FavouritedFile.objects.filter(user = self.request.user,is_deleted = False)
+    def create_File(self):
+        permission_classes = (IsAuthenticated,)
+        serializer_class = serializers.CreateFavouriteFiles
+        queryset = FavouritedFile.objects.all()
+        '''
+        API to create a new Favourite file
+        :return:
+        '''
+
+
 
 
