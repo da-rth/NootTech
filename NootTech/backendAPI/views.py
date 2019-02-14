@@ -101,3 +101,8 @@ class FavouriteView(generics.ListCreateAPIView):
         return FavouritedFile.objects.filter(user=self.request.user)
 
 
+
+
+class CreateDeleteFavouriteView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = (IsAuthenticated)
+    serializer_class = serializers.CreateDeleteFavourite

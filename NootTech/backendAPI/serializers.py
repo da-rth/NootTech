@@ -37,6 +37,29 @@ class FavouriteFiles(serializers.ModelSerializer):
         fields = ('id', 'generated_filename', 'original_filename', 'icon', 'thumbnail', 'file_url', 'uploader')
 
 
+class CreateDeleteFavourite(serializers.ModelSerializer):
+    generated_filename = serializers.CharField(source='file.generated_filename')
+    original_filename = serializers.CharField(source='file.original_filename')
+    file_url = serializers.CharField(source='file.file_content')
+    uploader = serializers.CharField(source='file.user.username')
+    icon = serializers.CharField(source='file.icon')
+    thumbnail = serializers.CharField(source='file.thumbnail')
+
+    class Meta:
+        model = FavouritedFile
+        fields = ('id', 'generated_filename', 'original_filename', 'icon', 'thumbnail', 'file_url', 'uploader')
+
+    def create(self, validated_data):
+        generated = validated_data['generated_filename']
+        original = validated_data['original_filename']
+        icon = validated_data['icon']
+        thumbnail = validated_data['thumbnail']
+        url = validated_data['file_url']
+        uploader = validated_data['uploader']
+        file = File(
+
+        )
+
 class CreateUserSerializer(serializers.ModelSerializer):
 
     email = serializers.CharField(write_only= True)
