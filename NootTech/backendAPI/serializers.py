@@ -2,13 +2,14 @@ from rest_framework import serializers
 from .models import User, ErrorVideo, File, FavouritedFile, ReportedFile
 from django.contrib.auth.password_validation import validate_password
 from django.core import exceptions
+from . import validators
 
 
 class ListUsersSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'date_joined', 'colour', 'is_admin')
+        fields = ('id', 'username', 'email', 'date_joined', 'colour')
 
 
 class ListFilesSerializer(serializers.ModelSerializer):
@@ -48,10 +49,12 @@ class DeleteFavourite(serializers.ModelSerializer):
 
 class CreateUserSerializer(serializers.ModelSerializer):
 
-    email = serializers.CharField(write_only= True)
-    username = serializers.CharField(write_only=True)
-    password = serializers.CharField(write_only=True)
-    colour = serializers.CharField(write_only=True)
+    email = serializers.CharField(validators =[validators.validate_email],write_only= True )
+    username = serializers.CharField(validators =[validators.validate_username],write_only=True)
+    password = serializers.CharField(style = {'input_type': 'password'}, write_only=True)
+    colour = serializers.CharField(validators =[validators.validate_colour],write_only=True)
+
+
 
     class Meta:
         model = User
@@ -84,7 +87,9 @@ class ErrorVideoSerializer(serializers.ModelSerializer):
 
 class SettingsSerializer(serializers.ModelSerializer):
     gen_upload_key = serializers.BooleanField(default=False)
-    email = serializers.CharField(allow_null=True)
+    email = serializers.CharField(validators =[validators.validate_email],allow_null=True)
+    colour = serializers.CharField(validators =[validators.validate_colour],write_only=True)
+
 
     class Meta:
         model = User
@@ -92,6 +97,11 @@ class SettingsSerializer(serializers.ModelSerializer):
 
 
 class ReportList(serializers.ModelSerializer):
+    reported_user_name = serializers.CharField(source="reported_user.username")
+    reported_by_name = serializers.CharField(source="reported_by.username")
+    file_gen_name = serializers.CharField(source="reported_file.generated_filename")
+    file_orig_name = serializers.CharField(source="reported_file.original_filename")
+    file_url = serializers.CharField(source="reported_file.file_content")
     class Mete:
         model = ReportedFile
         fields = '__all__'

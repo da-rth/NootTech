@@ -63,8 +63,10 @@ class SettingsView(generics.ListCreateAPIView):
         # Update user object with these values...
         if serializer.validated_data.get('colour'):
             # if "colour" exists and isn't an empty string
+
             u.colour = serializer.validated_data.get('colour')
         if serializer.validated_data.get('email'):
+
             # If "email" exists and isn't an empty string
             u.email = serializer.validated_data.get('email')
         if serializer.validated_data.get('gen_upload_key'):
