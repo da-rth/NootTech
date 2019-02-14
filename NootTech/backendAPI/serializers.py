@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, ErrorVideo, File
+from .models import User, ErrorVideo, File, FavouritedFile
 from django.contrib.auth.password_validation import validate_password
 from django.core import exceptions
 
@@ -20,42 +20,22 @@ class ListFilesSerializer(serializers.ModelSerializer):
         model = File
         fields = '__all__'
 
+
 class FavouriteFiles(serializers.ModelSerializer):
     '''
     Serializer for favourite files
     '''
-    uploader_id = serializers.CharField(source='user.id')
-    uploader = serializers.CharField(source='user.username')
+    generated_filename = serializers.CharField(source='file.generated_filename')
+    original_filename = serializers.CharField(source='file.original_filename')
+    file_url = serializers.CharField(source='file.file_content')
+    uploader = serializers.CharField(source='file.user.username')
+    icon = serializers.CharField(source='file.icon')
+    thumbnail = serializers.CharField(source='file.thumbnail')
 
     class Meta:
-        model = File
-        field = '__all__'
+        model = FavouritedFile
+        fields = ('id', 'generated_filename', 'original_filename', 'icon', 'thumbnail', 'file_url', 'uploader')
 
-class CreateFavouriteFiles(serializers.ModelSerializer):
-    '''
-    Serializer to create a new favourite file, need counselling on what to do
-    '''
-    user = serializers.CharField(write_only= True)
-    'Not Sure About parentesis content'
-    file =serializers.FileField()
-    date = serializers.DateField(write_only= True)
-    class Meta:
-        model = File
-        field = ('user','file','date')
-
-    def create(self,new_file):
-
-        file = FavouriteFiles(
-        user = new_file['user'],
-        file=new_file['file'],
-        date=new_file['date'],
-        )
-        '''
-        Validation to write
-        :param new_file:
-        Informations about the new File
-        :return:
-        '''
 
 class CreateUserSerializer(serializers.ModelSerializer):
 

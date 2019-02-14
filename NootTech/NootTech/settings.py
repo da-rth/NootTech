@@ -75,6 +75,7 @@ ADMIN_REORDER = (
     # models with custom name
     {'app': 'backendAPI', 'label': 'File Management', 'models': (
         'backendAPI.File',
+        'backendAPI.FavouritedFile',
         'backendAPI.Image',
         'backendAPI.Audio',
         'backendAPI.Video',

@@ -1,7 +1,7 @@
 from rest_framework import generics
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from django.contrib.auth.hashers import check_password
-from .models import ErrorVideo, User ,File, FavouritedFile
+from .models import ErrorVideo, User, File, FavouritedFile
 from .utils import get_upload_key
 from . import serializers
 
@@ -69,7 +69,7 @@ class SettingsView(generics.ListCreateAPIView):
         if serializer.validated_data.get('email'):
             # If "email" exists and isn't an empty string
             u.email = serializer.validated_data.get('email')
-        if serializer.validated_data.get('gen_upload_key') == True:
+        if serializer.validated_data.get('gen_upload_key'):
             # If "upload_key" exists and is set to True
             u.upload_key = get_upload_key()
 
@@ -81,18 +81,15 @@ class CreateUserView(generics.ListCreateAPIView):
         This API will Take in  POST request of user informations and create a new User
     '''
 
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
     serializer_class = serializers.CreateUserSerializer
+    queryset = User.objects.all()
+    '''
+        API for creating a user
+        Process of checking valid data to be reviewed
+        :return:
+    '''
 
-    def create_user(request):
-        permission_classes = (AllowAny,)
-        serializer_class = serializers.CreateUserSerializer
-        queryset = User.objects.all()
-        '''
-            API for creating a user
-            Process of checking valid data to be reviewed
-            :return:
-        '''
 
 class FavouriteView(generics.ListCreateAPIView):
     '''
@@ -101,17 +98,8 @@ class FavouriteView(generics.ListCreateAPIView):
     '''
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.FavouriteFiles
+
     def get_queryset(self):
-        return FavouritedFile.objects.filter(user = self.request.user,is_deleted = False)
-    def create_File(self):
-        permission_classes = (IsAuthenticated,)
-        serializer_class = serializers.CreateFavouriteFiles
-        queryset = FavouritedFile.objects.all()
-        '''
-        API to create a new Favourite file
-        :return:
-        '''
-
-
+        return FavouritedFile.objects.filter(user=self.request.user)
 
 
