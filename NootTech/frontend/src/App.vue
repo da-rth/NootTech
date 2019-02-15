@@ -1,7 +1,9 @@
 <template>
   <div id="NTapp">
     <nt-navbar></nt-navbar>
+
     <router-view/>
+
     <nt-footer></nt-footer>
   </div>
 </template>
@@ -16,7 +18,17 @@ export default {
   data: function () {},
   components: {
     NtNavbar, NtMainPane, NtFooter
-  },
+  }
 
 }
 </script>
+
+<style>
+    body {
+    background-color: #242424;
+  }
+
+  h1 {
+    color: white;
+  }
+</style>

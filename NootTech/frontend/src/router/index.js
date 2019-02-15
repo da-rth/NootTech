@@ -6,9 +6,8 @@ import Router from 'vue-router'
 import Base from '../components/Base'
 import About from '../components/About'
 import TermsOfService from '../components/ToS'
-import Login from '../components/Authentication/Login'
+import LoginRegister from '../components/Authentication/LoginRegister'
 import Logout from '../components/Authentication/Logout'
-import Register from '../components/Authentication/Register'
 import PageNotFound from '../components/Navigation/PageNotFound'
 
 
@@ -23,17 +22,12 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: Login
+    component: LoginRegister
   },
   {
     path: '/logout',
     name: 'Logout',
     component: Logout
-  },
-    {
-    path: '/register',
-    name: 'Register',
-    component: Register
   },
   {
     path: '/about',
@@ -61,7 +55,7 @@ const router = new Router({
   routes,
   mode: 'history'
 });
-/*
+
 router.beforeEach((to, from, next) => {
   if (to.meta.requireAuth) {
     if (store.state.token) {
@@ -75,6 +69,6 @@ router.beforeEach((to, from, next) => {
   } else {
     next()
   }
-})*/
+})
 
 export default router

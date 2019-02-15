@@ -20,7 +20,8 @@
 
 <style scoped>
   .footer-copyright {
-    background-color: #F3F3F3;
+    border-top: 1px solid #3d3d3d;
+    background-color: #282828;
     padding-top: 10px;
     padding-bottom: 0px;
     position:fixed;

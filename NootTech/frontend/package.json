@@ -14,11 +14,9 @@
     "axios": "^0.18.0",
     "bootstrap-vue": "^2.0.0-rc.11",
     "vue": "^2.5.11",
-<<<<<<< HEAD
-    "vue-router": "^3.0.2"
-=======
-    "@babel/runtime": "^7.3.1"
->>>>>>> 17d72b0e9688f06a3a0db73248d3f41e1c514017
+    "vue-router": "^3.0.2",
+    "vuex": "^3.1.0",
+    "vuex-persistedstate": "^2.5.4"
   },
   "browserslist": [
     "> 1%",
