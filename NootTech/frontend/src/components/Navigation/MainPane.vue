@@ -10,10 +10,10 @@
 <script>
     export default {
         name: "NtMainPane",
-        data: function() {
-            return {
-                dummy: 42
-            }
+        props: ["title"],
+        created: function() {
+            document.title = this.title
+
         }
-    }
+   }
 </script>

@@ -1,12 +1,8 @@
 <template>
   <div>
     <nt-navbar></nt-navbar>
-    <nt-main-pane>
-     <H3>
-      This information is being displayed by VueJS but taken from
-      <a v-bind:href="this.$api_url+'/list-users/'">this API url</a>
-    </H3>
-
+    <nt-main-pane title="NootTech: More than meets the m-eye-nd">
+      <p>Hi there</p>
    </nt-main-pane>
   </div>
 </template>
