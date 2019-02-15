@@ -3,6 +3,10 @@ import App from './App.vue'
 import BootstrapVue from 'bootstrap-vue'
 import 'babel-polyfill'
 
+// Import CSS assets
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+
 
 Vue.prototype.$api_url = 'http://localhost:8000/api';
 Vue.prototype.$subdomain_url = ".noot.tech";
