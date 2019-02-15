@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'admin_reorder',
     'corsheaders',
-    'django_extensions',
     'easy_thumbnails',
     'rest_framework',
     'backendAPI',
