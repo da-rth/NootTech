@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import User, ErrorVideo, File, FavouritedFile, ReportedFile
+from collections import OrderedDict
+from .models import User, ErrorVideo, File, FavouritedFile, ReportedFile, Image, Video, Audio, Text
 from django.contrib.auth.password_validation import validate_password
 from django.core import exceptions
 from . import validators
@@ -12,14 +13,51 @@ class ListUsersSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'email', 'date_joined', 'colour')
 
 
+class ImageFileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Image
+        fields = '__all__'
+
+
+class VideoFileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Video
+        fields = '__all__'
+
+
+class AudioFileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Audio
+        fields = '__all__'
+
+
+class TextFileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Text
+        fields = '__all__'
+
+
 class ListFilesSerializer(serializers.ModelSerializer):
 
     uploader_id = serializers.CharField(source='user.id')
     uploader = serializers.CharField(source='user.username')
+    file_image_info = ImageFileSerializer(source='file_image')
+    file_video_info = VideoFileSerializer(source='file_video')
+    file_audio_info = AudioFileSerializer(source='file_audio')
+    file_text_info = TextFileSerializer(source='file_text')
 
     class Meta:
         model = File
         fields = '__all__'
+
+    def to_representation(self, instance):
+        # Omit null fields : https://stackoverflow.com/a/45569581
+        result = super(ListFilesSerializer, self).to_representation(instance)
+        return OrderedDict([(key, result[key]) for key in result if result[key] is not None])
 
 
 class FavouriteFiles(serializers.ModelSerializer):
@@ -54,8 +92,6 @@ class CreateUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(style = {'input_type': 'password'}, write_only=True)
     colour = serializers.CharField(validators =[validators.validate_colour],write_only=True)
 
-
-
     class Meta:
         model = User
         fields = ('username','email','colour','password')
@@ -89,7 +125,6 @@ class SettingsSerializer(serializers.ModelSerializer):
     gen_upload_key = serializers.BooleanField(default=False)
     email = serializers.CharField(validators =[validators.validate_email],allow_null=True)
     colour = serializers.CharField(validators =[validators.validate_colour],write_only=True)
-
 
     class Meta:
         model = User

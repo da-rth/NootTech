@@ -1,0 +1,6 @@
+/* 'cause dark colour is eye-candy for developers */
+
+.bg-dark {
+    background-color: #242424;
+    color: #eeeeee;
+}

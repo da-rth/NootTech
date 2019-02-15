@@ -4,6 +4,10 @@ from .models import ErrorVideo, User, File, FavouritedFile, ReportedFile
 from .utils import get_upload_key
 from . import serializers
 
+from rest_framework.fields import SkipField
+from rest_framework.relations import PKOnlyObject
+from collections import OrderedDict
+
 
 # Get List of user uploads
 class ListUsers(generics.ListAPIView):
@@ -37,7 +41,7 @@ class ListFilesView(generics.ListAPIView):
     serializer_class = serializers.ListFilesSerializer
 
     def get_queryset(self):
-        return File.objects.filter(user = self.request.user,is_deleted = False)
+        return File.objects.filter(user=self.request.user, is_deleted = False)
 
 
 class SettingsView(generics.ListCreateAPIView):
@@ -103,13 +107,13 @@ class FavouriteView(generics.ListCreateAPIView):
         return FavouritedFile.objects.filter(user=self.request.user)
 
 
-
 class AddFavouriteView(generics.CreateAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.DeleteFavourite
 
     def get_queryset(self):
         return FavouritedFile.objects.filter(user=self.request.user)
+
 
 class DeleteFavouriteView(generics.DestroyAPIView):
     permission_classes = (IsAuthenticated,)
