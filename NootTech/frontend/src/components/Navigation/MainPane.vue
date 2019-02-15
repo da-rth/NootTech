@@ -1,6 +1,6 @@
 <template>
     <main>
-        <b-container class="bv-example-row" bg-variant="dark">
+        <b-container fluid class="bv-example-row bg-dark">
             <b-form-row>
                 <slot></slot>
             </b-form-row>

@@ -1,5 +1,6 @@
 /* 'cause dark colour is eye-candy for developers */
 
-body {
-    background-color: #2e3035 !important;
+.bg-dark {
+    background-color: #242424;
+    color: #eeeeee;
 }

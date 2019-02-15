@@ -4,13 +4,10 @@
             <b-navbar-toggle target="nav_collapse" />
             <b-collapse is-nav id="nav_collapse">
                 <b-navbar-nav>
-                    <b-nav-item-dropdown text="Pick an user" v-if="users">
-                        <b-dropdown-item v-for="user in users" :key="user.id">{{user.username}}</b-dropdown-item>
-                    </b-nav-item-dropdown>
-                    <b-link v-else href="#TOS">User listing not available</b-link>
-                </b-navbar-nav>
-                <b-navbar-nav>
-                    <b-nav-item href="/TOS" size="md">Terms of Service</b-nav-item>
+                    <b-link @click="$refs.tos_modal.showModal()">Terms of Service</b-link>
+                    <nt-popup title="Terms of service" ref="tos_modal" id="tos">
+                        {{text}}
+                    </nt-popup>
                 </b-navbar-nav>
                 <!-- Keep this centered -->
                 <b-navbar-nav class="mx-auto">
@@ -26,6 +23,7 @@
     </div>
 </template>
 <script>
+    import NtPopup from '../Utils/Popup.vue'
     import axios from 'axios'
 
     export default {
@@ -34,10 +32,11 @@
             return {
                 brandName: "NootTech",
                 isLoggedIn: "False",
-                users: []
+                users: [],
+                text: "To Load"
             };
         },
-                
+
         created() {
             console.log(this.$api_url+"/list-users");
             axios.get(this.$api_url+"/list-users")
@@ -48,7 +47,10 @@
                 .catch(e => {
                 this.errors.push(e)
             })
+            console.log(this.$api_url+"/ToS");
         },
+
+        components: {NtPopup}
 
     }
 </script>
