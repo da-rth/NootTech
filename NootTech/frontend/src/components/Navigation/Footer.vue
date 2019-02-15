@@ -17,3 +17,14 @@
         name: "NtFooter"
     }
 </script>
+
+<style scoped>
+  .footer-copyright {
+    background-color: #F3F3F3;
+    padding-top: 10px;
+    padding-bottom: 0px;
+    position:fixed;
+    bottom:0;
+    width:100%;
+}
+</style>

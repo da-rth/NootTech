@@ -4,18 +4,16 @@
             <b-navbar-toggle target="nav_collapse" />
             <b-collapse is-nav id="nav_collapse">
                 <b-navbar-nav>
-                    <b-link @click="$refs.tos_modal.showModal()">Terms of Service</b-link>
-                    <nt-popup title="Terms of service" ref="tos_modal" id="tos">
-                        {{text}}
-                    </nt-popup>
+                  <b-nav-item><router-link to="/about">About</router-link></b-nav-item>
+                    <b-nav-item><router-link to="/tos">Terms of Service</router-link></b-nav-item>
                 </b-navbar-nav>
                 <!-- Keep this centered -->
                 <b-navbar-nav class="mx-auto">
-                    <b-navbar-brand href="#">{{ brandName }}</b-navbar-brand>
+                  <b-navbar-brand><router-link to="/">{{ brandName }}</router-link></b-navbar-brand>
                 </b-navbar-nav>
                 <b-navbar-nav class="ml-auto">
-                    <b-nav-item>Login</b-nav-item>
-                    <b-nav-item>Register</b-nav-item>
+                    <b-nav-item><router-link to="/login">Login</router-link></b-nav-item>
+                    <b-nav-item><router-link to="/register">Register</router-link></b-nav-item>
                 </b-navbar-nav>
             </b-collapse>
 
@@ -54,3 +52,15 @@
 
     }
 </script>
+<style scoped>
+  .navbar.bg-dark {
+    background-color: #242424 !important;
+  }
+  .navbar a {
+    color: #8f8f8f;
+  }
+  .navbar a:hover {
+    color: #d1d1d1;
+    text-decoration: none;
+  }
+</style>
