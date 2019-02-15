@@ -44,6 +44,7 @@ const actions = {
       return new Promise((resolve, reject) => {
           axios.post(LOGIN_URL, payload.credentials)
               .then( (response) => {
+                console.log("Logging user in...")
                   if (response.data.token) {
                       const mutationPayload = {};
                       mutationPayload.token = response.data.token;
@@ -57,18 +58,15 @@ const actions = {
       });
   },
 
-    [types.REGISTER] ({ commit }, payload) {
+    [types.REGISTER] ({ commit, dispatch }, payload) {
         return new Promise((resolve, reject) => {
             axios.post(REGISTER_URL, payload.credentials)
                 .then( (response) => {
-
-                    if (response.data.username) {
-                        console.log('Account created! Logging in...');
-                        [types.LOGIN]({commit}, payload)
-                        resolve();
-                    }
+                      console.log('Account created!')
+                      dispatch(types.LOGIN, payload)
+                      commit(types.REGISTER, payload.redirect);
+                      resolve();
                 }, (error) => reject(error))
-
         });
     },
 

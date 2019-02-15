@@ -84,7 +84,9 @@ export default {
                 credentials: this.register_credentials,
                 redirect: decodeURIComponent(this.$route.query.redirect || '/')
             };
-            this.$store.dispatch(types.REGISTER, params).then(response => { }).catch(errors => {
+            this.$store.dispatch(types.REGISTER, params).then(response => {
+              console.log("User created!")
+            }).catch(errors => {
               this.error = errors
               console.log("Failed to create user")
               this.renderErrors(errors.response.data)})

@@ -1,9 +1,8 @@
 <template>
   <div id="NTapp">
     <nt-navbar></nt-navbar>
-
+    <br/>
     <router-view/>
-
     <nt-footer></nt-footer>
   </div>
 </template>
