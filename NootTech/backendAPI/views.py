@@ -1,15 +1,22 @@
 from rest_framework import generics
-from rest_framework.permissions import AllowAny,IsAuthenticated ,IsAdminUser
-from .models import ErrorVideo, User, File, FavouritedFile, ReportedFile
-from .utils import get_upload_key
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
+from django.views.decorators.csrf import csrf_exempt
+from .models import ErrorVideo, User, File, FavouritedFile, ReportedFile, mime
+from django.views import View
+from django.shortcuts import redirect
+from django.utils.decorators import method_decorator
+from .utils import get_upload_key, upload_authentication_failure, get_ip, get_id_gen, get_ext
 from . import serializers
+from django.shortcuts import get_object_or_404
+from django.conf import settings
+from django.http import HttpResponse
+import traceback
 
-from rest_framework.fields import SkipField
-from rest_framework.relations import PKOnlyObject
-from collections import OrderedDict
-
+htp = "https" if settings.HTTPS else "http"
 
 # Get List of user uploads
+
+
 class ListUsers(generics.ListAPIView):
     """
     Returns a list of users with basic information (check ListUsersSerializer to see what info is sent in response)
@@ -41,7 +48,7 @@ class ListFilesView(generics.ListAPIView):
     serializer_class = serializers.ListFilesSerializer
 
     def get_queryset(self):
-        return File.objects.filter(user=self.request.user, is_deleted = False)
+        return File.objects.filter(user=self.request.user)
 
 
 class SettingsView(generics.ListCreateAPIView):
@@ -133,4 +140,70 @@ class ReportAddView(generics.ListCreateAPIView):
     permission_class = IsAdminUser
     serializer_class = serializers.ReportAdd
     queryset = ReportedFile.objects.all()
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class UploadView(View):
+
+    @csrf_exempt
+    def post(self, request):
+
+        uploaded_files = []
+
+        if request.user.is_authenticated:
+            upload_user = User.objects.get(id=request.user.id)
+            username = upload_user.username
+        else:
+            invalid_field_message = upload_authentication_failure(request, User)
+            if invalid_field_message:
+                return invalid_field_message
+            username = request.POST["username"]
+            upload_user = get_object_or_404(User, username=username, upload_key=request.POST["upload_key"])
+
+        for user_file in request.FILES.getlist('content'):
+            ip = get_ip(request)
+
+            try:
+                ext = get_ext(user_file.name)
+                if ext in [".gif", ".jpg", ".jpeg", ".png", ".mp4", ".webm", ".ogv", ".ico", ".apng", ".bmp"]:
+
+                    uploaded_file = File(
+                        user=upload_user,
+                        generated_filename=get_id_gen(),
+                        ip=ip,
+                        file_content=user_file,
+                        file_thumbnail=user_file
+                    )
+                else:
+                    uploaded_file = File(
+                        user=upload_user,
+                        generated_filename=get_id_gen(),
+                        ip=ip,
+                        file_content=user_file
+                    )
+
+                uploaded_file.save()
+
+                print(uploaded_file.original_filename, uploaded_file.generated_filename)
+
+                if settings.SUBDOMAIN:
+                    uploaded_files.append(f"{htp}://{username}.{settings.DOMAIN_NAME}/{uploaded_file.generated_filename}")
+                else:
+                    uploaded_files.append(f"{htp}://{settings.DOMAIN_NAME}/u/{username}/{uploaded_file.generated_filename}")
+
+            except Exception as e:
+
+                print(f"Upload for {user_file} failed")
+                traceback.print_exc()
+                uploaded_files.append(f"Failed to upload: {user_file}\n")
+
+        return HttpResponse(" \n".join(uploaded_files))
+
+    def get(self, request):
+        return redirect('/')
+
+
+
+
+
 
