@@ -16,6 +16,7 @@ Vue.prototype.$subdomain_enabled = false;
 Vue.prototype.$userColour = "#00CCCC";
 
 // load BootstrapVue
+// todo: load the single components instead
 Vue.use(BootstrapVue);
 
 new Vue({
@@ -24,3 +25,11 @@ new Vue({
   store,
   render: h => h(App)
 });
+
+Vue.mixin({
+  data() {
+    return {
+      companyName: "NootTech"
+    }
+  },
+})
