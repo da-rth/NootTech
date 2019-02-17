@@ -63,7 +63,7 @@
                 >
 
                 <b-form-input
-                  id="emailSigninField"
+                  id="emailSignupField"
                   type="password"
                   placeholder="user@example.com"
                   v-model="register_credentials.password"

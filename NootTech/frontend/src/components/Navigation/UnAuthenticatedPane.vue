@@ -1,9 +1,6 @@
 <template>
-  <nt-main-pane title="NootTech: More than meets the m-eye-nd" >
-    <div v-if="$store.state.user.authenticated">
-      <h1> You are logged in! Files will appear here</h1>
-    </div>
-    <div class="container-fluid" v-else>
+   <nt-main-pane title="NootTech: More than meets the m-eye-nd" >
+    <div class="container-fluid">
       <div class="row">
         <b-jumbotron header="Discover NooTech!"
                 class="bg-dark"
@@ -20,15 +17,15 @@
             @sliding-start="onSlideStart"
             @sliding-end="onSlideEnd"
           >
-            <b-carousel-slide 
+            <b-carousel-slide
               text="Hi there, this is the first image"
               img-src="https://cdn.discordapp.com/attachments/543489677412401153/543489777220059136/1.jpg"
             />
-            <b-carousel-slide 
+            <b-carousel-slide
               text="Hi there, this is the second image"
               img-src="https://cdn.discordapp.com/attachments/543489677412401153/543489780923760644/2.jpg"
             />
-            <b-carousel-slide 
+            <b-carousel-slide
               text="Hi there, this is the third image"
               img-src="https://cdn.discordapp.com/attachments/543489677412401153/543489782706077696/99789.jpg"
             />
@@ -49,27 +46,24 @@
         </b-jumbotron>
       </div>
     </div>
-  </nt-main-pane>
+   </nt-main-pane>
 </template>
 
 <script>
-import NtMainPane from './Navigation/MainPane.vue';
-
-export default {
-    name: "Base",
-    components: {NtMainPane},
+  export default {
+    name: "AuthenticatedPane",
     data() {
-        return {
-          slide: 0,
-          sliding: true
-        }
+      return {
+        slide: 0,
+        sliding: true
+      }
     },
     // avoid looping
     methods: {
       onSlideStart(slide) { this.sliding = true},
       onSlideEnd(slide) { this.sliding = false}
     }
-}
+  }
 </script>
 
 <style scoped>
