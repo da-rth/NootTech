@@ -15,9 +15,12 @@
 </template>
 
 <script>
-    export default {
-        name: "Base"
-    }
+import NtMainPane from './Navigation/MainPane.vue';
+
+export default {
+    name: "Base",
+    components: {NtMainPane}
+}
 </script>
 
 <style scoped>

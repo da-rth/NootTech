@@ -14,7 +14,7 @@ import NtFooter from './components/Navigation/Footer.vue'
 
 export default {
   name: 'app',
-  data: function () {},
+  data: function () {return {}},
   components: {
     NtNavbar, NtMainPane, NtFooter
   }

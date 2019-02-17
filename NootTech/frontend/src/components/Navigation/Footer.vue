@@ -1,6 +1,6 @@
 <template>
 <!-- Footer -->
-<footer class="page-footer font-small gray">
+<footer class="page-footer text-light">
 
   <!-- Copyright -->
   <div class="footer-copyright text-center py-3">© 2019 Copyright:
