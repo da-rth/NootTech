@@ -19,32 +19,6 @@ axios.interceptors.request.use(
   })
 
 /**
- * If unable to get valid response with JWT token, log user out (deletes token)
- */
-axios.interceptors.response.use(
-  response => {
-    return response
-  },
-  error => {
-    console.log('[Response error!]', error.response)
-    if (error.response) {
-      switch (error.response.status) {
-        case 401:
-          // Using logout instead of login for renew state
-          store.commit('LOGOUT', {
-            router: router,
-            redirect: router.currentRoute.fullPath
-          });
-          break;
-        case 500:
-          console.log(error.response.statusText)
-          break
-      }
-    }
-    return Promise.reject(error.response.data)
-  });
-
-/**
  * @returns {string} - The base API url. Remove :8000 before deployment!
  */
 export function base () {
