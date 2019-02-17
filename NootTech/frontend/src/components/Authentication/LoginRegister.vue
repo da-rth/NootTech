@@ -5,36 +5,97 @@
       <p v-html="formatted_error"></p>
     </b-alert>
 
-    <div class="container-login">
+    <div class="container-login" :class="{'registration-page': currentTab}" :style="{backgroundColor: getColour()}">
 
       <b-card no-body>
-        <b-tabs pills card>
+        <b-tabs pills card @input="updateTab">
 
           <b-tab ref="loginTab" title="Login" active>
-            <div class="form-group"><input type="text" class="form-control" placeholder="Username" v-model="login_credentials.username" required></div>
-            <div class="form-group"><input type="password" class="form-control" placeholder="Password" v-model="login_credentials.password" required></div>
-            <button class="btn btn-login" @click="submit('login')">Login</button>
+            <b-form @submit.prevent="login">
+              <b-form-group id="usernameFormGroup" label="Your username" label-for="usernameLoginField">
+                <b-form-input
+                  id="usernameLoginField" type="text" placeholder="Username" v-model="login_credentials.username" required />
+              </b-form-group>
+              <b-form-group id="passwordFormGroup" label="Your password" label-for="passwordFormGroup">
+                <b-form-input id="passwordLoginField" type="password" v-model="login_credentials.password" required/>
+              </b-form-group>
+              <b-button type="submit" variant="primary">Log in</b-button>
+            </b-form>
           </b-tab>
 
           <b-tab title="Register">
-            <div class="form-group"><input type="text" class="form-control" placeholder="Username" v-model="register_credentials.username" required></div>
-            <div class="form-group"><input type="email" class="form-control" placeholder="Email" v-model="register_credentials.email" required></div>
-            <div class="form-group"><input type="password" class="form-control" placeholder="Password" v-model="register_credentials.password" required></div>
-            <div class="form-group"><input type="text" class="form-control" placeholder="Pick a colour" value="#00CCCC" v-model="register_credentials.colour"></div>
-            <button class="btn btn-login" @click="submit('register')">Register</button>
+            <b-form @submit.prevent="register">
+              <b-form-group
+                id="usernameFormGroup"
+                label="Insert your username"
+                description="This will uniquely distinguish you"
+                label-for="usernameSigninField"
+                required>
+
+
+                <b-form-input
+                  id="usernameSigninField"
+                  type="text"
+                  placeholder="Username"
+                  v-model="register_credentials.username"
+                  required
+                />
+              </b-form-group>
+              <b-form-group
+                id="emailFormGroup"
+                label="Insert your email"
+                label-for="emailSigninField"
+                required>
+
+                <b-form-input
+                  id="emailSigninField"
+                  type="email"
+                  placeholder="user@example.com"
+                  v-model="register_credentials.email"
+                  required
+                />
+              </b-form-group>
+              <b-form-group
+                id="passwordSigninFormGroup"
+                label="Insert your password"
+                label-for="emailSigninField"
+                required
+                >
+
+                <b-form-input
+                  id="emailSignupField"
+                  type="password"
+                  placeholder="user@example.com"
+                  v-model="register_credentials.password"
+                  required
+                />
+              </b-form-group>
+              <b-form-group
+                id="colourForGroup"
+                label="Insert your colour"
+                label-for="colourSigninField">
+
+                <slider id="colourSigninField" v-model="register_credentials.colour" />
+             </b-form-group>
+              <b-button type="submit" variant="primary">Register</b-button>
+            </b-form>
           </b-tab>
         </b-tabs>
       </b-card>
-
     </div>
-
   </div>
 </template>
 
 <script>
 import * as types from '../../store/mutation-types'
 
+import {Slider} from 'vue-color';
+import {TinyColor} from '@ctrl/tinycolor';
+
+let colour = "#00cccc";
+
 export default {
+  components: {Slider},
   data () {
     return {
       login_credentials: {
@@ -45,14 +106,24 @@ export default {
         username: '',
         email: '',
         password: '',
-        colour: ''
+        colour: '#00cccc'
       },
       error: null,
       formatted_error: null,
-      creationIsSuccessful: false
+      creationIsSuccessful: false,
+      currentTab: 0
     }
   },
   methods: {
+    getColour() {
+      var colour = this.register_credentials.colour
+      if(typeof (colour) !== "string")
+        colour = colour.hex
+      return colour
+    },
+    updateTab(tabIndex) {
+      this.currentTab = tabIndex
+    },
     renderErrors (e) {
         console.log(e);
         this.formatted_error = '<strong>Whoops!</strong> Something went wrong...<br/>';
@@ -67,30 +138,30 @@ export default {
               }
           }
     },
-    async submit (type) {
-        this.formatted_error = null;
-        if (type === "login") {
-            let params = {
-                credentials: this.login_credentials,
-                redirect: decodeURIComponent(this.$route.query.redirect || '/')
-            };
-            this.$store.dispatch(types.LOGIN, params).then(response => { }).catch(errors => {
-              console.log("Failed to login")
-              this.error = errors
-              this.renderErrors(errors.response.data)})
-        }
-        if (type === "register") {
-            let params = {
-                credentials: this.register_credentials,
-                redirect: decodeURIComponent(this.$route.query.redirect || '/')
-            };
-            this.$store.dispatch(types.REGISTER, params).then(response => {
-              console.log("User created!")
-            }).catch(errors => {
-              this.error = errors
-              console.log("Failed to create user")
-              this.renderErrors(errors.response.data)})
-        }
+    async login(evt) {
+      let params = {
+          credentials: this.login_credentials,
+          redirect: decodeURIComponent(this.$route.query.redirect || '/')
+      };
+      this.$store.dispatch(types.LOGIN, params).then(response => {}).catch(errors =>  {
+        this.error = errors
+        this.renderErrors(errors.response.data)})
+    },
+
+    async register(evt) {
+      let params = {
+        credentials: this.register_credentials,
+        redirect: decodeURIComponent(this.$route.query.redirect || '/')
+      };
+      // get the colour as hex
+      params.credentials.colour = this.getColour()
+      this.$store.dispatch(types.REGISTER, params).then(response => {
+        console.log("User created!")
+      }).catch(errors => {
+        this.error = errors
+        console.log("Failed to create user")
+        this.renderErrors(errors.response.data)
+      });
     }
   }
 }
@@ -111,6 +182,11 @@ export default {
   -moz-box-shadow: 0px 0px 36px 3px rgba(0,0,0,0.7);
   box-shadow: 0px 0px 36px 3px rgba(0,0,0,0.7);
 }
+
+.registration-page {
+  width: 500px;
+}
+
 .auth-error {
   padding-bottom: 0;
   width: 34%;

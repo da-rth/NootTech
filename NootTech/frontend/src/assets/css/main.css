@@ -4,3 +4,8 @@
     background-color: #242424;
     color: #eeeeee;
 }
+
+/* fix image size */
+div.carousel-item img{
+    background-size: cover;
+}

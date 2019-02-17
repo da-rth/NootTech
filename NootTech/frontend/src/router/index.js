@@ -3,7 +3,7 @@ import Router from 'vue-router'
 //import store from '../store'
 
 //import Subdomain from '@/components/Subdomain'
-import Base from '../components/Base'
+import Base from '../components/Index'
 import About from '../components/About'
 import TermsOfService from '../components/ToS'
 import LoginRegister from '../components/Authentication/LoginRegister'
