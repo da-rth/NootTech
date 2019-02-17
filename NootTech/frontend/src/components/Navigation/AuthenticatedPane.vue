@@ -4,7 +4,7 @@
     <p style="color: white">
       Settings: {{ settings }}
       <br/>
-      Files: { files }}
+      Files: {{ files }}
     </p>
     </div>
 </template>
