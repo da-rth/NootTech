@@ -19,12 +19,17 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+VT_API_KEY = 'cce2a338c4f46b082ab39a88076aa4ab2f8f8da5d850a7e6814e052f75f0d3a0'
 SECRET_KEY = '8lixf+hs1+go!pu#cg95dwpr7ye!kx^zi2(-7$bciyiq#^fir#'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+SUBDOMAIN = False
 
 ALLOWED_HOSTS = []
+
+DOMAIN_NAME = "localhost:8000"
+HTTPS = False
 
 
 # Application definition
@@ -44,10 +49,14 @@ INSTALLED_APPS = [
     'webpack_loader',
 ]
 
+FILE_UPLOAD_HANDLERS = ("django.core.files.uploadhandler.TemporaryFileUploadHandler",)
+
+
 THUMBNAIL_SOURCE_GENERATORS = (
     'easy_thumbnails.source_generators.pil_image',
     'easy_thumbnails_ffmpeg.source_generators.ffmpeg_frame',
 )
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -85,6 +94,7 @@ ADMIN_REORDER = (
     # models with custom name
     {'app': 'backendAPI', 'label': 'File Management', 'models': (
         'backendAPI.File',
+        'backendAPI.VirusTotalScan',
         'backendAPI.FavouritedFile',
         'backendAPI.Image',
         'backendAPI.Audio',
