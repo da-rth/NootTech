@@ -1,5 +1,5 @@
 <template>
-  <div class="file-panel">
+  <div class="file-panel justify-content-center">
     <b-navbar toggleable="lg" type="dark" class="file-menubar">
 
       <b-navbar-toggle target="nav_file_collapse" />
@@ -13,7 +13,7 @@
         </b-button-group>
 
         <b-input-group prepend="K" class="filebar-uploadkey" v-if="showUploadKey">
-          <b-form-input class="key-field" v-bind:value="$parent.settings.upload_key" readonly/>
+          <b-form-input class="key-field" v-bind:value="$parent.settings.upload_key" readonly />
           <b-input-group-append>
             <b-button>Copy</b-button>
           </b-input-group-append>
@@ -28,17 +28,17 @@
         </b-form-checkbox>
 
         <b-dropdown text="File List" v-if="selectedFiles.length > 0 && selectFiles">
-          <b-dropdown-item v-for="file in getCheckedFiles()">
+          <b-dropdown-item v-bind:key="file.id" v-for="file in getCheckedFiles()">
             {{ file.generated_filename }} | {{ file.original_filename }}
           </b-dropdown-item>
         </b-dropdown>
 
 
         <!-- Right aligned nav items -->
-      <b-navbar-nav class="ml-auto">
-        <b-nav-form>
-          <b-form-input size="sm" class="mr-sm-2 filebar-search" type="text" placeholder="Search"/>
-        </b-nav-form>
+        <b-navbar-nav class="ml-auto">
+          <b-nav-form>
+            <b-form-input size="sm" class="mr-sm-2 filebar-search" type="text" placeholder="Search" />
+          </b-nav-form>
 
           <b-nav-item-dropdown right>
             <!-- Using button-content slot -->
@@ -68,24 +68,27 @@
 
       <b-form-checkbox-group v-model="selectedFiles">
         <b-row class="file-grid justify-content-center">
-          <b-col v-bind:id="file.id" cols="1" lg="1" v-for="file in paginated('searched_files')" class="file-block" v-bind:style="{ 'background-image': 'url(' + file.file_thumbnail + ')' }">
+          
+          <b-card id="FileBlock" v-bind:key="file.id" v-bind:id="file.id" v-for="file in paginated('searched_files')" v-bind:img-src="file.file_thumbnail" v-bind:img-alt="file.original_filename" img-top tag="file"
+            style="max-width: 20rem;" class="mb-2">
+            <b-card-text>
+              Uplod date: {{ file.date.split('.')[0]}}
+            </b-card-text>
             <b-form-checkbox v-if="selectFiles" v-bind:value="file.id" @change="changeBorder"></b-form-checkbox>
-          </b-col>
+          </b-card>
+
         </b-row>
       </b-form-checkbox-group>
 
     </paginate>
 
-    <paginate-links class="file-pagination" for="searched_files"
-                    :hide-single-page="true"
-                    :classes="{'ul': 'pagination', 'li': 'page-item', 'a' : 'page-link'}"
-                    :show-step-links="true"
-                    :step-links="{next: 'Next', prev: 'Previous'}">
+    <paginate-links class="file-pagination" for="searched_files" :hide-single-page="true" :classes="{'ul': 'pagination', 'li': 'page-item', 'a' : 'page-link'}"
+      :show-step-links="true" :step-links="{next: 'Next', prev: 'Previous'}">
     </paginate-links>
 
-        <div class="text-center">
+    <div class="text-center">
       Selected files: {{ selectedFiles }}
-      <br/>
+      <br />
       <b-button class="filebar-btn" variant="danger" v-if="selectFiles">Delete files</b-button>
       <b-button class="filebar-btn" variant="primary" v-if="selectFiles">Make files private</b-button>
     </div>
@@ -94,7 +97,6 @@
 </template>
 
 <script>
-
   export default {
     name: "FilePanel",
 
@@ -129,41 +131,52 @@
       },
     }
   }
+
 </script>
 
 <style scoped>
   * {
     color: #b8b8b8;
   }
+
   .file-panel {
-    width: 92vw;
-    height: 78vh;
-    margin: 30px auto;
+    margin: 20px auto;
+    height: 90vh;
+    width: 90vw;
   }
-  .file-menubar, .file-grid {
-    margin-bottom: 20px;
+
+  .file-menubar,
+  .file-grid {
+    width: 92.2vw;
+    margin: 20px -14px;
     border: 1px solid #121212;
     background-color: #1e1e1e !important;
   }
+
   .file-grid {
+    height: 72vh;
     color: #9c9c9c;
     padding: 10px;
-    max-height: 72vh;
     margin-bottom: 10px;
     overflow-y: scroll;
+    margin: 0px 16px;
   }
 
-  .file-block {
-    margin: 10px;
-    border-radius: 4px;
-    background-size: cover;
-    border: 1px solid #191919;
-    width: auto;
-    height: 100px;
+  .file-grid .card {
+    width: 26%;
+    height: 22%;
+    margin: 4px;
   }
 
-  .file-block:hover {
-    border-color: #fff;
+  .file-grid .card .card-body {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    background-color: #191919;
+    opacity: 0.9;
+    padding: 10px;
+    font-size: 0.8em;
   }
 
   .file-checkbox-group {
@@ -174,19 +187,19 @@
   .file-pagination {
     justify-content: center;
   }
+
   .select-files-switch {
     margin: 0px 7px;
   }
+
   .filebar-btn {
     margin: 0px 5px;
     height: 34px;
     padding: 5px 10px;
   }
+
   .filebar-uploadkey {
     width: 300px;
-  }
-  {
-    font-size: 12px;
   }
   .filebar-uploadkey .btn,
   .filebar-uploadkey .input-group-text,
