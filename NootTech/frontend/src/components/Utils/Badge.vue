@@ -12,7 +12,7 @@
     v-on:input="$emit('input', $event.target.value); "
     :img-src="value.file_thumbnail"
   >
-    <nt-image-badge :ref="popup_id" v-if="isImage()" v-model="value" />
+    <NtPopupModal :ref="popup_id" v-model="value" />
 
     <b-form-checkbox class="badge-checkbox" v-if="selectionStatus" v-bind:value="value.id"></b-form-checkbox>
 
@@ -34,10 +34,10 @@
 
 <script>
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-  import NtImageBadge from './ImageBadge.vue';
+  import NtPopupModal from './FilePopupModal';
   export default {
     name: "NtBadge",
-    components: {NtImageBadge, FontAwesomeIcon},
+    components: {NtPopupModal, FontAwesomeIcon},
     props: ['value', 'selected', 'selectionStatus'],
     data() {
       return {
