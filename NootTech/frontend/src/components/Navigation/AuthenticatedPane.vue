@@ -1,19 +1,22 @@
 <template>
   <div>
     <h1>wew you are signed in!</h1>
-    <p style="color: white">
       Settings: {{ settings }}
       <br/>
-      Files: { files }}
-    </p>
-    </div>
+      Files: {{files}}
+      <br/>
+      <nt-badge v-for="file in files" :key="file.id" :value="file"></nt-badge>
+  </div>
 </template>
 
 <script>
+  import NtBadge from '../Utils/Badge.vue'
   export default {
     name: "AuthenticatedPane",
+    components: {NtBadge},
     data () {
       return {
+        isSelection: false,
         settings: null,
         files: null
       }
