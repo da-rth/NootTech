@@ -6,13 +6,12 @@
 </template>
 
 <script>
-import NtMainPane from './Navigation/MainPane.vue';
 import NtAuthenticatedPane from './Navigation/AuthenticatedPane';
 import NtUnAuthenticatedPane from './Navigation/UnAuthenticatedPane';
 
 export default {
     name: "Base",
-    components: {NtAuthenticatedPane, NtUnAuthenticatedPane, NtMainPane},
+    components: {NtAuthenticatedPane, NtUnAuthenticatedPane},
     methods: {
       tokenVerified() {
         if (this.$store.state.token) {
