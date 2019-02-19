@@ -40,25 +40,27 @@
             <input v-model="searchTerm" class="form-control file-search" type="search" placeholder="Search" aria-label="Search">
           </b-nav-form>
 
-          <b-nav-item-dropdown right>
-            <!-- Using button-content slot -->
-            <template slot="button-content"><em>Filesize</em></template>
-            <b-dropdown-item href="#">Image</b-dropdown-item>
-            <b-dropdown-item href="#">Audio</b-dropdown-item>
-            <b-dropdown-item href="#">Video</b-dropdown-item>
-            <b-dropdown-item href="#">Text</b-dropdown-item>
-            <b-dropdown-item href="#">Other</b-dropdown-item>
-          </b-nav-item-dropdown>
+            <div class="col-sm">
 
-          <b-nav-item-dropdown right>
-            <!-- Using button-content slot -->
-            <template slot="button-content"><em>Type</em></template>
-            <b-dropdown-item href="#">Image</b-dropdown-item>
-            <b-dropdown-item href="#">Audio</b-dropdown-item>
-            <b-dropdown-item href="#">Video</b-dropdown-item>
-            <b-dropdown-item href="#">Text</b-dropdown-item>
-            <b-dropdown-item href="#">Other</b-dropdown-item>
-          </b-nav-item-dropdown>
+                <select @change="changedSelectionValue" class="custom-select file-sort">
+                    <option value="default">Sort by...</option>
+
+                    <option value="-date">Upload date (Latest)</option>
+                    <option value="date">Upload date (Oldest)</option>
+
+                    <option value="original_filename">Original Filename (A-Z)</option>
+                    <option value="-original_filename">Original Filename (Z-A)</option>
+
+                    <option value="generated_filename">Generated Filename (A-Z)</option>
+                    <option value="-generated_filename">Generated Filename (Z-A)</option>
+
+                    <option value="file_ext">Extension (Ascending)</option>
+                    <option value="-file_ext">Extension (Descending)</option>
+
+                    <option value="-views">Views (Most)</option>
+                    <option value="views">Views (Least)</option>
+                </select>
+            </div>
 
         </b-navbar-nav>
       </b-collapse>
@@ -90,10 +92,9 @@
     </paginate-links>
 
     <div class="text-center">
-      Selected files: {{ selectedFiles }}
       <br />
-      <b-button class="filebar-btn" variant="danger" v-if="selectFiles">Delete files</b-button>
-      <b-button class="filebar-btn" variant="primary" v-if="selectFiles">Make files private</b-button>
+      <b-button class="filebar-btn" variant="danger" v-if="selectFiles">Delete {{ selectedFiles.length }} file(s)</b-button>
+      <b-button class="filebar-btn" variant="primary" v-if="selectFiles">Make {{ selectedFiles.length }} file(s) private</b-button>
     </div>
 
   </div>
@@ -130,6 +131,28 @@
 
 
     methods: {
+      /** Used for "sort by" dropdown **/
+      changedSelectionValue: function(item) {
+        let value = item.target.value;
+        if (value !== 'default') {
+          this.$parent.searched_files = this.$parent.files.sort(this.dynamicSort(value));
+          console.log(this.$parent.files)
+        }
+      },
+
+      dynamicSort(property) {
+        var sortOrder = 1;
+        if(property[0] === "-") {
+          sortOrder = -1;
+          property = property.substr(1);
+        }
+        return function (a,b) {
+          var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+          return result * sortOrder;
+        }
+      },
+
+      /** Used for "search" input **/
       searchArray: function (term, array) {
       console.log(term)
         var results = [];
@@ -148,17 +171,6 @@
         }
       },
 
-      changeBorder(checked) {
-        // User can select files to either delete or set private, but not both at the same time.
-        console.log(JSON.stringify(checked))
-        /**
-         if (this.checkFilesDeletion) {
-          console.log("change border colour of file to red")
-        } else if (this.checkFilesPrivate) {
-          console.log("change border colour of file to blue")
-        }
-         */
-      },
       getCheckedFiles() {
         let files = this.$parent.files.filter(f => this.selectedFiles.includes(f.id));
         console.log(files)
