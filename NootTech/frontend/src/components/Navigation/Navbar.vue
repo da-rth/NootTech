@@ -11,8 +11,7 @@
                 </b-dropdown>
 
                 <b-navbar-nav v-else>
-                  <b-nav-item><router-link to="/about">About</router-link></b-nav-item>
-                  <b-nav-item><router-link to="/tos">Terms of Service</router-link></b-nav-item>
+                  <b-nav-item><router-link to="/about"><font-awesome-icon :icon="['fas', 'sign-in-alt']"/> &nbsp;About</router-link></b-nav-item>
                 </b-navbar-nav>
 
                   <!-- Keep this centered -->
@@ -21,11 +20,11 @@
                   </b-navbar-nav>
 
                   <b-navbar-nav class="ml-auto" v-if="$store.state.user.authenticated">
-                    <b-nav-item><router-link to="/logout">Logout</router-link></b-nav-item>
+                    <b-nav-item><router-link to="/logout"><font-awesome-icon :icon="['fas', 'sign-out-alt']"/> &nbsp;Logout</router-link></b-nav-item>
                   </b-navbar-nav>
 
                   <b-navbar-nav class="ml-auto" v-else>
-                    <b-nav-item><router-link to="/login">Login / Register</router-link></b-nav-item>
+                    <b-nav-item><router-link to="/login"><font-awesome-icon :icon="['fas', 'sign-in-alt']"/> &nbsp;Login / Register</router-link></b-nav-item>
 
                 </b-navbar-nav>
             </b-collapse>

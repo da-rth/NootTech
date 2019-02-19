@@ -9,3 +9,7 @@
 div.carousel-item img{
     background-size: cover;
 }
+
+a {
+  color: #2aabd2;
+}

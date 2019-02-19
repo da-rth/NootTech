@@ -6,44 +6,55 @@
 
       <b-collapse is-nav id="nav_file_collapse">
 
-        <b-button-group>
-          <b-button class="filebar-btn">Small</b-button>
-          <b-button class="filebar-btn">Med</b-button>
-          <b-button class="filebar-btn">Large</b-button>
-        </b-button-group>
+        <div class="col-md">
+          <b-button-group>
+            <b-button class="filebar-btn"><font-awesome-icon :icon="['fas', 'minus']"/></b-button>
+            <b-button class="filebar-btn"><font-awesome-icon :icon="['fas', 'plus']"/></b-button>
+          </b-button-group>
 
-        <b-input-group prepend="K" class="filebar-uploadkey" v-if="showUploadKey">
-          <b-form-input class="key-field" v-bind:value="$parent.settings.upload_key" readonly />
-          <b-input-group-append>
-            <b-button>Copy</b-button>
-          </b-input-group-append>
-        </b-input-group>
+          <!-- Popup modal here? -->
+          <b-button-group>
+            <b-button class="filebar-btn"><font-awesome-icon :icon="['fas', 'th']"/></b-button>
+            <b-button class="filebar-btn"><font-awesome-icon :icon="['fas', 'list']"/></b-button>
+          </b-button-group>
+        </div>
 
-        <b-form-checkbox class="select-files-switch" switch v-model="showUploadKey" name="check-button">
-          {{ showUploadKey ? "Hide Key" : "Show Key" }}
-        </b-form-checkbox>
+          <b-input-group prepend="K" class="filebar-uploadkey" v-if="showUploadKey">
+            <b-form-input class="key-field" v-bind:value="$parent.settings.upload_key" readonly />
+            <b-input-group-append>
+              <b-button>Copy</b-button>
+            </b-input-group-append>
+          </b-input-group>
 
-        <b-form-checkbox class="select-files-switch" switch v-model="selectFiles" name="check-button">
-          Select Files...
-        </b-form-checkbox>
+          <b-form-checkbox class="select-files-switch" switch v-model="showUploadKey" name="check-button">
+            {{ showUploadKey ? "Hide Key" : "Show Key" }}
+          </b-form-checkbox>
 
-        <b-dropdown text="File List" v-if="selectedFiles.length > 0 && selectFiles">
-          <b-dropdown-item v-bind:key="file.id" v-for="file in getCheckedFiles()">
-            {{ file.generated_filename }} | {{ file.original_filename }}
-          </b-dropdown-item>
-        </b-dropdown>
+          <b-form-checkbox class="select-files-switch" switch v-model="selectFiles" name="check-button">
+            Select Files
+          </b-form-checkbox>
+
+          <b-form-checkbox class="select-files-switch" switch name="check-button">
+            Private Only (todo)
+          </b-form-checkbox>
+
+          <b-dropdown text="File List" v-if="selectedFiles.length > 0 && selectFiles">
+            <b-dropdown-item v-bind:key="file.id" v-for="file in getCheckedFiles()">
+              {{ file.generated_filename }} | {{ file.original_filename }}
+            </b-dropdown-item>
+          </b-dropdown>
 
 
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
-          <b-nav-form>
-            <input v-model="searchTerm" class="form-control file-search" type="search" placeholder="Search" aria-label="Search">
-          </b-nav-form>
 
+            <div class="col-sm">
+              <font-awesome-icon />
+              <input v-model="searchTerm" class="form-control file-search" type="search" :icon="['fas', 'search']" placeholder="Search..." aria-label="Search">
+            </div>
             <div class="col-sm">
 
                 <select @change="changedSelectionValue" class="custom-select file-sort">
-                    <option value="default">Sort by...</option>
 
                     <option value="-date">Upload date (Latest)</option>
                     <option value="date">Upload date (Oldest)</option>
@@ -60,6 +71,7 @@
                     <option value="-views">Views (Most)</option>
                     <option value="views">Views (Least)</option>
                 </select>
+
             </div>
 
         </b-navbar-nav>
@@ -240,6 +252,11 @@
 
   .file-badge {
     margin: 5px;
+  }
+
+  .file-search, .file-sort {
+    background-color: rgba(0,0,0,0.2);
+    border: 1px solid #3d3d3d;
   }
 
 </style>

@@ -9,7 +9,7 @@ import TermsOfService from '../components/ToS'
 import LoginRegister from '../components/Authentication/LoginRegister'
 import Logout from '../components/Authentication/Logout'
 import PageNotFound from '../components/Navigation/PageNotFound'
-
+import Privacy from '../components/Privacy'
 
 Vue.use(Router);
 
@@ -35,7 +35,12 @@ const routes = [
     component: About
   },
   {
-    path: '/tos',
+    path: '/privacy',
+    name: 'PrivacyPolicy',
+    component: Privacy
+  },
+    {
+    path: '/terms',
     name: 'TermsOfService',
     component: TermsOfService
   },
