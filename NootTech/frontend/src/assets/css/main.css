@@ -21,6 +21,10 @@ div.carousel-item img {
   opacity: 0.9;
 }
 
+footer a {
+  color: #1574d3 !important;
+}
+
 #PrivacyPolicy, #TermsOfService {
   margin: 0 auto;
   color: #cfcfcf;
@@ -44,8 +48,4 @@ div.carousel-item img {
 ::-webkit-scrollbar-thumb {
   background-color: #3c3c3c;
   border-radius: 3px;
-}
-
-a {
-  color: #007094;
 }

@@ -4,11 +4,19 @@
       <b-navbar-toggle target="nav_collapse"/>
       <b-collapse is-nav id="nav_collapse">
 
-        <b-dropdown id="userdropdown" v-bind:text="$store.state.user.username" v-if="$store.state.user.authenticated">
-          <b-dropdown-item href="#">Favourites</b-dropdown-item>
-          <b-dropdown-item href="#">Upload History</b-dropdown-item>
-          <b-dropdown-item href="#">Settings</b-dropdown-item>
-        </b-dropdown>
+        <template v-if="$store.state.user.authenticated">
+
+          <b-dropdown v-bind:text="$store.state.user.username">
+            <b-dropdown-item>Favourites</b-dropdown-item>
+            <b-dropdown-item>Upload History</b-dropdown-item>
+            <b-dropdown-item>Settings</b-dropdown-item>
+          </b-dropdown>
+           &nbsp;&nbsp;
+          <router-link to="/how-to">
+            <font-awesome-icon :icon="['fas', 'cloud']"/>
+            How to...
+          </router-link>
+        </template>
 
         <b-navbar-nav v-else>
           <b-nav-item>
@@ -17,16 +25,14 @@
         </b-navbar-nav>
 
         <!-- Keep this centered -->
-        <b-navbar-nav class="mx-auto">
-          <b-navbar-brand>
-            <router-link class="navbar-brand" to="/">noot.<span class="brand-right">tech</span></router-link>
-          </b-navbar-brand>
-        </b-navbar-nav>
+        <b-navbar-brand>
+          <router-link class="navbar-brand" to="/">noot.<span class="brand-right">tech</span></router-link>
+        </b-navbar-brand>
 
         <b-navbar-nav class="ml-auto" v-if="$store.state.user.authenticated">
 
           <b-input-group class="filebar-uploadkey" v-if="showUploadKey">
-            <b-form-input class="key-field" v-bind:value="$parent.settings.upload_key" readonly />
+            <b-form-input class="key-field" v-bind:value="$parent.settings.upload_key" readonly/>
             <b-input-group-append>
               <b-button>Copy</b-button>
             </b-input-group-append>
@@ -80,7 +86,7 @@
 <style scoped>
   .navbar.bg-dark {
     background-color: #202020 !important;
-    border-bottom: 1px solid #00cccc;
+    border-bottom: 1px solid #121212;
   }
 
   .navbar.bg-dark .navbar-brand {
@@ -89,7 +95,6 @@
     top: 2px;
     transform: translateX(-50%);
     font-size: 24px;
-    border-bottom: 1px solid black;
   }
 
   .brand-right {
@@ -110,11 +115,13 @@
     border: none;
     color: #969696;
   }
-    .filebar-uploadkey {
-      margin-top: 4px;
+
+  .filebar-uploadkey {
+    margin-top: 4px;
     width: 230px;
-      text-align: center;
+    text-align: center;
   }
+
   .filebar-uploadkey .btn,
   .filebar-uploadkey .input-group-text,
   .filebar-uploadkey .key-field {
@@ -125,7 +132,8 @@
   .filebar-uploadkey .key-field {
     color: #242424;
   }
+
   .filebar-uploadkey .btn {
     height: 32px;
-}
+  }
 </style>
