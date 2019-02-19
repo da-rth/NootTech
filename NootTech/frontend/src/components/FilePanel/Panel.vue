@@ -67,15 +67,18 @@
     <paginate name="searched_files" :list="$parent.searched_files" :per="paginate_by" tag="div" class="row file-row">
 
       <b-form-checkbox-group v-model="selectedFiles">
-        <b-row class="file-grid justify-content-center">
-          
-          <b-card id="FileBlock" v-bind:key="file.id" v-bind:id="file.id" v-for="file in paginated('searched_files')" v-bind:img-src="file.file_thumbnail" v-bind:img-alt="file.original_filename" img-top tag="file"
-            style="max-width: 20rem;" class="mb-2">
-            <b-card-text>
-              Uplod date: {{ file.date.split('.')[0]}}
-            </b-card-text>
-            <b-form-checkbox v-if="selectFiles" v-bind:value="file.id" @change="changeBorder"></b-form-checkbox>
-          </b-card>
+
+        <b-row class="file-grid">
+
+          <NtBadge
+            class="file-badge"
+            v-for="file in  paginated('searched_files')"
+            :key="file.id" :value="file"
+            :selectionStatus="selectFiles"
+            :selected="isSelected(file.id)"
+          >
+
+          </NtBadge>
 
         </b-row>
       </b-form-checkbox-group>
@@ -97,9 +100,10 @@
 </template>
 
 <script>
+  import NtBadge from "../Utils/Badge";
   export default {
     name: "FilePanel",
-
+    components: {NtBadge},
     data() {
       return {
         selectedFiles: [],
@@ -129,6 +133,10 @@
         console.log(files)
         return files
       },
+
+      isSelected(file_id) {
+        return this.selectedFiles.includes(file_id)
+      }
     }
   }
 
@@ -147,41 +155,11 @@
 
   .file-menubar,
   .file-grid {
+    padding: 10px;
     width: 92.2vw;
     margin: 20px -14px;
     border: 1px solid #121212;
     background-color: #1e1e1e !important;
-  }
-
-  .file-grid {
-    height: 72vh;
-    color: #9c9c9c;
-    padding: 10px;
-    margin-bottom: 10px;
-    overflow-y: scroll;
-    margin: 0px 16px;
-  }
-
-  .file-grid .card {
-    width: 26%;
-    height: 22%;
-    margin: 4px;
-  }
-
-  .file-grid .card .card-body {
-    position: absolute;
-    bottom: 0px;
-    left: 0px;
-    right: 0px;
-    background-color: #191919;
-    opacity: 0.9;
-    padding: 10px;
-    font-size: 0.8em;
-  }
-
-  .file-checkbox-group {
-    width: 100%;
-    height: 100%;
   }
 
   .file-pagination {
@@ -215,6 +193,10 @@
   .filebar-search {
     width: 15vw;
     font-size: 12px;
+  }
+
+  .file-badge {
+    margin: 5px;
   }
 
 </style>
