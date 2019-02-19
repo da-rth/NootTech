@@ -75,7 +75,6 @@ class Warnings(models.Model):
     def __str__(self):
         return f"Warned: {self.warned_user.username} by Administrator: {self.warned_by.username}"
 
-
 class BannedUser(models.Model):
     """
     This model stores information about all users that have been banned by an administrator.
@@ -105,9 +104,7 @@ class File(models.Model):
 
     - IP : The IP address of the location where the file was uploaded
     - IS_PRIVATE : The privacy status of the file uploaded by the user.
-
     As well as general info listed below
-
     All deleted files and banned users will be logged.
     """
     class Meta:

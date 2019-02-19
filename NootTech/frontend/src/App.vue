@@ -9,6 +9,7 @@
 <script>
   import NtNavbar from './components/Navigation/Navbar.vue'
   import NtFooter from './components/Navigation/Footer.vue'
+import decode from 'jwt-decode';
 
   export default {
     name: 'app',
@@ -55,13 +56,13 @@
         if (this.user.authenticated) {
           if (this.token && this.isTokenAlmostExpired(this.token)) {
             console.log('Token about to expire, refreshing!');
-            this.$store.dispatch(types.REFRESH, {token: this.token});
+            this.$store.dispatch('REFRESH', {token: this.token});
           }
         }
       }
     },
     async beforeMount () {
-      this.$store.dispatch(types.VERIFY, {token: this.token});
+      this.$store.dispatch('VERIFY', {token: this.token});
       this.checkToken()
       if (this.token) {
         this.settings = await this.$api.GetSettings();
