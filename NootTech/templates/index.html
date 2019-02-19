@@ -1,14 +1,13 @@
-{% extends 'base.html' %}
 {% load staticfiles %}
 {% load render_bundle from webpack_loader %}
 
-{% block title_block %}
-    Index
-{% endblock %}
+<form method="post" enctype="multipart/form-data" action="api/upload">
+    <input type="file" name="content" multiple>
+    <input type="submit" value="Upload">
+</form>
 
-{% block body_block %}
-    <h1>Index Page</h1>
-    <div id="app"></div>
-    <script src="{% static 'build.js' %}"></script>
-    {% render_bundle 'main' %}
-{% endblock %}
+<h1>Index Page</h1>
+<div id="app"></div>
+<!-- For DEPLOYMENT use -->
+<script src="{% static 'build.js' %}"></script>
+{% render_bundle 'main' %}

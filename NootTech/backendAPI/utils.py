@@ -5,17 +5,58 @@ import os.path
 from hurry.filesize import size
 from pathlib import Path
 from string import ascii_uppercase, ascii_lowercase
-from django.utils.http import int_to_base36
+from virus_total_apis import PublicApi as VirusTotalPublicApi
+from django.conf import settings
+from random import choices, randint
+from django.http import HttpResponseBadRequest
 
 DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 all_chars = "".join(['1234567890-_=$', ascii_uppercase, ascii_lowercase])
+vt = VirusTotalPublicApi(settings.VT_API_KEY)
+
+
+def thumb_path(instance, filename):
+    """
+    Gets the media filepath location based on user id and generated, original filename for file THUMBNAIL image
+    :param instance: - The File instance
+    :param filename: - unused parameter
+    :return: A string filepath for media directory of where file thumbnail will be saved
+    """
+    return 'Thumbnails/{0}/{1}_{2}.jpg'.format(
+        instance.user.id,
+        instance.generated_filename,
+        instance.original_filename.replace('.', '_')
+    )
+
+
+def file_path(instance, filename):
+    """
+    Gets the media filepath location based on user id and generated, original filename.
+    :param instance: - The File instance
+    :param filename: - unused parameter
+    :return: A string filepath for media directory of where file will be saved
+    """
+    return 'Uploads/{0}/{1}__{2}.jpg'.format(
+        instance.user.id,
+        instance.generated_filename,
+        instance.original_filename
+    )
+
+
+def scan_file(filepath):
+    """
+    Scans a file at filepath with virustotal API
+    :param filepath: the path of the file to be scanned
+    :return: a dict of scan response information
+    """
+    return vt.scan_file(filepath)
 
 
 def get_id_gen() -> str:
     """
     :return: Generates a randomly generated upload filename which is 8 chars long
     """
-    return int_to_base36(uuid.uuid4().int)[:8]
+    return ''.join(choices(all_chars, k=7))+str(randint(0, 99))
 
 
 def get_ext(filename):
@@ -23,7 +64,7 @@ def get_ext(filename):
     :param filename: Path to/filename (MyFile.txt)
     :return: String : file extension (.txt)
     """
-    return "".join(Path(filename).suffixes)
+    return "".join(Path(filename).suffixes).strip()
 
 
 def get_upload_key():
@@ -56,7 +97,7 @@ def is_websafe(ext):
     """
     web_safe = [
         ".png", ".jpg", ".jpeg", ".gif", ".svg", ".bmp", ".ico",
-        ".webm", ".mp4", ".ogg", ".oggv", ".ogga", ".flac", ".wav"
+        ".webm", ".mp4", ".ogg", ".oggv", ".ogga", ".flac", ".wav", ".mp3"
     ]
     if ext.lower() in web_safe:
         return True
@@ -88,7 +129,6 @@ def get_fontawesome(mimetype, ext):
     else:
         mimetype = mimetype.split('/')
         if mimetype[0] in mimes:
-            print(mimetype[0])
             if isinstance(mimes[mimetype[0]], str):
                 return mimes[mimetype[0]]
             if mimetype[1] in mimes[mimetype[0]]:
@@ -125,3 +165,39 @@ def get_chars_lines(filename):
         chars = sum([len(i) - 1 for i in fr])
         lines = len(fr)
     return chars, lines
+
+
+def upload_authentication_failure(request, User):
+
+    help_url = f"https://{settings.DOMAIN_NAME}/how-to"
+    response_err_msg = ""
+
+    if 'username' not in request.POST:
+        response_err_msg += "- You did not provide a 'username' field\n"
+
+    if 'upload_key' not in request.POST:
+        response_err_msg += "- You did not provide an 'upload_key' field\n"
+
+    if 'content' not in request.FILES:
+        response_err_msg += "- You did not provide a 'content' file field\n"
+
+    if 'username' in request.POST and 'upload_key' in request.POST:
+
+        if not User.objects.filter(username=request.POST["username"], upload_key=request.POST["upload_key"]).exists():
+
+            user = request.POST["username"]
+            response_err_msg += f"- Could not authenticate user {user} with the provided upload key\n"
+
+    if response_err_msg:
+        return HttpResponseBadRequest(f"Whoops!\n{response_err_msg}Please check {help_url} for assistance.")
+
+
+def get_ip(request):
+
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip

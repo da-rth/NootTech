@@ -20,12 +20,13 @@
 
 <style scoped>
   .footer-copyright {
-    border-top: 1px solid #3d3d3d;
-    background-color: #282828;
+    border-top: 1px solid #2a2a2a;
+    background-color: #242424;
     padding-top: 10px;
     padding-bottom: 0px;
     position:static;
     bottom:0;
     width:100%;
+    opacity: 0.9;
 }
 </style>

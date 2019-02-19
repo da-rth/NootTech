@@ -1,8 +1,6 @@
 <template>
-  <nt-main-pane title="NootTech: More than meets the m-eye-nd" >
-    <NtAuthenticatedPane v-if="$store.state.user.authenticated && tokenVerified()"/>
-    <NtUnAuthenticatedPane v-else />
-  </nt-main-pane>
+  <NtAuthenticatedPane v-if="$store.state.user.authenticated && tokenVerified()"/>
+  <NtUnAuthenticatedPane v-else />
 </template>
 
 <script>
