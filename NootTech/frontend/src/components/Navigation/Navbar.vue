@@ -33,7 +33,6 @@
     </div>
 </template>
 <script>
-    import NtPopup from '../Utils/Popup.vue'
     import axios from 'axios'
 
     export default {
@@ -45,7 +44,6 @@
             };
         },
 
-        components: {NtPopup}
 
     }
 </script>

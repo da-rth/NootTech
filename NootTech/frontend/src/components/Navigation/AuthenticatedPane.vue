@@ -16,6 +16,7 @@
     components: {NtBadge},
     data () {
       return {
+        isSelection: false,
         settings: null,
         files: null
       }
