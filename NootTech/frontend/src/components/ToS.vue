@@ -174,40 +174,7 @@
 </template>
 
 <script>
-
   export default {
-    name: "TermsOfService",
-
+    name: "TermsOfService"
   }
 </script>
-
-<style scoped>
-  #PrivacyPolicy, #TermsOfService {
-    margin: 0 auto;
-    color: #cfcfcf;
-    height: 90vh;
-    overflow: auto;
-    background-color: #1d1d1d;
-    padding: 30px;
-    border-radius: 5px;
-    border: 1px solid #181818;
-  }
-
-  ::-webkit-scrollbar-track {
-    background-color: transparent;
-  }
-
-  ::-webkit-scrollbar {
-    width: 10px;
-    background-color: transparent;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background-color: #3c3c3c;
-    border-radius: 3px;
-  }
-
-  a {
-    color: #007094;
-  }
-</style>

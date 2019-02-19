@@ -9,7 +9,8 @@ import VuePaginate from 'vue-paginate'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
- 
+import './assets/css/main.css'
+
 library.add(fas)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon);

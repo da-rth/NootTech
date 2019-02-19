@@ -19,17 +19,6 @@
           </b-button-group>
         </div>
 
-          <b-input-group prepend="K" class="filebar-uploadkey" v-if="showUploadKey">
-            <b-form-input class="key-field" v-bind:value="$parent.settings.upload_key" readonly />
-            <b-input-group-append>
-              <b-button>Copy</b-button>
-            </b-input-group-append>
-          </b-input-group>
-
-          <b-form-checkbox class="select-files-switch" switch v-model="showUploadKey" name="check-button">
-            {{ showUploadKey ? "Hide Key" : "Show Key" }}
-          </b-form-checkbox>
-
           <b-form-checkbox class="select-files-switch" switch v-model="selectFiles" name="check-button">
             Select Files
           </b-form-checkbox>
@@ -229,20 +218,6 @@
     margin: 0px 5px;
     height: 34px;
     padding: 5px 10px;
-  }
-
-  .filebar-uploadkey {
-    width: 300px;
-  }
-  .filebar-uploadkey .btn,
-  .filebar-uploadkey .input-group-text,
-  .filebar-uploadkey .key-field {
-    font-size: 12px;
-  }
-
-  .filebar-uploadkey .input-group-text,
-  .filebar-uploadkey .key-field {
-    color: #242424;
   }
 
   .filebar-search {
