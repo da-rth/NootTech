@@ -1,15 +1,15 @@
-from rest_framework import generics
-from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
-from django.views.decorators.csrf import csrf_exempt
-from .models import ErrorVideo, User, File, FavouritedFile, ReportedFile, mime
-from django.views import View
-from django.shortcuts import redirect
-from django.utils.decorators import method_decorator
 from .utils import get_upload_key, upload_authentication_failure, get_ip, get_id_gen, get_ext
-from . import serializers
-from django.shortcuts import get_object_or_404
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
+from rest_framework import generics, viewsets
+from rest_framework.response import Response
+from django.utils.decorators import method_decorator
+from django.shortcuts import get_object_or_404, redirect
+from django.views.decorators.csrf import csrf_exempt
+from django.views import View
 from django.conf import settings
 from django.http import HttpResponse
+from . import serializers
+from .models import *
 import traceback
 
 htp = "https" if settings.HTTPS else "http"
@@ -17,30 +17,16 @@ htp = "https" if settings.HTTPS else "http"
 # Get List of user uploads
 
 
-class ListUsers(generics.ListAPIView):
-    """
-    Returns a list of users with basic information (check ListUsersSerializer to see what info is sent in response)
-    """
-    permission_classes = (AllowAny,)
-    serializer_class = serializers.ListUsersSerializer
-    ordering = ('-id',)
-
-    def get_queryset(self):
-        return User.objects.all()
-
-
-class ErrorVideoView(generics.ListAPIView):
+class ErrorVideoAPIView(generics.ListAPIView):
     """
     Returns a list of videos used (randomly) at website 404 page.
     """
-    permission_classes = (AllowAny,)
+    permission_class = AllowAny
     serializer_class = serializers.ErrorVideoSerializer
-
-    def get_queryset(self):
-        return ErrorVideo.objects.all()
+    queryset = ErrorVideo.objects.all()
 
 
-class ListFilesView(generics.ListAPIView):
+class ListFilesAPIView(generics.ListAPIView):
     """
     Returns a list of files belonging to an Authenticated user
     """
@@ -51,7 +37,7 @@ class ListFilesView(generics.ListAPIView):
         return File.objects.filter(user=self.request.user)
 
 
-class SettingsView(generics.ListCreateAPIView):
+class GetSetSettingsAPIView(generics.ListCreateAPIView):
     """
     Returns a list of settings on GET request for an AUTHENTICATED user
     Updates specific settings sent over via POST request for an AUTENTICATED user
@@ -87,7 +73,7 @@ class SettingsView(generics.ListCreateAPIView):
         u.save()
 
 
-class CreateUserView(generics.ListCreateAPIView):
+class CreateUserAPIView(generics.ListCreateAPIView):
     '''
         This API will Take in  POST request of user informations and create a new User
     '''
@@ -102,44 +88,134 @@ class CreateUserView(generics.ListCreateAPIView):
     '''
 
 
-class FavouriteView(generics.ListCreateAPIView):
+class ListFavouritesAPIView(generics.ListCreateAPIView):
     '''
         This API Will POST the files favourite by a user, Create new favourites, delete already favourite files
         Needs tweeking, need model to be created
     '''
     permission_classes = (IsAuthenticated,)
-    serializer_class = serializers.FavouriteFiles
+    serializer_class = serializers.SerializeFavouritesList
 
     def get_queryset(self):
         return FavouritedFile.objects.filter(user=self.request.user)
 
 
-class AddFavouriteView(generics.CreateAPIView):
+class AddFavouriteAPIView(generics.CreateAPIView):
     permission_classes = (IsAuthenticated,)
-    serializer_class = serializers.DeleteFavourite
+    serializer_class = serializers.SerializeFavourite
 
     def get_queryset(self):
         return FavouritedFile.objects.filter(user=self.request.user)
 
 
-class DeleteFavouriteView(generics.DestroyAPIView):
+class DeleteFavouriteAPIView(generics.DestroyAPIView):
     permission_classes = (IsAuthenticated,)
-    serializer_class = serializers.DeleteFavourite
 
     def get_queryset(self):
         return FavouritedFile.objects.filter(user=self.request.user)
 
 
-class ReportListView(generics.ListCreateAPIView):
+class ReportListAPIView(generics.ListAPIView):
     permission_class = IsAdminUser
     serializer_class = serializers.ReportList
     queryset = ReportedFile.objects.all()
 
 
-class ReportAddView(generics.ListCreateAPIView):
+class ReportAddAPIView(generics.CreateAPIView):
     permission_class = IsAdminUser
     serializer_class = serializers.ReportAdd
     queryset = ReportedFile.objects.all()
+
+
+class DeleteFileAPIView(generics.DestroyAPIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        return File.objects.filter(user=self.request.user)
+
+
+class SubdomainViewSet(viewsets.ViewSet):
+
+    permission_class = AllowAny
+
+    def field(self, request, username, gen_name):
+
+        user = User.objects.filter(username=username).first()
+        file = File.objects.filter(user=user, generated_filename=gen_name).first()
+        file.views += 1
+        file.save()
+
+        serializer = serializers.SubdomainSerializer(file)
+        data = serializer.data
+        if user and file:
+            return Response({'file': data if not file.is_private else None, 'colour': user.colour})
+        else:
+            return Response({'file': None, 'colour': user.colour if user else None})
+
+
+class BanViewSet(viewsets.ViewSet):
+
+    permission_class = IsAdminUser
+
+    def field(self, request, pk):
+        user = User.objects.filter(id=pk).first()
+
+        if user:
+            user.is_active = False
+            files = File.objects.filter(user=user)
+            files.delete()
+            user.save()
+
+            banned_user = BannedUser(
+                banned_by=self.request.user,
+                banned_user=user,
+                reason="User was very very bad! >:("
+            )
+            banned_user.save()
+            # LOG BAN HERE
+            # LOG FILES DELETED HERE
+            return Response({'banned': True})
+        else:
+            return Response({'banned': False})
+
+
+class WarnViewSet(viewsets.ViewSet):
+
+    permission_class = IsAdminUser
+
+    def field(self, request, pk):
+        # reason = ...
+        user = User.objects.filter(id=pk).first()
+
+        if user:
+
+            user.warnings += 1
+            autoban = False
+
+            warning = Warnings(
+                warned_by=self.request.user,
+                warned_user=user,
+                reason="User was a little bad..."
+            )
+            warning.save()
+
+            if user.warnings > 3:
+                autoban = True
+                user.is_active = False
+                files = File.objects.filter(user=user)
+                files.delete()
+                ban = BannedUser(
+                    banned_by=self.request.user,
+                    banned_user=user,
+                    reason="User was very very bad! >:("
+                )
+                ban.save()
+            user.save()
+
+            # LOG WARNING HERE
+            return Response({'warned': True, 'autoban': autoban, 'warnings': user.warnings})
+        else:
+            return Response({'warned': False, 'autoban': False, 'warnings': None})
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -159,6 +235,11 @@ class UploadView(View):
                 return invalid_field_message
             username = request.POST["username"]
             upload_user = get_object_or_404(User, username=username, upload_key=request.POST["upload_key"])
+
+            if not upload_user.is_active:
+                return HttpResponse(f"Your account is no longer active.\n"
+                                    f"If you think this is a mistake, "
+                                    f"please visit: {htp}://{settings.DOMAIN_NAME}/contact")
 
         for user_file in request.FILES.getlist('content'):
             ip = get_ip(request)
@@ -201,9 +282,3 @@ class UploadView(View):
 
     def get(self, request):
         return redirect('/')
-
-
-
-
-
-

@@ -11,7 +11,7 @@ from random import choices, randint
 from django.http import HttpResponseBadRequest
 
 DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-all_chars = "".join(['1234567890-_=$', ascii_uppercase, ascii_lowercase])
+all_chars = "".join(['1234567890-_=$+!*', ascii_uppercase, ascii_lowercase])
 vt = VirusTotalPublicApi(settings.VT_API_KEY)
 
 
@@ -25,7 +25,7 @@ def thumb_path(instance, filename):
     return 'Thumbnails/{0}/{1}_{2}.jpg'.format(
         instance.user.id,
         instance.generated_filename,
-        instance.original_filename.replace('.', '_')
+        instance.original_filename.split('.')[0]
     )
 
 
@@ -36,7 +36,7 @@ def file_path(instance, filename):
     :param filename: - unused parameter
     :return: A string filepath for media directory of where file will be saved
     """
-    return 'Uploads/{0}/{1}__{2}.jpg'.format(
+    return 'Uploads/{0}/{1}_{2}'.format(
         instance.user.id,
         instance.generated_filename,
         instance.original_filename

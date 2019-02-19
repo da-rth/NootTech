@@ -5,46 +5,60 @@ from django.contrib.auth.password_validation import validate_password
 from django.core import exceptions
 from . import validators
 
-
-class ListUsersSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = User
-        fields = ('id', 'username', 'email', 'date_joined', 'colour')
+"""
+Sub-File Serializers (Image, Video, Audio, Text)
+"""
 
 
 class ImageFileSerializer(serializers.ModelSerializer):
-
+    """
+    Serializer used for File Sub-type : Image
+    Exclusdes the file-pointer and id fields from being serialized
+    """
     class Meta:
         model = Image
-        fields = '__all__'
+        exclude = ('file_pointer', 'id')
 
 
 class VideoFileSerializer(serializers.ModelSerializer):
-
+    """
+    Serializer used for File Sub-type : Video
+    Exclusdes the file-pointer and id fields from being serialized
+    """
     class Meta:
         model = Video
-        fields = '__all__'
+        exclude = ('file_pointer', 'id')
 
 
 class AudioFileSerializer(serializers.ModelSerializer):
-
+    """
+    Serializer used for File Sub-type : Audio
+    Exclusdes the file-pointer and id fields from being serialized
+    """
     class Meta:
         model = Audio
-        fields = '__all__'
+        exclude = ('file_pointer', 'id')
 
 
 class TextFileSerializer(serializers.ModelSerializer):
-
+    """
+    Serializer used for File Sub-type : Text
+    Exclusdes the file-pointer and id fields from being serialized
+    """
     class Meta:
         model = Text
-        fields = '__all__'
+        exclude = ('file_pointer', 'id')
 
 
 class ListFilesSerializer(serializers.ModelSerializer):
+    """
+    This serializer serializes a File Object, merging it with any additional file information relevant to the file.
+    Additional info is gathered by the 4 serializers below. If no info is found for that sub-type of file, then its null
 
-    uploader_id = serializers.CharField(source='user.id')
-    uploader = serializers.CharField(source='user.username')
+    The method to_representation() simply skips any keys/values
+    where the value is null, preventing them from being serialized.
+    I (Daniel) found out how to do this from: https://stackoverflow.com/a/45569581
+    """
     file_image_info = ImageFileSerializer(source='file_image')
     file_video_info = VideoFileSerializer(source='file_video')
     file_audio_info = AudioFileSerializer(source='file_audio')
@@ -52,41 +66,69 @@ class ListFilesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = File
-        fields = '__all__'
+        exclude = ('file_image', 'file_video', 'file_audio', 'file_text')
 
     def to_representation(self, instance):
-        # Omit null fields : https://stackoverflow.com/a/45569581
         result = super(ListFilesSerializer, self).to_representation(instance)
         return OrderedDict([(key, result[key]) for key in result if result[key] is not None])
 
 
-class FavouriteFiles(serializers.ModelSerializer):
-    '''
-    Serializer for favourite files
-    '''
-    generated_filename = serializers.CharField(source='file.generated_filename')
-    original_filename = serializers.CharField(source='file.original_filename')
-    file_url = serializers.CharField(source='file.file_content')
-    uploader = serializers.CharField(source='file.user.username')
-    icon = serializers.CharField(source='file.icon')
-    thumbnail = serializers.CharField(source='file.thumbnail')
+class SubdomainSerializer(serializers.ModelSerializer):
+    """
+    This serializer is almost identical to the serializer above.
+    However, since this file will be displayed on a subdomain for ANYONE to see,
+    we want to exlude the user's IP address from being sent to the frontend, as well as other irrelevant information
+    """
+    file_image_info = ImageFileSerializer(source='file_image')
+    file_video_info = VideoFileSerializer(source='file_video')
+    file_audio_info = AudioFileSerializer(source='file_audio')
+    file_text_info = TextFileSerializer(source='file_text')
+    username = serializers.CharField(source="user.username")
+    colour = serializers.CharField(source="user.colour")
+
+    class Meta:
+        # Prevent IP and is_private from being included in serialized data
+        exclude = ('ip', 'is_private', 'file_image', 'file_video', 'file_audio', 'file_text')
+        model = File
+
+    def to_representation(self, instance):
+        result = super(SubdomainSerializer, self).to_representation(instance)
+        return OrderedDict([(key, result[key]) for key in result if result[key] is not None])
+
+
+class SerializeFavouritesList(serializers.ModelSerializer):
+    """
+    This serializer takes a file (favourited by a user) and returns a small amount of the file's attributes
+    Such as its original filename, gen name, thumbnail, icon, extension and (fontawesome) icon
+    """
+    icon = serializers.CharField(source='file.icon', read_only=True)
+    username = serializers.CharField(source='file.user.username', read_only=True)
+    ext = serializers.CharField(source='file.file_ext', read_only=True)
+    gen =serializers.CharField(source='file.generated_filename', read_only=True)
+    original = serializers.CharField(source='file.original_filename', read_only=True)
+    thumbnail = serializers.CharField(source='file.file_thumbnail', read_only=True)
 
     class Meta:
         model = FavouritedFile
-        fields = ('id', 'generated_filename', 'original_filename', 'icon', 'thumbnail', 'file_url', 'uploader')
+        fields = ('id', 'original', 'ext', 'icon', 'gen', 'username', 'thumbnail')
 
 
-class DeleteFavourite(serializers.ModelSerializer):
-    '''
-    API for deleting Files
-    '''
+class SerializeFavourite(serializers.ModelSerializer):
+    """
+    This serializer serilizes the FavouritedFile mode, for adding a new favourite.
+    """
     class Meta:
         model = FavouritedFile
-        fields = ('file','user')
+        fields = '__all__'
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
-
+    """
+    This serializer allows for four fields to be posted; username, email, colour and password
+    All of these fields will then go through validation
+    If successful, the create() method will automatically be called.
+    It will then proceed to validate the password and create the user - validation errors return BadRequest responses
+    """
     email = serializers.CharField(validators =[validators.validate_email],write_only= True )
     username = serializers.CharField(validators =[validators.validate_username],write_only=True)
     password = serializers.CharField(style = {'input_type': 'password'}, write_only=True)
@@ -94,37 +136,42 @@ class CreateUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username','email','colour','password')
+        fields = ('username', 'email', 'colour', 'password')
 
     def create(self, validated_data):
-        password = validated_data['password']
 
-        user = User(
-            username=validated_data['username'],
-            email=validated_data['email'],
-            colour=validated_data['colour'],
-        )
+        user = User(username=validated_data['username'], email=validated_data['email'], colour=validated_data['colour'])
 
         try:
+            # Try to validate password and create account
             validate_password(password=validated_data['password'], user=user)
+
         except exceptions.ValidationError as e:
             raise serializers.ValidationError({'password': list(e.messages)})
-
-        user.set_password(password)
+        # If successful, set password and save user (created! woohoo!)
+        user.set_password(validated_data['password'])
         user.save()
         return validated_data
 
 
 class ErrorVideoSerializer(serializers.ModelSerializer):
+    """
+    Basic serializer for turning ErorVideo model queryset into JSON
+    Note: __all__ simply includes two fields: url and title
+    """
     class Meta:
         model = ErrorVideo
         fields = '__all__'
 
 
 class SettingsSerializer(serializers.ModelSerializer):
-    gen_upload_key = serializers.BooleanField(default=False)
-    email = serializers.CharField(validators =[validators.validate_email],allow_null=True)
-    colour = serializers.CharField(validators =[validators.validate_colour],write_only=True)
+    """
+    This serializer is used to convert colour, email, warnings and upload_key of the currently authenticated user
+    The aforementioned fields can also be set through a POST request
+    """
+    gen_upload_key = serializers.BooleanField(default=False, allow_null=True, write_only=True)
+    email = serializers.CharField(validators =[validators.validate_email], allow_null=True)
+    colour = serializers.CharField(validators =[validators.validate_colour], allow_null=True)
 
     class Meta:
         model = User
@@ -132,20 +179,30 @@ class SettingsSerializer(serializers.ModelSerializer):
 
 
 class ReportList(serializers.ModelSerializer):
-    reported_user_name = serializers.CharField(source="reported_user.username")
-    reported_by_name = serializers.CharField(source="reported_by.username")
-    file_gen_name = serializers.CharField(source="reported_file.generated_filename")
-    file_orig_name = serializers.CharField(source="reported_file.original_filename")
-    file_url = serializers.CharField(source="reported_file.file_content")
-    class Mete:
+    """
+    Serializer for a list of reports (viewed by admin), additional info on report is provided.
+    Additional info is obtained using the serializers.CharField parameter "source" as shown below:
+    """
+    reported_user_name = serializers.CharField(source="reported_user.username", read_only=True)
+    reported_by_name = serializers.CharField(source="reported_by.username", read_only=True)
+    file_gen_name = serializers.CharField(source="reported_file.generated_filename", read_only=True)
+    file_orig_name = serializers.CharField(source="reported_file.original_filename", read_only=True)
+    file_url = serializers.CharField(source="reported_file.file_content", read_only=True)
+
+    class Meta:
         model = ReportedFile
         fields = '__all__'
 
 
 class ReportAdd(serializers.ModelSerializer):
-    class Mete:
+    """
+    Basic serializer for reporting a user
+    As the date is automatically obtained, it is added to the excluded fields list
+    """
+    class Meta:
         model = ReportedFile
-        fields = '__all__'
+        exclude = ('date',)
+
 
 
 
