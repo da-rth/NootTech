@@ -37,7 +37,7 @@
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
           <b-nav-form>
-            <b-form-input size="sm" class="mr-sm-2 filebar-search" type="text" placeholder="Search" />
+            <input v-model="searchTerm" class="form-control file-search" type="search" placeholder="Search" aria-label="Search">
           </b-nav-form>
 
           <b-nav-item-dropdown right>
@@ -106,6 +106,7 @@
     components: {NtBadge},
     data() {
       return {
+        searchTerm: null,
         selectedFiles: [],
         selectFiles: false,
         showUploadKey: false,
@@ -116,7 +117,37 @@
         paginate_by: 60,
       }
     },
+    watch: {
+      searchTerm: function (val) {
+        if (val.length !== 0) {
+          this.searchArray(val.toLowerCase(), this.$parent.files)
+        } else {
+          this.$parent.searched_files = this.$parent.files
+        }
+      }
+    },
+
+
+
     methods: {
+      searchArray: function (term, array) {
+      console.log(term)
+        var results = [];
+        for (var i=0; i < array.length; i++) {
+          var has_gen_name = array[i].generated_filename.toString().toLowerCase().includes(term);
+          var has_orig_name = array[i].original_filename.toString().toLowerCase().includes(term);
+          var has_ext = array[i].file_ext.toString().toLowerCase().includes(term);
+          if (has_gen_name | has_orig_name | has_ext) {
+            results.push(array[i])
+          }
+        }
+        if (results.length > 0) {
+          this.$parent.searched_files = results;
+        } else {
+          this.$parent.searched_files = this.$parent.files
+        }
+      },
+
       changeBorder(checked) {
         // User can select files to either delete or set private, but not both at the same time.
         console.log(JSON.stringify(checked))
