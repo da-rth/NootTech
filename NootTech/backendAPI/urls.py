@@ -33,7 +33,7 @@ urlpatterns = format_suffix_patterns([
     url(r'^ban/(?P<pk>\w+)', BanViewSet.as_view({'get': 'field', }), name='Ban'),
     url(r'^warn/(?P<pk>\w+)', WarnViewSet.as_view({'get': 'field', }), name='Warn'),
 
-    url(r'^subdomain/(?P<username>\w+)/(?P<gen_name>\w+)', SubdomainViewSet.as_view({'get': 'field', }), name='Sub'),
+    url(r'^users/(?P<username>\w+)/(?P<gen_name>\w+)', SubdomainViewSet.as_view({'get': 'field', }), name='Sub'),
     url(r'^error-videos', ErrorVideoAPIView.as_view(), name='ErrorVideos'),
 ])
 
