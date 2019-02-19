@@ -24,7 +24,7 @@
     background-color: #242424;
     padding-top: 10px;
     padding-bottom: 0px;
-    position:fixed;
+    position:static;
     bottom:0;
     width:100%;
     opacity: 0.9;
