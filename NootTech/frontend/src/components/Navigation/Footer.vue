@@ -24,7 +24,7 @@
     background-color: #282828;
     padding-top: 10px;
     padding-bottom: 0px;
-    position:fixed;
+    position:static;
     bottom:0;
     width:100%;
 }

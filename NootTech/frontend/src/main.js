@@ -5,6 +5,15 @@ import 'babel-polyfill'
 import router from './router'
 import store from './store'
 import * as backendAPI from './api.js'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { fas } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+ 
+library.add(fas)
+
+Vue.component('font-awesome-icon', FontAwesomeIcon);
+
+Vue.config.productionTip = false;
 
 // Import CSS assets
 import 'bootstrap/dist/css/bootstrap.css'
@@ -16,6 +25,7 @@ Vue.prototype.$subdomain_enabled = false;
 Vue.prototype.$userColour = "#00CCCC";
 
 // load BootstrapVue
+// todo: load the single components instead
 Vue.use(BootstrapVue);
 
 new Vue({
@@ -24,3 +34,11 @@ new Vue({
   store,
   render: h => h(App)
 });
+
+Vue.mixin({
+  data() {
+    return {
+      companyName: "NootTech"
+    }
+  },
+})
