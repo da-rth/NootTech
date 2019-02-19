@@ -1,5 +1,15 @@
 /* 'cause dark colour is eye-candy for developers */
 
-body {
-    background-color: #2e3035 !important;
+.bg-dark {
+    background-color: #242424;
+    color: #eeeeee;
+}
+
+/* fix image size */
+div.carousel-item img{
+    background-size: cover;
+}
+
+.border-white {
+	border-color: rgba(255,255,255,0.7) !important;
 }

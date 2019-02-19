@@ -60,6 +60,11 @@ class File(models.Model):
     is_private = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False)
 
+    file_image = models.ForeignKey('Image', on_delete=models.CASCADE, blank=True, null=True)
+    file_video = models.OneToOneField('Video', on_delete=models.CASCADE, null=True, blank=True)
+    file_audio = models.OneToOneField('Audio', on_delete=models.CASCADE, null=True, blank=True)
+    file_text = models.OneToOneField('Text', on_delete=models.CASCADE, null=True, blank=True)
+
     generated_filename = models.CharField(max_length=16, default=get_id_gen(), unique=True)
     original_filename = models.CharField(blank=True, max_length=300)
 
@@ -142,7 +147,7 @@ class Image(models.Model):
     class Meta:
         verbose_name_plural = 'Images'
 
-    file = models.ForeignKey(File, on_delete=models.CASCADE)
+    file_pointer = models.ForeignKey(File, on_delete=models.CASCADE)
     resolution = models.CharField(max_length=64, null=True, blank=True)
     mode = models.CharField(null=True, max_length=32)
     info = models.TextField(null=True, blank=True)
@@ -150,8 +155,8 @@ class Image(models.Model):
 
     def save(self, *args, **kwargs):
 
-        if "svg" not in self.file.file_mime_type:
-            img = PIL.Image.open(self.file.file_content.path)
+        if "svg" not in self.file_pointer.file_mime_type:
+            img = PIL.Image.open(self.file_pointer.file_content.path)
             info = ""
             for k, v in img.info.items():
                 if "exif" not in k and len(str(v)) < 128:
@@ -165,12 +170,12 @@ class Image(models.Model):
             self.info = None
             self.mode = None
 
-        self.is_web_safe = is_websafe(self.file.file_ext)
+        self.is_web_safe = is_websafe(self.file_pointer.file_ext)
 
         super(Image, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f'{self.file.generated_filename}{self.file.file_ext} - uploaded by {self.file.user.username}'
+        return f'{self.file_pointer.generated_filename}{self.file_pointer.file_ext} - uploaded by {self.file_pointer.user.username}'
 
 
 class Video(models.Model):
@@ -178,7 +183,7 @@ class Video(models.Model):
     class Meta:
         verbose_name_plural = 'Videos'
 
-    file = models.ForeignKey(File, on_delete=models.CASCADE)
+    file_pointer = models.ForeignKey(File, on_delete=models.CASCADE)
     resolution = models.CharField(max_length=64, null=True, blank=True)
     duration = models.IntegerField(default=0)
     fps = models.IntegerField(default=30)
@@ -201,7 +206,7 @@ class Audio(models.Model):
     class Meta:
         verbose_name_plural = 'Audio'
 
-    file = models.ForeignKey(File, on_delete=models.CASCADE)
+    file_pointer = models.ForeignKey(File, on_delete=models.CASCADE)
     duration = models.IntegerField(default=0)
     sample_rate = models.IntegerField(default=0)
     is_web_safe = models.BooleanField(default=False)
@@ -222,7 +227,7 @@ class Text(models.Model):
     class Meta:
         verbose_name_plural = 'Text'
 
-    file = models.ForeignKey(File, on_delete=models.CASCADE)
+    file_pointer = models.ForeignKey(File, on_delete=models.CASCADE)
     characters = models.IntegerField(default=0)
     lines = models.IntegerField(default=0)
     syntax_highlighting = models.CharField(blank=True, max_length=32)
@@ -238,17 +243,49 @@ class Text(models.Model):
 
 @receiver(post_save, sender=File)
 def create_file_subtype(sender, instance, **kwargs):
-    ft = None
-    if instance.file_mime_type.lower().startswith("image"):
-        ft = Image.objects.create(file=instance)
-    elif instance.file_mime_type.lower().startswith("video"):
-        ft = Video.objects.create(file=instance)
-    elif instance.file_mime_type.lower().startswith("audio"):
-        ft = Audio.objects.create(file=instance)
-    elif instance.file_mime_type.lower().startswith("text"):
-        ft = Text.objects.create(file=instance)
-    if ft:
-        ft.save()
+
+    # Break recursion by changing value of instance.proceed after saving a file subtype
+    if not (instance.file_image or instance.file_video or instance.file_audio or instance.file_text):
+        ft = None
+        if instance.file_mime_type.lower().startswith("image"):
+            ft = Image.objects.create(file_pointer=instance)
+        elif instance.file_mime_type.lower().startswith("video"):
+            ft = Video.objects.create(file_pointer=instance)
+        elif instance.file_mime_type.lower().startswith("audio"):
+            ft = Audio.objects.create(file_pointer=instance)
+        elif instance.file_mime_type.lower().startswith("text"):
+            ft = Text.objects.create(file_pointer=instance)
+        if ft:
+            ft.save()
+
+
+# Below code prevents File post_save receiver from executing
+@receiver(post_save, sender=Image)
+def create_file_image_subtype(sender, instance, **kwargs):
+    f = File.objects.filter(id=instance.file_pointer.id).first()
+    f.file_image = instance
+    f.save()
+
+
+@receiver(post_save, sender=Video)
+def create_file_video_subtype(sender, instance, **kwargs):
+    f = File.objects.filter(id=instance.file_pointer.id).first()
+    f.file_video = instance
+    f.save()
+
+
+@receiver(post_save, sender=Audio)
+def create_file_audio_subtype(sender, instance, **kwargs):
+    f = File.objects.filter(id=instance.file_pointer.id).first()
+    f.file_audio = instance
+    f.save()
+
+
+@receiver(post_save, sender=Text)
+def create_file_text_subtype(sender, instance, **kwargs):
+    f = File.objects.filter(id=instance.file_pointer.id).first()
+    f.file_text = instance
+    f.save()
 
 
 class ErrorVideo(models.Model):

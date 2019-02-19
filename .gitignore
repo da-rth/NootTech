@@ -449,3 +449,5 @@ migrations/
 # remove webpack
 webpack-stats.json
 
+# the frontend developer has a love for VSCode...
+*.code-workspace

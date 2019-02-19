@@ -3,22 +3,29 @@
         <b-navbar toggleable="lg" variant="dark" type="dark">
             <b-navbar-toggle target="nav_collapse" />
             <b-collapse is-nav id="nav_collapse">
-                <b-navbar-nav>
-                    <b-nav-item-dropdown text="Pick an user" v-if="users">
-                        <b-dropdown-item v-for="user in users" :key="user.id">{{user.username}}</b-dropdown-item>
-                    </b-nav-item-dropdown>
-                    <b-link v-else href="#TOS">User listing not available</b-link>
+
+                <b-dropdown v-bind:text="$store.state.user.username" v-if="$store.state.user.authenticated">
+                  <b-dropdown-item href="#">An item</b-dropdown-item>
+                  <b-dropdown-item href="#">Another item</b-dropdown-item>
+                </b-dropdown>
+
+                <b-navbar-nav v-else>
+                  <b-nav-item><router-link to="/about">About</router-link></b-nav-item>
+                  <b-nav-item><router-link to="/tos">Terms of Service</router-link></b-nav-item>
                 </b-navbar-nav>
-                <b-navbar-nav>
-                    <b-nav-item href="/TOS" size="md">Terms of Service</b-nav-item>
-                </b-navbar-nav>
-                <!-- Keep this centered -->
-                <b-navbar-nav class="mx-auto">
-                    <b-navbar-brand href="#">{{ brandName }}</b-navbar-brand>
-                </b-navbar-nav>
-                <b-navbar-nav class="ml-auto">
-                    <b-nav-item>Login</b-nav-item>
-                    <b-nav-item>Register</b-nav-item>
+
+                  <!-- Keep this centered -->
+                  <b-navbar-nav class="mx-auto">
+                    <b-navbar-brand><router-link to="/">{{ brandName }}</router-link></b-navbar-brand>
+                  </b-navbar-nav>
+
+                  <b-navbar-nav class="ml-auto" v-if="$store.state.user.authenticated">
+                    <b-nav-item><router-link to="/logout">Logout</router-link></b-nav-item>
+                  </b-navbar-nav>
+
+                  <b-navbar-nav class="ml-auto" v-else>
+                    <b-nav-item><router-link to="/login">Login / Register</router-link></b-nav-item>
+
                 </b-navbar-nav>
             </b-collapse>
 
@@ -33,22 +40,22 @@
         data: function() {
             return {
                 brandName: "NootTech",
-                isLoggedIn: "False",
-                users: []
+                text: "To Load"
             };
         },
-                
-        created() {
-            console.log(this.$api_url+"/list-users");
-            axios.get(this.$api_url+"/list-users")
-                .then(response => {
-                    console.log(response);
-                    this.users = response.data
-                })
-                .catch(e => {
-                this.errors.push(e)
-            })
-        },
+
 
     }
 </script>
+<style scoped>
+  .navbar.bg-dark {
+    background-color: #202020 !important;
+  }
+  .navbar a {
+    color: #8f8f8f;
+  }
+  .navbar a:hover {
+    color: #d1d1d1;
+    text-decoration: none;
+  }
+</style>
