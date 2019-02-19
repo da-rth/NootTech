@@ -1,13 +1,8 @@
 {% load staticfiles %}
 {% load render_bundle from webpack_loader %}
 
-<form method="post" enctype="multipart/form-data" action="api/upload">
-    <input type="file" name="content" multiple>
-    <input type="submit" value="Upload">
-</form>
-
 <h1>Index Page</h1>
 <div id="app"></div>
 <!-- For DEPLOYMENT use -->
-<script src="{% static 'build.js' %}"></script>
+<!--script src="{% static 'build.js' %}"></script-->
 {% render_bundle 'main' %}

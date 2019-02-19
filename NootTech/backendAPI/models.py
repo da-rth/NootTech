@@ -53,6 +53,28 @@ class ErrorVideo(models.Model):
         return self.title
 
 
+class Warnings(models.Model):
+    """
+    This model stores information about all users that have been WARNED by an administrator.
+
+    - WARNED_USER : Foreign key pointing to the User who has been warned
+    - WARNED_BY : Foreign key pointing to the administrator that has banned the user.
+    - DATE : Automatically obtained whenever this model is saved
+    - REASON : A text-field expplaining the reason for why a user was banned (maybe can be emailed to user)
+
+    All deleted files and banned users will be logged.
+    """
+    class Meta:
+        verbose_name_plural = 'Banned Users'
+
+    warned_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='warned_user_set')
+    warned_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='warned_by_admin_set')
+    date = models.DateTimeField(default=timezone.now)
+    reason = models.TextField(blank=False)
+
+    def __str__(self):
+        return f"Warned: {self.warned_user.username} by Administrator: {self.warned_by.username}"
+
 class BannedUser(models.Model):
     """
     This model stores information about all users that have been banned by an administrator.
@@ -68,9 +90,12 @@ class BannedUser(models.Model):
         verbose_name_plural = 'Banned Users'
 
     banned_user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='banned_user_set')
-    banned_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='banned_by_set')
+    banned_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='banned_by_admin_set')
     date = models.DateTimeField(default=timezone.now)
     reason = models.TextField(blank=False)
+
+    def __str__(self):
+        return f"Banned: {self.banned_user.username} by Administrator: {self.banned_by.username}"
 
 
 class File(models.Model):
@@ -79,9 +104,7 @@ class File(models.Model):
 
     - IP : The IP address of the location where the file was uploaded
     - IS_PRIVATE : The privacy status of the file uploaded by the user.
-
     As well as general info listed below
-
     All deleted files and banned users will be logged.
     """
     class Meta:
@@ -95,9 +118,9 @@ class File(models.Model):
     is_private = models.BooleanField(default=False)
     """Virus Scan is blank=True as not all files will be scanned with VirusTotal, only text and applications."""
     virus_scan = models.OneToOneField('VirusTotalScan', on_delete=models.CASCADE, null=True, blank=True)
-    generated_filename = models.CharField(max_length=16, unique=True)
+    generated_filename = models.CharField(max_length=16, unique=True, default=utils.get_id_gen)
     """Linux supports filenames that are less than 256 chars in length."""
-    original_filename = models.CharField(blank=True, max_length=255)
+    original_filename = models.CharField(max_length=255, blank=True)
 
     file_content = models.FileField(
         upload_to=utils.file_path,
@@ -132,7 +155,7 @@ class File(models.Model):
     file_text = models.OneToOneField('Text', on_delete=models.CASCADE, null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        self.original_filename = self.file_content.name
+        self.original_filename = self.file_content.name.split("/")[-1].replace(self.generated_filename+'_', '')
         self.file_ext = utils.get_ext(self.file_content.name)
         self.file_size_bytes = self.file_content.size
         self.file_size_str = utils.get_filesize_str(self.file_content.size)

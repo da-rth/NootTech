@@ -11,7 +11,6 @@
 <script>
   import LoadingFiles from '../FilePanel/LoadingFiles';
   import FilePanel from '../FilePanel/Panel';
-
   export default {
     name: "AuthenticatedPane",
     data () {
