@@ -26,8 +26,10 @@ export function base () {
 }
 
 export async function GetErrorVideos () {
+  console.log("Attempting to get list of error videoss...");
   return axios.get(base() + '/error-videos/')
     .then(response => {
+      console.log('ERROR VIDEO SUCCESS', response)
       console.log(response)
       return response.data
     })
@@ -38,6 +40,7 @@ export async function GetErrorVideos () {
 }
 
 export async function GetSettings () {
+  console.log("Attempting to get user settings...");
   const res = axios.get(base() + '/settings/')
     .then(response => {
       console.log('SETTINGS SUCCESS', response)
@@ -51,9 +54,25 @@ export async function GetSettings () {
 }
 
 export async function GetFiles () {
+  console.log("Attempting to get user files...");
   const res = axios.get(base()+'/files/')
     .then(response => {
       console.log('FILES SUCCESS', response);
+      return response.data
+    })
+    .catch(e => {
+      console.log('ERROR', e.response);
+      return null
+    });
+  return await res
+}
+
+
+export async function DeleteFile (file_id) {
+  console.log("Attempting to delete file with ID: "+file_id);
+  const res = axios.delete(base()+'/file/delete/'+file_id)
+    .then(response => {
+      console.log('DELETE SUCCESS', response);
       return response.data
     })
     .catch(e => {

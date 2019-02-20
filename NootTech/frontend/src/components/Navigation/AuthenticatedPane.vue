@@ -32,9 +32,13 @@
       async getData() {
         this.isLoading = true;
         this.settings = await this.$api.GetSettings();
+        await this.loadFiles()
+        this.isLoading = false;
+      },
+      async loadFiles() {
         this.files = await this.$api.GetFiles();
         this.searched_files = this.files;
-        this.isLoading = false;
+        return true
       }
     },
     beforeMount () {

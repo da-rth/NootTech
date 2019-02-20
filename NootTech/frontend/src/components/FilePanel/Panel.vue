@@ -17,51 +17,54 @@
             <b-button class="filebar-btn"><font-awesome-icon :icon="['fas', 'th']"/></b-button>
             <b-button class="filebar-btn"><font-awesome-icon :icon="['fas', 'list']"/></b-button>
           </b-button-group>
-        </div>
+          &nbsp;
+          <a v-on:click="showPrivateFiles = !showPrivateFiles" name="check-button">
+              <font-awesome-icon :icon="['fas', 'share']" v-if="showPrivateFiles"/>
+              <font-awesome-icon :icon="['fas', 'user-secret']" v-else/>
+              {{ showPrivateFiles ? "&nbsp;View Public files" : "&nbsp;View Private Files" }}
+            </a>
 
-          <b-form-checkbox class="select-files-switch" switch v-model="selectFiles" name="check-button">
-            Select Files
-          </b-form-checkbox>
-
-          <b-form-checkbox class="select-files-switch" switch name="check-button">
-            Private Only (todo)
-          </b-form-checkbox>
-
+          <b-button class="filebar-btn" variant="danger" v-if="selectFiles" v-on:click="deleteSelectedFiles()">Delete {{ selectedFiles.length }} file(s)</b-button>
+          <b-button class="filebar-btn" variant="primary" v-if="selectFiles" v-on:click="privateSelectedFiles()">Make {{ selectedFiles.length }} file(s) private</b-button>
           <b-dropdown text="File List" v-if="selectedFiles.length > 0 && selectFiles">
-            <b-dropdown-item v-bind:key="file.id" v-for="file in getCheckedFiles()">
+            <b-dropdown-item v-bind:key="file.id" v-for="file in getCheckedFiles()" disabled>
               {{ file.generated_filename }} | {{ file.original_filename }}
             </b-dropdown-item>
           </b-dropdown>
+        </div>
 
+        <b-form-checkbox class="select-files-switch" switch v-model="selectFiles" name="check-button">
+          Select Files
+        </b-form-checkbox>
 
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
 
-            <div class="col-sm">
-              <font-awesome-icon />
-              <input v-model="searchTerm" class="form-control file-search" type="search" :icon="['fas', 'search']" placeholder="Search..." aria-label="Search">
-            </div>
-            <div class="col-sm">
+          <div class="col-sm">
+            <font-awesome-icon />
+            <input v-model="searchTerm" class="form-control file-search" type="search" :icon="['fas', 'search']" placeholder="Search..." aria-label="Search">
+          </div>
+          <div class="col-sm">
 
-                <select @change="changedSelectionValue" class="custom-select file-sort">
+            <select @change="changedSelectionValue" class="custom-select file-sort">
 
-                    <option value="-date">Upload date (Latest)</option>
-                    <option value="date">Upload date (Oldest)</option>
+              <option value="-date">Upload date (Latest)</option>
+              <option value="date">Upload date (Oldest)</option>
 
-                    <option value="original_filename">Original Filename (A-Z)</option>
-                    <option value="-original_filename">Original Filename (Z-A)</option>
+              <option value="original_filename">Original Filename (A-Z)</option>
+              <option value="-original_filename">Original Filename (Z-A)</option>
 
-                    <option value="generated_filename">Generated Filename (A-Z)</option>
-                    <option value="-generated_filename">Generated Filename (Z-A)</option>
+              <option value="generated_filename">Generated Filename (A-Z)</option>
+              <option value="-generated_filename">Generated Filename (Z-A)</option>
 
-                    <option value="file_ext">Extension (Ascending)</option>
-                    <option value="-file_ext">Extension (Descending)</option>
+              <option value="file_ext">Extension (Ascending)</option>
+              <option value="-file_ext">Extension (Descending)</option>
 
-                    <option value="-views">Views (Most)</option>
-                    <option value="views">Views (Least)</option>
-                </select>
+              <option value="-views">Views (Most)</option>
+              <option value="views">Views (Least)</option>
+            </select>
 
-            </div>
+          </div>
 
         </b-navbar-nav>
       </b-collapse>
@@ -71,17 +74,29 @@
 
       <b-form-checkbox-group v-model="selectedFiles">
 
-        <b-row class="file-grid">
+        <b-row class="file-grid justify-content-center">
+          <template v-for="file in  paginated('searched_files')">
 
-          <NtBadge
-            class="file-badge"
-            v-for="file in  paginated('searched_files')"
-            :key="file.id" :value="file"
-            :selectionStatus="selectFiles"
-            :selected="isSelected(file.id)"
-          >
+            <template v-if="showPrivateFiles">
+              <NtBadge
+                class="file-badge"
+                v-if="file.is_private"
+                :key="file.id" :value="file"
+                :selectionStatus="selectFiles"
+                :selected="isSelected(file.id)"
+              />
+            </template>
 
-          </NtBadge>
+            <template v-else><NtBadge
+              class="file-badge"
+              v-if="!file.is_private"
+              :key="file.id" :value="file"
+              :selectionStatus="selectFiles"
+              :selected="isSelected(file.id)"
+            />
+            </template>
+
+          </template>
 
         </b-row>
       </b-form-checkbox-group>
@@ -89,19 +104,16 @@
     </paginate>
 
     <paginate-links class="file-pagination" for="searched_files" :hide-single-page="true" :classes="{'ul': 'pagination', 'li': 'page-item', 'a' : 'page-link'}"
-      :show-step-links="true" :step-links="{next: 'Next', prev: 'Previous'}">
+                    :show-step-links="true" :step-links="{next: 'Next', prev: 'Previous'}">
     </paginate-links>
-
-    <div class="text-center">
-      <br />
-      <b-button class="filebar-btn" variant="danger" v-if="selectFiles">Delete {{ selectedFiles.length }} file(s)</b-button>
-      <b-button class="filebar-btn" variant="primary" v-if="selectFiles">Make {{ selectedFiles.length }} file(s) private</b-button>
-    </div>
 
   </div>
 </template>
 
 <script>
+  /**
+   * MODAL currently broken by setting .file-grid "overflow: scroll". Perhaps because modal is inside badge component...
+   */
   import NtBadge from "../Utils/Badge";
   export default {
     name: "FilePanel",
@@ -111,6 +123,7 @@
         searchTerm: null,
         selectedFiles: [],
         selectFiles: false,
+        showPrivateFiles: false,
         showUploadKey: false,
         checkFilesDeletion: false,
         checkFilesPrivate: false,
@@ -132,6 +145,33 @@
 
 
     methods: {
+      async reloadFiles() {
+        this.$parent.files = await this.$api.GetFiles();
+        this.$parent.searched_files = this.$parent.files;
+      },
+
+      async deleteSelectedFiles() {
+        let deleteCount = 0;
+
+        for (var i = 0; i < this.selectedFiles.length; i++) {
+          let response = this.$api.DeleteFile(this.selectedFiles[i]);
+
+          if (response) {
+            deleteCount += 1;
+          }
+        }
+        console.log(`Removed ${deleteCount} files...`);
+        // File reload only seems to work by making two calls??? one call doesn't update searched_files...
+        await this.$parent.loadFiles()
+        await this.$parent.loadFiles()
+
+
+      },
+
+      privateSelectedFiles() {
+        console.log(`Attempting to privatise  ${this.selectedFiles.length} files`)
+      },
+
       /** Used for "sort by" dropdown **/
       changedSelectionValue: function(item) {
         let value = item.target.value;
@@ -155,7 +195,7 @@
 
       /** Used for "search" input **/
       searchArray: function (term, array) {
-      console.log(term)
+        console.log(term)
         var results = [];
         for (var i=0; i < array.length; i++) {
           var has_gen_name = array[i].generated_filename.toString().toLowerCase().includes(term);
@@ -204,6 +244,11 @@
     margin: 20px -14px;
     border: 1px solid #121212;
     background-color: #1e1e1e !important;
+  }
+
+  .file-grid {
+    height: 74vh;
+    overflow: scroll;
   }
 
   .file-pagination {
