@@ -3,7 +3,10 @@
 		<b-modal size="lg" centered :ref="modalId" :title="value.original_filename">
       <p>
       <br/>
-        <img class="preview-image" v-if="value.file_mime_type.startsWith('image') && value.file_image_info.is_web_safe" :src="value.file_content"/>
+        <template v-if="value.file_image_info">
+          <img class="preview-image" v-if="value.file_mime_type.startsWith('image') && value.file_image_info.is_web_safe" :src="value.file_content"/>
+          <h2 v-else>download only, no preview</h2>
+        </template>
         <h4>{{ value.generated_filename }}</h4>
       </p>
 		</b-modal>

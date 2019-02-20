@@ -1,5 +1,7 @@
 <template>
+
   <div class="file-panel justify-content-center">
+
     <b-navbar toggleable="lg" type="dark" class="file-menubar">
 
       <b-navbar-toggle target="nav_file_collapse" />
@@ -7,6 +9,7 @@
       <b-collapse is-nav id="nav_file_collapse">
 
         <div class="col-md">
+
           <b-button-group>
             <b-button class="filebar-btn"><font-awesome-icon :icon="['fas', 'minus']"/></b-button>
             <b-button class="filebar-btn"><font-awesome-icon :icon="['fas', 'plus']"/></b-button>
@@ -18,19 +21,22 @@
             <b-button class="filebar-btn"><font-awesome-icon :icon="['fas', 'list']"/></b-button>
           </b-button-group>
           &nbsp;
+
           <a v-on:click="showPrivateFiles = !showPrivateFiles" name="check-button">
-              <font-awesome-icon :icon="['fas', 'share']" v-if="showPrivateFiles"/>
-              <font-awesome-icon :icon="['fas', 'user-secret']" v-else/>
+              <font-awesome-icon v-bind:icon="['fas', 'share']" v-if="showPrivateFiles"/>
+              <font-awesome-icon v-bind:icon="['fas', 'user-secret']" v-else/>
               {{ showPrivateFiles ? "&nbsp;View Public files" : "&nbsp;View Private Files" }}
             </a>
 
           <b-button class="filebar-btn" variant="danger" v-if="selectFiles" v-on:click="deleteSelectedFiles()">Delete {{ selectedFiles.length }} file(s)</b-button>
           <b-button class="filebar-btn" variant="primary" v-if="selectFiles" v-on:click="privateSelectedFiles()">Make {{ selectedFiles.length }} file(s) private</b-button>
+
           <b-dropdown text="File List" v-if="selectedFiles.length > 0 && selectFiles">
             <b-dropdown-item v-bind:key="file.id" v-for="file in getCheckedFiles()" disabled>
               {{ file.generated_filename }} | {{ file.original_filename }}
             </b-dropdown-item>
           </b-dropdown>
+
         </div>
 
         <b-form-checkbox class="select-files-switch" switch v-model="selectFiles" name="check-button">
@@ -44,6 +50,7 @@
             <font-awesome-icon />
             <input v-model="searchTerm" class="form-control file-search" type="search" :icon="['fas', 'search']" placeholder="Search..." aria-label="Search">
           </div>
+
           <div class="col-sm">
 
             <select @change="changedSelectionValue" class="custom-select file-sort">
@@ -67,7 +74,9 @@
           </div>
 
         </b-navbar-nav>
+
       </b-collapse>
+
     </b-navbar>
 
     <paginate name="searched_files" :list="$parent.searched_files" :per="paginate_by" tag="div" class="row file-row">
@@ -75,9 +84,11 @@
       <b-form-checkbox-group v-model="selectedFiles">
 
         <b-row class="file-grid justify-content-center">
+
           <template v-for="file in  paginated('searched_files')">
 
             <template v-if="showPrivateFiles">
+
               <NtBadge
                 class="file-badge"
                 v-if="file.is_private"
@@ -94,17 +105,25 @@
               :selectionStatus="selectFiles"
               :selected="isSelected(file.id)"
             />
+
             </template>
 
           </template>
 
         </b-row>
+
       </b-form-checkbox-group>
 
     </paginate>
 
-    <paginate-links class="file-pagination" for="searched_files" :hide-single-page="true" :classes="{'ul': 'pagination', 'li': 'page-item', 'a' : 'page-link'}"
-                    :show-step-links="true" :step-links="{next: 'Next', prev: 'Previous'}">
+    <paginate-links
+      class="file-pagination"
+      for="searched_files"
+      :hide-single-page="true"
+      :classes="{'ul': 'pagination', 'li': 'page-item', 'a' : 'page-link'}"
+      :show-step-links="true"
+      :step-links="{next: 'Next', prev: 'Previous'}"
+      >
     </paginate-links>
 
   </div>
@@ -115,6 +134,8 @@
    * MODAL currently broken by setting .file-grid "overflow: scroll". Perhaps because modal is inside badge component...
    */
   import NtBadge from "../Utils/Badge";
+  import NtPopupModal from "../Utils/FilePopupModal"
+
   export default {
     name: "FilePanel",
     components: {NtBadge},
@@ -247,8 +268,9 @@
   }
 
   .file-grid {
-    height: 74vh;
-    overflow: scroll;
+    height: auto;
+    max-height: 74vh;
+    /*overflow: scroll;*/
   }
 
   .file-pagination {
@@ -272,6 +294,8 @@
 
   .file-badge {
     margin: 5px;
+    height: 10rem;
+    width: 18rem;
   }
 
   .file-search, .file-sort {
