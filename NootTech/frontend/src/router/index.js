@@ -4,6 +4,7 @@ import Router from 'vue-router'
 
 //import Subdomain from '@/components/Subdomain'
 import Base from '../components/Index'
+import SharePage from '../components/Navigation/SharePage'
 import About from '../components/About'
 import TermsOfService from '../components/ToS'
 import LoginRegister from '../components/Authentication/LoginRegister'
@@ -39,27 +40,32 @@ const routes = [
     name: 'PrivacyPolicy',
     component: Privacy
   },
-    {
+  {
     path: '/terms',
     name: 'TermsOfService',
     component: TermsOfService
   },
   {
-    path: "*", component: PageNotFound
+    path: '/u/:username/:gen_name',
+    name: 'ShareLink',
+    component: SharePage
+  },
+  {
+    path: '/404',
+    name: '404',
+    component: PageNotFound
+  },
+  {
+    path: '*',
+    redirect: '/404'
   }
 ]
-/*
-  {
-      path: '/subdomain/:username/:gen_name',
-      name: 'Subdomain',
-      component: Subdomain
-  },
 
- */
 const router = new Router({
   routes,
   mode: 'history'
 });
+
 
 router.beforeEach((to, from, next) => {
   if (to.meta.requireAuth) {

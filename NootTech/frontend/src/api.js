@@ -7,16 +7,18 @@ axios.defaults.xsrfHeaderName = "X-CSRFToken"
 /**
  * Configures AXIOS to send JWT token in header of each API request for user.is_authenticated API calls
  */
-axios.interceptors.request.use(
-  config => {
-    if (store.state.token) {
-      config.headers.Authorization = `JWT ${store.state.token}`
-    }
-    return config
-  },
-  err => {
-    return Promise.reject(err)
-  })
+if (store.state.token) {
+  axios.interceptors.request.use(
+    config => {
+      if (store.state.token) {
+        config.headers.Authorization = `JWT ${store.state.token}`
+      }
+      return config
+    },
+    err => {
+      return Promise.reject(err)
+    })
+}
 
 /**
  * @returns {string} - The base API url. Remove :8000 before deployment!
@@ -82,32 +84,15 @@ export async function DeleteFile (file_id) {
   return await res
 }
 
-/*
-Will implement later...
 
-export async function GetFile (url) {
-    const res = axios.get(url)
+export async function GetShareData (username, gen_name) {
+    const res = axios.get(base()+`/sharelink/${username}/${gen_name}`)
         .then(response => {
-            console.log('Success!');
+            console.log('SHARELINK SUCCESS!',  response.data);
             return response.data;
         })
         .catch(e => {
-            console.log(e);
-            return 'Could not get file contents';
+            console.log('SHARELINK ERROR...');
         });
     return await res
 }
-
-export async function SubdomainRequest (username, gen_name) {
-    const res = axios.get(base()+`/get/subdomain?username=${username}&gen_name=${gen_name}`)
-        .then(response => {
-            console.log('Success!');
-            return response.data;
-        })
-        .catch(e => {
-            console.log(e);
-            return 'Could not establish subdomain... should redirect';
-        });
-    return await res
-}
-*/

@@ -1,4 +1,5 @@
 /* 'cause dark colour is eye-candy for developers */
+@import url('https://fonts.googleapis.com/css?family=Roboto:300');
 
 .bg-dark {
   background-color: #242424;
@@ -15,7 +16,6 @@ div.carousel-item img {
   background-color: #242424;
   padding-top: 10px;
   padding-bottom: 0px;
-  position:fixed;
   bottom:0;
   width:100%;
   opacity: 0.9;

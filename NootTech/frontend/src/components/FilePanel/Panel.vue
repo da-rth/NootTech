@@ -270,7 +270,7 @@
   .file-grid {
     height: auto;
     max-height: 74vh;
-    /*overflow: scroll;*/
+    overflow: scroll;
   }
 
   .file-pagination {
