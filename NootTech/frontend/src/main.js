@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import './assets/css/main.css'
 import VueVideoPlayer from 'vue-video-player'
 import Notifications from 'vue-notification'
+
 // CSS Imports
 import 'video.js/dist/video-js.css'
 import 'bootstrap/dist/css/bootstrap.css'
@@ -32,7 +33,6 @@ Vue.use(BootstrapVue);
 
 Vue.prototype.$api = backendAPI;
 Vue.prototype.$site_url = 'http://localhost:8000';
-Vue.prototype.$subdomain_url = ".noot.tech";
 Vue.prototype.$subdomain_enabled = false;
 
 // load BootstrapVue
