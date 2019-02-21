@@ -57,42 +57,15 @@ export async function GetSettings () {
 
 export async function GetFiles () {
   console.log("Attempting to get user files...");
-  const res = axios.get(base()+'/files/')
-    .then(response => {
-      console.log('FILES SUCCESS', response);
-      return response.data
-    })
-    .catch(e => {
-      console.log('ERROR', e.response);
-      return null
-    });
-  return await res
+  return await axios.get(base()+'/files/');
 }
-
 
 export async function DeleteFile (file_id) {
   console.log("Attempting to delete file with ID: "+file_id);
-  const res = axios.delete(base()+'/file/delete/'+file_id)
-    .then(response => {
-      console.log('DELETE SUCCESS', response);
-      return response.data
-    })
-    .catch(e => {
-      console.log('ERROR', e.response);
-      return null
-    });
-  return await res
+  return await axios.delete(base()+'/file/delete/'+file_id)
 }
 
 
 export async function GetShareData (username, gen_name) {
-    const res = axios.get(base()+`/sharelink/${username}/${gen_name}`)
-        .then(response => {
-            console.log('SHARELINK SUCCESS!',  response.data);
-            return response.data;
-        })
-        .catch(e => {
-            console.log('SHARELINK ERROR...');
-        });
-    return await res
+    return await axios.get(base()+`/sharelink/${username}/${gen_name}`)
 }

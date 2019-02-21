@@ -1,6 +1,7 @@
 <template>
   <div class="justify-content-center">
-    <template v-if="file">
+    <template v-if="this.file">
+      {{ file.original_filename }}
       <h2 class="file-header">{{ this.file.original_filename }}</h2>
       <VideoPlayer :file="file" v-if="file.file_video_info"/>
       <AudioPlayer :file="file" v-else-if="file.file_audio_info"/>
@@ -44,13 +45,19 @@
       LoadingFiles,
     },
 
-    async created () {
+    async beforeMount() {
         this.username = this.$route.params.username;
         this.gen_name = this.$route.params.gen_name;
-        let data = await this.$api.GetShareData(this.username, this.gen_name);
-        this.file = data.file;
-        this.colour = data.colour;
-        console.log("DATA", this.data)
+
+        await this.$api.GetShareData(this.username, this.gen_name)
+        .then(response => {
+          console.log("SHARELINK SUCCESS", response)
+          this.file = response.data.file;
+          this.colour = response.data.colour;
+        })
+        .catch(e => {
+          console.log('SHARELINK ERROR...');
+        });
     },
   }
 </script>

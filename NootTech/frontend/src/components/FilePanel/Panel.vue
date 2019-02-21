@@ -2,6 +2,8 @@
 
   <div class="file-panel justify-content-center">
 
+    <notifications group="FileDeletion" />
+
     <b-navbar toggleable="lg" type="dark" class="file-menubar">
 
       <b-navbar-toggle target="nav_file_collapse" />
@@ -166,27 +168,36 @@
 
 
     methods: {
-      async reloadFiles() {
-        this.$parent.files = await this.$api.GetFiles();
-        this.$parent.searched_files = this.$parent.files;
-      },
 
       async deleteSelectedFiles() {
         let deleteCount = 0;
 
         for (var i = 0; i < this.selectedFiles.length; i++) {
-          let response = this.$api.DeleteFile(this.selectedFiles[i]);
-
-          if (response) {
+          // Make api call to delete file
+          await this.$api.DeleteFile(this.selectedFiles[i])
+          .then(response => {
+            console.log('DELETE SUCCESS', response);
+            // Increment delete count by 1
             deleteCount += 1;
-          }
+            // Remove id from selectedFiles
+            this.selectedFiles.splice(i, 1);
+
+          })
+          .catch(e => {
+            // Catch the error and notify user that file cant be deleted
+            console.log('ERROR', e.response);
+            console.log("Could not delete file...")
+            return null
+          });
         }
         console.log(`Removed ${deleteCount} files...`);
-        // File reload only seems to work by making two calls??? one call doesn't update searched_files...
         await this.$parent.loadFiles()
-        await this.$parent.loadFiles()
-
-
+        this.$notify({
+          group: 'FileDeletion',
+          title: `Removed <strong>${deleteCount}</strong> files...`,
+          text: 'The file panel is now updating...',
+          position: 'bottom right'
+        });
       },
 
       privateSelectedFiles() {
