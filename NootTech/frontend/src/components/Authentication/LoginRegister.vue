@@ -105,14 +105,12 @@ export default {
     }
   },
   methods: {
-    methods: {
-      showFeedback ({suggestions, warning}) {
-        console.log('🙏', suggestions)
-        console.log('⚠', warning)
-      },
-      showScore (score) {
-        console.log('💯', score)
-      }
+    showFeedback ({suggestions, warning}) {
+      console.log('🙏', suggestions)
+      console.log('⚠', warning)
+    },
+    showScore (score) {
+      console.log('💯', score)
     },
     getColour() {
       var colour = this.register_credentials.colour

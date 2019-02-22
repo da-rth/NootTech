@@ -9,7 +9,7 @@
 <script>
   import NtNavbar from './components/Navigation/Navbar.vue'
   import NtFooter from './components/Navigation/Footer.vue'
-import decode from 'jwt-decode';
+  import decode from 'jwt-decode';
 
   export default {
     name: 'app',
@@ -53,7 +53,7 @@ import decode from 'jwt-decode';
       },
 
       checkToken: function () {
-        if (this.user.authenticated) {
+        if (this.user) {
           if (this.token && this.isTokenAlmostExpired(this.token)) {
             console.log('Token about to expire, refreshing!');
             this.$store.dispatch('REFRESH', {token: this.token});
