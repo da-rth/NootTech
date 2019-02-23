@@ -2,11 +2,15 @@ import axios from 'axios'
 import * as config from './config.js';
 
 const API_URL = config.API_URL
+const FILE_URL = API_URL + '/file';
+const FILES_URL = API_URL + '/files/';
 const LOGIN_URL = API_URL + '/token/auth/';
-const REGISTER_URL = API_URL + '/create-user/';
-const VERIFY_URL = API_URL + '/token/verify/';
 const REFRESH_URL = API_URL + '/token/refresh/';
+const REGISTER_URL = API_URL + '/create-user/';
 const SETTINGS_URL = API_URL + '/settings/';
+const SHARELINK_URL = API_URL + '/sharelink/';
+const UPLOAD_URL = API_URL + '/upload/';
+const VERIFY_URL = API_URL + '/token/verify/';
 
 axios.defaults.xsrfHeaderName = "X-CSRFToken"
 
@@ -118,28 +122,41 @@ export async function GetSettings () {
 
 export async function GetFiles () {
   console.log("Attempting to get user files...");
-  return await axios.get(API_URL+'/files/');
+  return await axios.get(FILES_URL);
 }
 
 export async function DeleteFile (file_id) {
   console.log("Attempting to delete file with ID: "+file_id);
-  return await axios.delete(API_URL+'/file/delete/'+file_id)}
+  return await axios.delete(FILE_URL+'delete/'+file_id)}
 
 
 export async function GetShareData (username, gen_name) {
-  return await axios.get(API_URL+`/sharelink/${username}/${gen_name}`)
+  return await axios.get(SHARELINK_URL+`${username}/${gen_name}`)
 }
 
-export async function UploadFiles(upload_settings) {
+/**
+ * Upload an URL
+ * @param {Object} payload the payload to load
+ * @param {String} payload.upload_key the upload token required for uploading
+ * @param {Blob[]} payload.files an array of blob resources to load
+ * @param {string} payload.username the uploader's username
+ */
+export async function UploadFiles(payload) {
   console.log("Attempting to upload a file");
   let formData = new FormData();
 
   //formData.set('private', Boolean(is_private))
-  formData.set('upload_key', upload_settings.upload_key);
-  formData.set('content', upload_settings.files[0]);
-  formData.set('username', upload_settings.username);
+  formData.set('upload_key', payload.upload_key);
 
-  return await axios.post(API_URL+'/upload/', formData,
+  payload.files.forEach((file => {
+    formData.append(`content`, file, file.name);
+  }));
+
+  formData.set('username', payload.username);
+
+  console.log(formData);
+
+  return await axios.post(UPLOAD_URL, formData,
                 {
                   headers: { 'Content-Type': 'multipart/form-data' }
                 });

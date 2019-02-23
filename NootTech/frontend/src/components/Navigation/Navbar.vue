@@ -130,17 +130,14 @@
       },
       async uploadFiles() {
         // Make api call to delete file
-        await this.$api.UploadFiles(this.upload_files)
-        .then(response => {
+        try {
+          await this.$api.UploadFiles(this.upload_files);
           console.log('Successfully uploaded', response);
-
-        })
-        .catch(e => {
+        } catch(error) {
           // Catch the error and notify user that file cant be deleted
-          console.log('ERROR', e.response);
-          console.log("Could not upload the file...")
-          return null
-        });
+          console.log('ERROR', error.response);
+          console.log("Could not upload the file...");
+        }
         /**
          * TODO: implement an Observer with LoadingFiles (or just use a watch with some global vars)
          */
