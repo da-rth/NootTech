@@ -20,7 +20,6 @@ const mutations = {
   [types.LOGIN]: (state, payload) => {
     state.token = payload.token;
     state.user = payload.user;
-    console.log("OK, now the state is: ", state);
     router.push(payload.redirect);
   },
   [types.SETTINGS]: (state, settings) => {
@@ -50,7 +49,6 @@ const actions = {
    */
   async [types.LOGIN] ({ commit, dispatch }, payload) {
     const mutationPayload = await authentication.login(payload.credentials);
-    console.log(mutationPayload);
     mutationPayload.redirect = payload.redirect;
     console.log("Authentication successfully performed");
     dispatch(types.SETTINGS);
@@ -98,4 +96,4 @@ const store = new Vuex.Store({
   ]
 });
 
-export default store
+export default store;

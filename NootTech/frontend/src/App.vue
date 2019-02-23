@@ -1,5 +1,5 @@
 <template>
-  <div id="NTapp">
+  <div id="NTapp" title="More than meets the mind">
     <nt-navbar></nt-navbar>
     <router-view/>
     <nt-footer></nt-footer>
@@ -15,6 +15,7 @@
     name: 'app',
     data () {
       return {
+        title: "NootTech: More than meets the m-eye-nd!",
         settings: null,
         files: null,
         isLoading: false,
@@ -28,7 +29,7 @@
       },
       user () {
         return this.$store.state.user
-      }
+      },
     },
     components: {
       NtNavbar, NtFooter
@@ -66,6 +67,13 @@
       this.checkToken()
       if (this.token) {
         this.settings = await this.$api.GetSettings();
+      }
+      // set title
+      document.title = this.title;
+    },
+    watch: {
+      title() {
+        document.title = this.title;
       }
     }
   }
