@@ -54,18 +54,36 @@ const actions = {
     dispatch(types.SETTINGS);
     commit(types.LOGIN, mutationPayload);
   },
+  /**
+   * Update the user settings
+   */
   async [types.SETTINGS] ({ commit }) {
     commit(types.SETTINGS, await authentication.GetSettings());
   },
+  /**
+   * Register a new user and logs in with the newly created account
+   * @param {Object} payload
+   * @param {Object} payload.credentials email+username+password
+   * @param {Object} payload.redirect redirect url after registration succeeds
+   */
   async [types.REGISTER] ({ commit, dispatch }, payload) {
     try {
       await authentication.register(payload.credentials);
       console.log("Account created!");
+      dispatch(types.LOGIN, payload);
+      // this step is not necessary as the route will be propagated anyway
       commit(types.REGISTER, payload.redirect);
     } catch(error) {
       console.log("Can't register a new user: ", error);
     }
   },
+  /**
+   * Verify the current token. In case the token is invalid, apply for another
+   * one
+   * @param {Object} payload
+   * @param {String} payload.token
+   * @param {String} payload.redirect In case of failure, redirect to this page
+   */
   async [types.VERIFY] ({ commit }, payload) {
     try {
       let response = await authentication.verifyToken(payload.token);
@@ -78,6 +96,11 @@ const actions = {
       commit(types.LOGOUT, {redirect: payload.redirect});
     }
   },
+  /**
+   * Refresh the current token with a new token.
+   * @param {Object} payload
+   * @param {String} payload.token
+   */
   async [types.REFRESH] ({ commit }, payload) {
     try {
       commit(types.REFRESH, {token: await authentication.refreshToken(payload.token)});

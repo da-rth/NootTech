@@ -1,6 +1,5 @@
 import axios from 'axios'
 import * as config from './config.js';
-import { REGISTER } from './store/mutation-types.js';
 
 const API_URL = config.API_URL
 const LOGIN_URL = API_URL + '/token/auth/';
