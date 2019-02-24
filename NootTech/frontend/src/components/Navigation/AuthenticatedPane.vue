@@ -57,9 +57,11 @@
 
     },
     async beforeMount () {
+        this.sharelinkColour = null;
         this.isLoading = true;
         await this.loadSettings();
         await this.loadFiles();
+
     },
   }
 </script>

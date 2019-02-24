@@ -1,6 +1,6 @@
 <template>
   <div id="NTImagePreview">
-      <img id="NTImage" :src="$site_url+file.file_content">
+      <img id="NTImage" :src="$backend_url+file.file_content">
   </div>
 </template>
 

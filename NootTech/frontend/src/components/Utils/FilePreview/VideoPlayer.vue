@@ -1,11 +1,10 @@
 <template>
   <div class="video-container">
   <video-player
-                 ref="videoPlayer"
-                 class="video-player-box vjs-big-play-centered NTVideoPlayer"
-                 :options="{ aspectRatio: '16:9', muted: false, language: 'en', playbackRates: [0.7, 1.0, 1.5, 2.0], sources: [{ src: video }], fluid: true }"
-                 :playsinline="true"
-                 customEventName="customstatechangedeventname">
+    ref="videoPlayer"
+    class="video-player-box vjs-big-play-centered NTVideoPlayer"
+    :options="{ aspectRatio: '16:9', muted: false, language: 'en', playbackRates: [0.7, 1.0, 1.5, 2.0], sources: [{ src: video }], fluid: true }"
+    :playsinline="true">
   </video-player>
     </div>
 </template>
@@ -17,7 +16,7 @@
     props: ['file'],
     data() {
       return {
-        video: this.file.file_content.startsWith('/') ? this.$site_url+this.file.file_content : this.file.file_content
+        video: this.file.file_content.startsWith('/') ? this.$backend_url+this.file.file_content : this.file.file_content
       }
     },
     mounted() {

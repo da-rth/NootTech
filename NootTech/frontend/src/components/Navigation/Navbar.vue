@@ -1,20 +1,26 @@
 <template>
   <div>
-    <b-navbar toggleable="lg" variant="dark" type="dark">
+    <b-navbar
+    toggleable="lg"
+    variant="dark"
+    type="dark"
+    :style="{borderBottom: ($store.state.settings != null) ? `1px solid ${$store.state.settings.colour}` : `1px solid ${$default_colour}`}">
+
+      <notifications group="FileUpload" />
+
       <b-navbar-toggle target="nav_collapse"/>
       <b-collapse is-nav id="nav_collapse">
 
         <template v-if="$store.state.user != null">
 
-          <b-dropdown v-bind:text="$store.state.user.username">
-            <b-dropdown-item>Favourites</b-dropdown-item>
-            <b-dropdown-item>Upload History</b-dropdown-item>
-            <b-dropdown-item>Settings</b-dropdown-item>
-          </b-dropdown>
-           &nbsp;&nbsp;
+          <b-button class="settings-modal-btn">
+              <font-awesome-icon icon="user-ninja"/>&nbsp; {{ $store.state.user.username }}
+          </b-button>
+
+          &nbsp;&nbsp;
           <router-link to="/how-to">
-            <font-awesome-icon :icon="['fas', 'cloud']"/>
-            How to...
+            <font-awesome-icon icon="question-circle"/>
+            &nbsp;How to...
           </router-link>
         </template>
 
@@ -26,7 +32,7 @@
 
         <!-- Keep this centered -->
         <b-navbar-brand>
-          <router-link class="navbar-brand" to="/">noot.<span class="brand-right">tech</span></router-link>
+          <router-link class="navbar-brand" to="/">Noot<span class="brand-right">tech</span></router-link>
         </b-navbar-brand>
 
         <b-navbar-nav class="ml-auto" v-if="$store.state.user != null">
@@ -36,52 +42,23 @@
             <b-input-group-append>
               <b-button>Copy</b-button>
             </b-input-group-append>
+            &nbsp;&nbsp;
           </b-input-group>
 
           <b-nav-item>
-            <b-button @click="$refs.uploadModal.show()">Upload</b-button>
-            <b-modal
-              ref="uploadModal"
-              title="Upload"
-              header-bg-variant='dark'
-              body-bg-variant='dark'
-              footer-bg-variant='dark'
-              :ok-disabled='upload_files.files.length == 0'
-              @ok="uploadFiles"
-              @cancel="upload_files.files = []"
-              >
-              <h1>File upload</h1>
-              You can select one or more files.
-              <b-form>
-                <b-form-group
-                  id="inputFileGroup"
-                  label="Select a file: "
-                  label-for="inputFileField">
-                  <!-- TODO: implement a grid-like drop zone here! -->
-                  <b-form-file
-                    v-model="upload_files.files"
-                    :state="upload_files.files.length > 0"
-                    placeholder="Choose one or more file..."
-                    drop-placeholder="Drop one or more files here..."
-                    browse-text="Select file(s)"
-                    multiple
-                  />
-                  <div class="mt-3">Selected files: {{ upload_files.files.map(x => x.name) }}</div>
-
-                </b-form-group>
-              </b-form>
-            </b-modal>
+            <a @click="$refs.uploadModalContainer.$refs.uploadModal.show()"><font-awesome-icon icon="upload"/>&nbsp; Upload</a>
+            <nt-upload-modal ref="uploadModalContainer"></nt-upload-modal>
           </b-nav-item>
+
           <b-nav-item>
             <a v-on:click="showUploadKey = !showUploadKey" name="check-button">
-              &nbsp;
-              <font-awesome-icon :icon="['fas', 'eye-slash']" v-if="showUploadKey"/>
-              <font-awesome-icon :icon="['fas', 'eye']" v-else/>
+              <font-awesome-icon icon="eye-slash" v-if="showUploadKey"/>
+              <font-awesome-icon icon="eye" v-else/>&nbsp;
               {{ showUploadKey ? "&nbsp;Hide Key" : "Show Key" }}
             </a>
-            &nbsp;
+            &nbsp;&nbsp;
             <router-link to="/logout">
-              <font-awesome-icon :icon="['fas', 'sign-out-alt']"/> &nbsp;Logout
+              <font-awesome-icon :icon="['fas', 'sign-out-alt']"/> Logout
             </router-link>
           </b-nav-item>
         </b-navbar-nav>
@@ -101,63 +78,21 @@
 </template>
 <script>
   import NtPopup from '../Utils/Popup.vue'
-  import axios from 'axios'
+  import NtUploadModal from '../Modals/UploadModal'
 
   export default {
     name: 'NtNavbar',
     data() {
       return {
         brandName: "NootTech",
-        text: "To Load",
-        showUploadKey: false,
-        upload_files: {
-          username: this.$store.state.user != null ? this.$store.state.user.username : "",
-          upload_key: this.$store.state.settings != null ? this.$store.state.settings.upload_key : "",
-          files: [],
-          is_private: false,
-        }
-     };
+        showUploadKey: false
+      };
     },
-    methods: {
-      async handleOkUpload(evt) {
-        evt.preventDefault()
-        // last resort check before sending the payload
-        if(this.upload_files.files.length == 0) {
-          await this.uploadFiles()
-          .then(() => this.$refs.uploadModal.hide())
-          .catch(() => console.log("Something bad happened and I can't close the modal"))
-        }
-      },
-      async uploadFiles() {
-        // Make api call to delete file
-        try {
-          await this.$api.UploadFiles(this.upload_files);
-          console.log('Successfully uploaded', response);
-        } catch(error) {
-          // Catch the error and notify user that file cant be deleted
-          console.log('ERROR', error.response);
-          console.log("Could not upload the file...");
-        }
-        /**
-         * TODO: implement an Observer with LoadingFiles (or just use a watch with some global vars)
-         */
-      }
-        /**
-         *  await this.$parent.loadFiles()
-        this.$notify({
-          group: 'FileDeletion',
-          title: `Removed <strong>${deleteCount}</strong> files...`,
-          text: 'The file panel is now updating...',
-          position: 'bottom right'
-        });
-      },
-      */
-    },
-    components: {NtPopup}
-
+    components: {NtPopup, NtUploadModal}
   }
+
 </script>
-<style scoped>
+<style>
   .navbar.bg-dark {
     background-color: #202020 !important;
     border-bottom: 1px solid #121212;
@@ -209,5 +144,18 @@
 
   .filebar-uploadkey .btn {
     height: 32px;
+  }
+  .user-dropdown button {
+    color: red;
+  }
+  .settings-modal-btn {
+    padding: 0px 10px;
+    border: none;
+    background: transparent;
+    color: #909090;
+  }
+
+  .settings-modal-btn:hover {
+    color: #FFFFFF;
   }
 </style>

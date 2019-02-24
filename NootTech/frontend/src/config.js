@@ -19,3 +19,6 @@ export const API_URL = BACKEND_URL+"/api";
  * TODO: toggle ENABLE_SUBDOMAINS to enable subdomain usernames
  */
 export const ENABLE_SUBDOMAINS = false;
+
+
+export const DEFAULT_HIGHLIGHT = "#bebebe";

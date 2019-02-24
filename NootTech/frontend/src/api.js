@@ -19,7 +19,7 @@ axios.defaults.xsrfHeaderName = "X-CSRFToken"
  * user.is_authenticated API calls.
  * This function is invoked every time the user loges in.
  * TODO: choose whether to expose this function or not.
- * 
+ *
  * @param {string} token - the JWT token
  */
 
@@ -54,11 +54,11 @@ export async function login(credentials) {
 
 /**
  * Register a new user.
- * 
+ *
  * N.B.: This call doesn't automatically log the user in, hence the `login()` function
  * should always be invoked.
- * 
- * @param {Object} credentials 
+ *
+ * @param {Object} credentials
  * @param {string} credentials.username
  * @param {string} credentials.email
  * @param {string} credentials.password
@@ -71,8 +71,8 @@ export async function register(credentials) {
 
 /**
  * checks if the current token is still valid.
- * 
- * @param {string} token 
+ *
+ * @param {string} token
  * @returns {Promise} an axios response encapsulated in a promise.
  * On success the response data should contain the same token
  */
@@ -84,7 +84,7 @@ export async function verifyToken(token) {
 /**
  * Check the current token and provide a new one.
  * The new token is automatically used
- * 
+ *
  * @param {string} old_token - the old token
  * @returns {Promise} the new token (a `string`) encapsulated in a promise
  */
@@ -112,7 +112,7 @@ export async function GetErrorVideos () {
 }
 /**
  * Get the user settings.
- * @returns {Promise} A list of settings 
+ * @returns {Promise} A list of settings
  */
 export async function GetSettings () {
   console.log("Attempting to get user settings...");
@@ -142,22 +142,14 @@ export async function GetShareData (username, gen_name) {
  * @param {string} payload.username the uploader's username
  */
 export async function UploadFiles(payload) {
-  console.log("Attempting to upload a file");
+  console.log("Attempting to upload a file", payload);
   let formData = new FormData();
-
   //formData.set('private', Boolean(is_private))
   formData.set('upload_key', payload.upload_key);
-
+  formData.set('username', payload.username);
   payload.files.forEach((file => {
     formData.append(`content`, file, file.name);
   }));
 
-  formData.set('username', payload.username);
-
-  console.log(formData);
-
-  return await axios.post(UPLOAD_URL, formData,
-                {
-                  headers: { 'Content-Type': 'multipart/form-data' }
-                });
+  return await axios.post(UPLOAD_URL, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
 }

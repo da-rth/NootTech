@@ -13,20 +13,20 @@
         <div class="col-md">
 
           <b-button-group>
-            <b-button class="filebar-btn"><font-awesome-icon :icon="['fas', 'minus']"/></b-button>
-            <b-button class="filebar-btn"><font-awesome-icon :icon="['fas', 'plus']"/></b-button>
+            <b-button class="filebar-btn"><font-awesome-icon icon="minus"/></b-button>
+            <b-button class="filebar-btn"><font-awesome-icon icon="plus"/></b-button>
           </b-button-group>
 
           <!-- Popup modal here? -->
           <b-button-group>
-            <b-button class="filebar-btn"><font-awesome-icon :icon="['fas', 'th']"/></b-button>
-            <b-button class="filebar-btn"><font-awesome-icon :icon="['fas', 'list']"/></b-button>
+            <b-button class="filebar-btn"><font-awesome-icon icon="th"/></b-button>
+            <b-button class="filebar-btn"><font-awesome-icon icon="list"/></b-button>
           </b-button-group>
           &nbsp;
 
           <a v-on:click="showPrivateFiles = !showPrivateFiles" name="check-button">
-              <font-awesome-icon v-bind:icon="['fas', 'share']" v-if="showPrivateFiles"/>
-              <font-awesome-icon v-bind:icon="['fas', 'user-secret']" v-else/>
+              <font-awesome-icon icon="share" v-if="showPrivateFiles"/>
+              <font-awesome-icon icon="user-secret" v-else/>
               {{ showPrivateFiles ? "&nbsp;View Public files" : "&nbsp;View Private Files" }}
             </a>
 
@@ -49,7 +49,6 @@
         <b-navbar-nav class="ml-auto">
 
           <div class="col-sm">
-            <font-awesome-icon />
             <input v-model="searchTerm" class="form-control file-search" type="search" :icon="['fas', 'search']" placeholder="Search..." aria-label="Search">
           </div>
 
@@ -86,30 +85,27 @@
       <b-form-checkbox-group v-model="selectedFiles">
 
         <b-row class="file-grid justify-content-center">
-
-          <template v-for="file in  paginated('searched_files')">
-
-            <template v-if="showPrivateFiles">
-
-              <NtBadge
+          <template v-if="paginated('searched_files').length <= 0">
+            <h1>You haven't uploaded any files yet! <font-awesome-icon icon="sad-tear"/></h1>
+          </template>
+          <template v-else>
+            <template v-for="file in  paginated('searched_files')">
+              <template v-if="showPrivateFiles">
+                <NtBadge
+                  class="file-badge"
+                  v-if="file.is_private"
+                  :key="file.id" :value="file"
+                  :selectionStatus="selectFiles"
+                  :selected="isSelected(file.id)"
+                /></template>
+              <template v-else><NtBadge
                 class="file-badge"
-                v-if="file.is_private"
+                v-if="!file.is_private"
                 :key="file.id" :value="file"
                 :selectionStatus="selectFiles"
                 :selected="isSelected(file.id)"
-              />
+              /></template>
             </template>
-
-            <template v-else><NtBadge
-              class="file-badge"
-              v-if="!file.is_private"
-              :key="file.id" :value="file"
-              :selectionStatus="selectFiles"
-              :selected="isSelected(file.id)"
-            />
-
-            </template>
-
           </template>
 
         </b-row>

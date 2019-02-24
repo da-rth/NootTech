@@ -36,7 +36,17 @@ Vue.use(BootstrapVue);
 
 Vue.prototype.$api = backendAPI;
 Vue.prototype.$site_url = config.SITE_URL;
+Vue.prototype.$backend_url = config.BACKEND_URL;
 Vue.prototype.$subdomain_enabled = config.ENABLE_SUBDOMAINS;
+Vue.prototype.$default_colour = config.DEFAULT_HIGHLIGHT;
+
+Vue.mixin({
+  data: function () {
+    return {
+      sharelinkColour: null
+    }
+  }
+})
 
 Vue.directive('highlightjs', {
     deep: true,

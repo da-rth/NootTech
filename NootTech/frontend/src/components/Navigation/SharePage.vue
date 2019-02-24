@@ -1,5 +1,6 @@
 <template>
   <div class="justify-content-center">
+    {{ sharelinkColour }}
     <template v-if="this.file">
       {{ file.original_filename }}
       <h2 class="file-header">{{ this.file.original_filename }}</h2>
@@ -54,6 +55,7 @@
           console.log("SHARELINK SUCCESS", response)
           this.file = response.data.file;
           this.colour = response.data.colour;
+          this.sharelinkColour = this.colour;
         })
         .catch(e => {
           console.log('SHARELINK ERROR...');
