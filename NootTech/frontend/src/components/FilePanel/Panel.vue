@@ -1,6 +1,6 @@
 <template>
 
-  <div class="file-panel justify-content-center">
+  <div class="file-panel">
 
     <notifications group="FileDeletion" />
 
@@ -12,15 +12,15 @@
 
         <div class="col-md">
 
-          <b-button-group>
-            <b-button class="filebar-btn"><font-awesome-icon icon="minus"/></b-button>
-            <b-button class="filebar-btn"><font-awesome-icon icon="plus"/></b-button>
+          <b-button-group class="filebar-btn-group">
+            <b-button class="filebar-btn" v-on:click="decreaseWH()"><font-awesome-icon icon="minus"/></b-button>
+            <b-button class="filebar-btn" v-on:click="increaseWH()"><font-awesome-icon icon="plus"/></b-button>
           </b-button-group>
 
           <!-- Popup modal here? -->
-          <b-button-group>
-            <b-button class="filebar-btn"><font-awesome-icon icon="th"/></b-button>
-            <b-button class="filebar-btn"><font-awesome-icon icon="list"/></b-button>
+          <b-button-group class="filebar-btn-group">
+            <b-button class="filebar-btn" v-on:click="grid_view = true"><font-awesome-icon icon="th"/></b-button>
+            <b-button class="filebar-btn" v-on:click="grid_view = false"><font-awesome-icon icon="list"/></b-button>
           </b-button-group>
           &nbsp;
 
@@ -88,23 +88,50 @@
           <template v-if="paginated('searched_files').length <= 0">
             <h1>You haven't uploaded any files yet! <font-awesome-icon icon="sad-tear"/></h1>
           </template>
+
           <template v-else>
+
             <template v-for="file in  paginated('searched_files')">
-              <template v-if="showPrivateFiles">
-                <NtBadge
-                  class="file-badge"
-                  v-if="file.is_private"
-                  :key="file.id" :value="file"
-                  :selectionStatus="selectFiles"
-                  :selected="isSelected(file.id)"
-                /></template>
-              <template v-else><NtBadge
-                class="file-badge"
-                v-if="!file.is_private"
-                :key="file.id" :value="file"
-                :selectionStatus="selectFiles"
-                :selected="isSelected(file.id)"
-              /></template>
+
+              <template v-if="grid_view">
+                <template v-if="showPrivateFiles">
+
+                  <NtBadge
+                    :style="{
+                      width: `${thumb_size.width}rem`,
+                      height: `${thumb_size.height}rem`
+                      }"
+                    class="file-badge"
+                    v-if="file.is_private"
+                    :key="file.id" :value="file"
+                    :selectionStatus="selectFiles"
+                    :selected="isSelected(file.id)"/>
+                </template>
+
+                <template v-else>
+
+                  <NtBadge
+                    :style="{
+                      width: `${thumb_size.width}rem`,
+                      height: `${thumb_size.height}rem`
+                      }"
+                    class="file-badge"
+                    v-if="!file.is_private"
+                    :key="file.id" :value="file"
+                    :selectionStatus="selectFiles"
+                    :selected="isSelected(file.id)"/>
+
+                </template>
+              </template>
+
+              <template v-else>
+                <template v-if="showPrivateFiles">
+                  <nt-row-badge :key="file.id" :height="row_height" :file="file" v-if="file.is_private"/>
+                </template>
+                <template v-else>
+                  <nt-row-badge :key="file.id" :height="row_height" :file="file"/>
+                </template>
+              </template>
             </template>
           </template>
 
@@ -132,11 +159,11 @@
    * MODAL currently broken by setting .file-grid "overflow: scroll". Perhaps because modal is inside badge component...
    */
   import NtBadge from "../Utils/Badge";
-  import NtPopupModal from "../Utils/FilePopupModal"
+  import NtRowBadge from "../Utils/RowBadge"
 
   export default {
     name: "FilePanel",
-    components: {NtBadge},
+    components: {NtBadge, NtRowBadge},
     data() {
       return {
         searchTerm: null,
@@ -149,6 +176,13 @@
         paginate: ['searched_files'],
         page: {},
         paginate_by: 60,
+        thumb_size: {
+          // rem
+          width: 18,
+          height: 10
+        },
+        row_height: 10,
+        grid_view: true
       }
     },
     watch: {
@@ -164,6 +198,21 @@
 
 
     methods: {
+
+      increaseWH() {
+        if (this.thumb_size.width < 24 && this.thumb_size.height < 14 && this.row_height < 18) {
+          this.thumb_size.width += 0.5;
+          this.thumb_size.height += 0.5;
+          this.row_height += 0.5;
+        }
+      },
+      decreaseWH() {
+        if (this.thumb_size.width > 9 && this.thumb_size.height > 5 && this.row_height >= 10) {
+          this.thumb_size.width -= 0.5;
+          this.thumb_size.height -= 0.5;
+          this.row_height -= 0.5;
+        }
+      },
 
       async deleteSelectedFiles() {
         let deleteCount = 0;
@@ -261,11 +310,18 @@
 
   .file-panel {
     margin: 20px auto;
-    height: 90vh;
+    max-height: 90vh;
     width: 90vw;
   }
 
-  .file-menubar,
+  .file-menubar {
+    width: 92.2vw;
+    background-color: rgba(0,0,0,0.1);
+    padding: 3px;
+    border: 1px solid #121212;
+    margin-left: -29px;
+  }
+
   .file-grid {
     padding: 10px;
     width: 92.2vw;
@@ -301,13 +357,29 @@
 
   .file-badge {
     margin: 5px;
-    height: 10rem;
-    width: 18rem;
+    background-color: transparent;
   }
 
   .file-search, .file-sort {
     background-color: rgba(0,0,0,0.2);
     border: 1px solid #3d3d3d;
   }
+
+  .filebar-btn-group .filebar-btn {
+    background-color: transparent;
+    border: none;
+    border-radius: 5px;
+    margin: 4px;
+  }
+
+  .filebar-btn-group .filebar-btn:focus {
+    border: none;
+    box-shadow: none;
+  }
+
+  .filebar-btn-group {
+    border: 1px solid #202020;
+  }
+
 
 </style>

@@ -76,6 +76,7 @@
 
 <style scoped>
   .hovereffect {
+    background-size: cover;
     overflow: hidden;
     display: inline-block;
   }
@@ -139,5 +140,7 @@
     -webkit-transform:translatey(0);
     transform: translatey(0);
   }
-
+  .card-img-overlay {
+    /*background-color: #202020;*/
+  }
 </style>
