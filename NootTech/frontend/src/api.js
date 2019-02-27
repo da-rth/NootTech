@@ -153,3 +153,9 @@ export async function UploadFiles(payload) {
 
   return await axios.post(UPLOAD_URL, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
 }
+
+
+export async function GetFile(url) {
+  // Gets the content of a specified URL (used for highlightjs)
+  return await axios.get(url);
+}

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from collections import OrderedDict
-from .models import User, ErrorVideo, File, FavouritedFile, ReportedFile, Image, Video, Audio, Text
+from .models import User, ErrorVideo, File, FavouritedFile, ReportedFile, Image, Video, Audio, Text, VirusTotalScan
 from django.contrib.auth.password_validation import validate_password
 from django.core import exceptions
 from . import validators
@@ -8,7 +8,10 @@ from . import validators
 """
 Sub-File Serializers (Image, Video, Audio, Text)
 """
-
+class VirusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VirusTotalScan
+        fields = '__all__'
 
 class ImageFileSerializer(serializers.ModelSerializer):
     """
@@ -63,38 +66,15 @@ class ListFilesSerializer(serializers.ModelSerializer):
     file_video_info = VideoFileSerializer(source='file_video')
     file_audio_info = AudioFileSerializer(source='file_audio')
     file_text_info = TextFileSerializer(source='file_text')
+    virus_info = VirusSerializer(source='virus_scan')
 
     class Meta:
         model = File
-        exclude = ('file_image', 'file_video', 'file_audio', 'file_text')
+        exclude = ('file_image', 'file_video', 'file_audio', 'file_text', 'virus_scan')
 
     def to_representation(self, instance):
         result = super(ListFilesSerializer, self).to_representation(instance)
         return OrderedDict([(key, result[key]) for key in result if result[key] is not None])
-
-
-class SubdomainSerializer(serializers.ModelSerializer):
-    """
-    This serializer is almost identical to the serializer above.
-    However, since this file will be displayed on a subdomain for ANYONE to see,
-    we want to exlude the user's IP address from being sent to the frontend, as well as other irrelevant information
-    """
-    file_image_info = ImageFileSerializer(source='file_image')
-    file_video_info = VideoFileSerializer(source='file_video')
-    file_audio_info = AudioFileSerializer(source='file_audio')
-    file_text_info = TextFileSerializer(source='file_text')
-    username = serializers.CharField(source="user.username")
-    colour = serializers.CharField(source="user.colour")
-
-    class Meta:
-        # Prevent IP and is_private from being included in serialized data
-        exclude = ('ip', 'is_private', 'file_image', 'file_video', 'file_audio', 'file_text')
-        model = File
-
-    def to_representation(self, instance):
-        result = super(SubdomainSerializer, self).to_representation(instance)
-        return OrderedDict([(key, result[key]) for key in result if result[key] is not None])
-
 
 class SerializeFavouritesList(serializers.ModelSerializer):
     """

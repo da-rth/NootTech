@@ -14,7 +14,7 @@
     You can select one or more files.
 
     <b-form class="upload-form">
-      <b-form-group
+      <b-form-group>
         <b-form-file
           v-model="upload_data.files"
           class="file-selection-area"

@@ -1,4 +1,5 @@
 <template>
+
   <b-card
     overlay
     img-alg="Image"
@@ -12,6 +13,8 @@
     v-on:input="$emit('input', $event.target.value); "
     :img-src="value.file_thumbnail"
   >
+    <font-awesome-icon icon="play" v-if="value.file_thumbnail && value.file_mime_type.startsWith('video')" class="large-fa-icon"/>
+    <font-awesome-icon :icon="getIcon()" v-else-if="value.file_thumbnail == null" class="large-fa-icon"/>
     <NtPopupModal :ref="popup_id" v-model="value" />
 
     <b-form-checkbox class="badge-checkbox" v-if="selectionStatus" v-bind:value="value.id"></b-form-checkbox>
@@ -21,8 +24,11 @@
       <h2>{{value.original_filename}}</h2>
       <div class="overlay-footer">
         <div class="icon">
-          <font-awesome-icon :icon="getIcon()"/>
+          <font-awesome-icon :icon="getIcon()" v-if="value.file_thumbnail != null"/>
+          <font-awesome-icon icon="file-archive" v-else/>
+          <span style="padding-left: 2px">{{ value.file_size_str }}</span>
         </div>
+
         <div class="views">
           <font-awesome-icon icon="eye"/>
           <span style="padding-left: 2px">{{getViews()}}</span>
@@ -142,5 +148,12 @@
   }
   .card-img-overlay {
     /*background-color: #202020;*/
+    text-align: center;
+  }
+
+  .large-fa-icon {
+    font-size: 7rem !important; /* 11rem max, 6.4rem minimum */
+    text-align: center;
+    opacity: 0.8;
   }
 </style>
