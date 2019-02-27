@@ -10,8 +10,7 @@ import VuePaginate from 'vue-paginate'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'
 import { far } from '@fortawesome/free-regular-svg-icons'
-import { fab } from '@fortawesome/fontawesome-free-brands';
-//import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 import VueVideoPlayer from 'vue-video-player'
 import Notifications from 'vue-notification'
@@ -79,7 +78,6 @@ Vue.use(VueHighlightJS, {
 // register FontAwesome fonts
 library.add(fas);
 library.add(far);
-//library.add(fab);
 
 
 Vue.component('font-awesome-icon', FontAwesomeIcon);
