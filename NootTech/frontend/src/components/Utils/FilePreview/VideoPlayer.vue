@@ -39,7 +39,6 @@
     border-bottom: 1px solid rgba(0,0,0,0.6);
   }
 .NTVideoPlayer {
-  width: 68vw;
   margin: 0 auto;
 }
 </style>

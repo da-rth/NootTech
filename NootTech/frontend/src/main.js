@@ -99,7 +99,8 @@ Vue.mixin({
   data: function () {
     return {
       colour: config.DEFAULT_HIGHLIGHT,
-      sharelinkName: null
+      sharelinkName: null,
+      popupFileModalFile: null,
     }
   }
 })

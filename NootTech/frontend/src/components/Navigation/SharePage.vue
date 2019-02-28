@@ -1,6 +1,5 @@
 <template>
   <div class="justify-content-center">
-    {{ $root.colour }}
     <template v-if="this.file">
 
       <h2 class="file-header">{{ this.file.original_filename }}</h2>

@@ -183,7 +183,8 @@
           height: 10
         },
         row_height: 10,
-        grid_view: true
+        grid_view: true,
+        openedFile: null
       }
     },
     watch: {
@@ -216,6 +217,7 @@
       },
 
       async deleteSelectedFiles() {
+
         let deleteCount = 0;
 
         for (var i = 0; i < this.selectedFiles.length; i++) {

@@ -2,7 +2,6 @@
   <div>
     <LoadingFiles :multiple="true" v-if="isLoading"></LoadingFiles>
     <template v-else>
-      <!--FileMenu></ileMenu-->
       <FilePanel></FilePanel>
     </template>
   </div>

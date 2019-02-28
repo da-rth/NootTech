@@ -76,6 +76,22 @@ class ListFilesSerializer(serializers.ModelSerializer):
         result = super(ListFilesSerializer, self).to_representation(instance)
         return OrderedDict([(key, result[key]) for key in result if result[key] is not None])
 
+
+class PublicFileSerializer(serializers.ModelSerializer):
+    file_image_info = ImageFileSerializer(source='file_image')
+    file_video_info = VideoFileSerializer(source='file_video')
+    file_audio_info = AudioFileSerializer(source='file_audio')
+    file_text_info = TextFileSerializer(source='file_text')
+    virus_info = VirusSerializer(source='virus_scan')
+
+    class Meta:
+        model = File
+        exclude = ('file_image', 'file_video','file_audio', 'file_text', 'virus_scan', 'ip')
+
+    def to_representation(self, instance):
+        result = super(PublicFileSerializer, self).to_representation(instance)
+        return OrderedDict([(key, result[key]) for key in result if result[key] is not None])
+
 class SerializeFavouritesList(serializers.ModelSerializer):
     """
     This serializer takes a file (favourited by a user) and returns a small amount of the file's attributes

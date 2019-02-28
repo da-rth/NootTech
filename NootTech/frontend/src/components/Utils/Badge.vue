@@ -5,18 +5,26 @@
     img-alg="Image"
     img-top
     tag="article"
-    style="width: 18rem;"
     class="mb-2 hovereffect"
-    :border-variant="selected ? 'primary' : 'white'"
+    :border-variant="selected ? 'danger' : 'secondary'"
     v-bind:value="value"
     text-variant="dark"
     v-on:input="$emit('input', $event.target.value); "
     :img-src="value.file_thumbnail"
   >
-    <font-awesome-icon icon="play" v-if="value.file_thumbnail && value.file_mime_type.startsWith('video')" class="large-fa-icon"/>
-    <font-awesome-icon :icon="getIcon()" v-else-if="value.file_thumbnail == null" class="large-fa-icon"/>
-    <NtPopupModal :ref="popup_id" v-model="value" />
+    <font-awesome-icon 
+     icon="play"
+     v-if="value.file_thumbnail && value.file_mime_type.startsWith('video')" 
+     class="large-fa-icon"
+     />
 
+    <font-awesome-icon 
+     :icon="getIcon()" 
+     v-else-if="value.file_thumbnail == null" 
+     class="large-fa-icon"
+    />
+
+    <NtFilePopupModal :ref="popup_id" v-model="value" />
     <b-form-checkbox class="badge-checkbox" v-if="selectionStatus" v-bind:value="value.id"></b-form-checkbox>
 
     <div class="overlay" v-else @click="showModal">
@@ -40,10 +48,11 @@
 
 <script>
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-  import NtPopupModal from './FilePopupModal';
+  import NtFilePopupModal from '../Modals/FilePopupModal'
+
   export default {
     name: "NtBadge",
-    components: {NtPopupModal, FontAwesomeIcon},
+    components: {FontAwesomeIcon, NtFilePopupModal},
     props: ['value', 'selected', 'selectionStatus'],
     data() {
       return {
@@ -80,7 +89,7 @@
   }
 </script>
 
-<style scoped>
+<style>
   .hovereffect {
     background-size: cover;
     overflow: hidden;
@@ -152,8 +161,35 @@
   }
 
   .large-fa-icon {
-    font-size: 7rem !important; /* 11rem max, 6.4rem minimum */
-    text-align: center;
-    opacity: 0.8;
+    font-size: 400%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+  }
+
+  .badge-checkbox {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,.2);
+  }
+
+  .badge-checkbox .custom-control-label,
+  .badge-checkbox .custom-control-label::before,
+  .badge-checkbox .custom-control-label::after  {
+    cursor: pointer;
+    border-radius: 0px;
+    width: 105% !important;
+    height: auto !important;
+    background: transparent !important;
+    margin: -5px;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    top: 0;
   }
 </style>

@@ -142,7 +142,7 @@ class SubdomainViewSet(viewsets.ViewSet):
 
         user = User.objects.filter(username=username).first()
         file = File.objects.filter(user=user, generated_filename=gen_name).first()
-        serializer = serializers.ListFilesSerializer(file)
+        serializer = serializers.PublicFileSerializer(file)
         data = serializer.data
         if user and file:
             file.views += 1
