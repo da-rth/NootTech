@@ -55,25 +55,25 @@
           <div class="col-sm">
 
             <select @change="changedSelectionValue" class="custom-select file-sort">
-              <option value="-date">Sorty by...</option>
+              <option class="opt"value="-date">Sorty by...</option>
 
-              <option value="-date">Upload date (Latest)</option>
-              <option value="date">Upload date (Oldest)</option>
+              <option class="opt"value="-date">Upload date (Latest)</option>
+              <option class="opt"value="date">Upload date (Oldest)</option>
 
-              <option value="original_filename">Original Filename (A-Z)</option>
-              <option value="-original_filename">Original Filename (Z-A)</option>
+              <option class="opt"value="original_filename">Original Filename (A-Z)</option>
+              <option class="opt"value="-original_filename">Original Filename (Z-A)</option>
 
-              <option value="generated_filename">Generated Filename (A-Z)</option>
-              <option value="-generated_filename">Generated Filename (Z-A)</option>
+              <option class="opt"value="generated_filename">Generated Filename (A-Z)</option>
+              <option class="opt"value="-generated_filename">Generated Filename (Z-A)</option>
 
-              <option value="file_ext">Extension (Ascending)</option>
-              <option value="-file_ext">Extension (Descending)</option>
+              <option class="opt"value="file_ext">Extension (Ascending)</option>
+              <option class="opt"value="-file_ext">Extension (Descending)</option>
 
-              <option value="-views">Views (Most)</option>
-              <option value="views">Views (Least)</option>
+              <option class="opt" value="-views">Views (Most)</option>
+              <option class="opt"value="views">Views (Least)</option>
 
-              <option value="-file_size_bytes">Filesize (Largest)</option>
-              <option value="file_size_bytes">Filesize (Smallest)</option>
+              <option class="opt"value="-file_size_bytes">Filesize (Largest)</option>
+              <option class="opt"value="file_size_bytes">Filesize (Smallest)</option>
             </select>
 
           </div>
@@ -311,7 +311,7 @@
 
 </script>
 
-<style scoped>
+<style>
   * {
     color: #b8b8b8;
   }
@@ -389,5 +389,7 @@
     border: 1px solid #202020;
   }
 
-
+  .opt {
+    color: black;
+  }
 </style>
