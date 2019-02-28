@@ -1,6 +1,6 @@
 <template>
   <div id="download-container">
-    <b-button class="download-btn" v-on:click="downloadFile()">
+    <b-button class="download-btn" v-bind:style="{borderColorHover: this.$root.colour}" v-on:click="downloadFile()">
       <font-awesome-icon icon="download"/> &nbsp;Download File ({{ file.file_size_str }})
       </b-button>
 
@@ -9,7 +9,7 @@
         <font-awesome-icon icon="shield-alt"/> &nbsp;Virus Total Info
         </b-button>
       <br/><br/>
-      <span class="md5"><span v-bind:style="{color: '#00CCCC'}">MD5:</span> {{ file.virus_info.md5 }}</span>
+      <span class="md5"><span v-bind:style="{color: this.$root.colour}">MD5:</span> {{ file.virus_info.md5 }}</span>
     </template>
   </div>
 </template>
@@ -68,7 +68,7 @@
 }
 .download-btn:hover {
   opacity: 1;
-  border: 1px solid #00CCCC;
+  border: 1px solid #FFFFFF;
 }
 
 .virus-btn:hover {

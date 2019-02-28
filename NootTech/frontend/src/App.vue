@@ -15,11 +15,7 @@
     name: 'app',
     data () {
       return {
-        title: "NootTech: More than meets the m-eye-nd!",
-        settings: null,
-        files: null,
-        isLoading: false,
-        subdomain: false,
+        title: "NootTech",
         domain: 'noot.tech'
       }
     },
@@ -34,6 +30,7 @@
     components: {
       NtNavbar, NtFooter
     },
+
     methods: {
 
       getTokenExpirationDate: function (encodedToken) {
@@ -63,19 +60,12 @@
       }
     },
     async beforeMount () {
-      this.$store.dispatch('VERIFY', {token: this.token});
-      this.checkToken()
       if (this.token) {
-        this.settings = await this.$api.GetSettings();
+        this.$store.dispatch('VERIFY', {token: this.token});
+        this.checkToken()
       }
-      // set title
       document.title = this.title;
     },
-    watch: {
-      title() {
-        document.title = this.title;
-      }
-    }
   }
 </script>
 

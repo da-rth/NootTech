@@ -21,4 +21,4 @@ export const API_URL = BACKEND_URL+"/api";
 export const ENABLE_SUBDOMAINS = false;
 
 
-export const DEFAULT_HIGHLIGHT = "#bebebe";
+export const DEFAULT_HIGHLIGHT = "#00cccc";

@@ -62,6 +62,14 @@
     methods: {
       onSlideStart(slide) { this.sliding = true},
       onSlideEnd(slide) { this.sliding = false}
+    },
+    async updated() {
+      this.$root.colour = this.$default_colour;
+      this.$root.sharelinkName = null;
+    },
+    async mounted() {
+      this.$root.colour = this.$default_colour;
+      this.$root.sharelinkName = null;
     }
   }
 </script>

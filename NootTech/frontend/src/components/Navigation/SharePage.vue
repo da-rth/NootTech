@@ -1,5 +1,6 @@
 <template>
   <div class="justify-content-center">
+    {{ $root.colour }}
     <template v-if="this.file">
 
       <h2 class="file-header">{{ this.file.original_filename }}</h2>
@@ -45,15 +46,16 @@
     },
 
     async beforeMount() {
+
         this.username = this.$route.params.username;
         this.gen_name = this.$route.params.gen_name;
+        this.$root.sharelinkName = this.username;
 
         await this.$api.GetShareData(this.username, this.gen_name)
         .then(response => {
           console.log("SHARELINK SUCCESS", response)
           this.file = response.data.file;
-          this.colour = response.data.colour;
-          this.sharelinkColour = this.colour;
+          this.$root.colour = response.data.colour;
         })
         .catch(e => {
           console.log('SHARELINK ERROR...');

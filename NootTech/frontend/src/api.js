@@ -14,6 +14,10 @@ const VERIFY_URL = API_URL + '/token/verify/';
 
 axios.defaults.xsrfHeaderName = "X-CSRFToken"
 
+var axios_unauth = axios.create({
+  baseURL: config.API_URL,
+  timeout: 1000
+});
 /**
  * Configures AXIOS to send JWT token in header of each API request for
  * user.is_authenticated API calls.
@@ -131,7 +135,7 @@ export async function DeleteFile (file_id) {
 
 
 export async function GetShareData (username, gen_name) {
-  return await axios.get(SHARELINK_URL+`${username}/${gen_name}`)
+  return await axios_unauth.get(SHARELINK_URL+`${username}/${gen_name}`)
 }
 
 /**
@@ -157,5 +161,5 @@ export async function UploadFiles(payload) {
 
 export async function GetFile(url) {
   // Gets the content of a specified URL (used for highlightjs)
-  return await axios.get(url);
+  return await axios_unauth.get(url);
 }

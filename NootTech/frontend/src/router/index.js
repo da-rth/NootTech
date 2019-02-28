@@ -11,6 +11,7 @@ import LoginRegister from '../components/Authentication/LoginRegister'
 import Logout from '../components/Authentication/Logout'
 import PageNotFound from '../components/Navigation/PageNotFound'
 import Privacy from '../components/Privacy'
+import HowTo from '../components/HowTo'
 
 Vue.use(Router);
 
@@ -29,6 +30,11 @@ const routes = [
     path: '/logout',
     name: 'Logout',
     component: Logout
+  },
+  {
+    path: '/how-to',
+    name: 'HowTo',
+    component: HowTo
   },
   {
     path: '/about',

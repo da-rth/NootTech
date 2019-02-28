@@ -80,7 +80,7 @@
 
     </b-navbar>
 
-    <paginate name="searched_files" :list="$parent.searched_files" :per="paginate_by" tag="div" class="row file-row">
+    <paginate name="searched_files" :list="$parent.searched_files" :per="paginate_by" tag="div" class="row file-row" v-if="$parent.searched_files">
 
       <b-form-checkbox-group v-model="selectedFiles">
 
@@ -148,6 +148,7 @@
       :classes="{'ul': 'pagination', 'li': 'page-item', 'a' : 'page-link'}"
       :show-step-links="true"
       :step-links="{next: 'Next', prev: 'Previous'}"
+      v-if="$parent.searched_files"
       >
     </paginate-links>
 

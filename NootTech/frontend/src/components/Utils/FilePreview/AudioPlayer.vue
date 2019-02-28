@@ -66,7 +66,7 @@
         rate: 1,
         waveOptions: {
           container: '#waveform',
-          waveColor: '#00CCCC',
+          waveColor: this.$root.colour,
           cursorColor: '#484848',
           progressColor: '#AAAAAA',
           autoCenter: true,
@@ -191,7 +191,6 @@
         border: 0;
     }
     .audioplayer-btn:hover {
-        color: #00CCCC;
         cursor: pointer;
     }
     .audioplayer-controls {
@@ -216,10 +215,6 @@
     }
     .volume-slider:hover {
         opacity: 1;
-    }
-    .volume-slider:hover::-moz-range-thumb
-    .volume-slider:hover::-webkit-slider-thumb {
-        background: #00cccc;
     }
     .volume-slider::-webkit-slider-thumb {
         -webkit-appearance: none;
