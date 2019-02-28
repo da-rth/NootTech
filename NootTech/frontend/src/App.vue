@@ -1,5 +1,6 @@
 <template>
   <div id="NTapp" title="More than meets the mind">
+    <nt-modal />
     <nt-navbar></nt-navbar>
     <router-view/>
     <nt-footer></nt-footer>
@@ -7,8 +8,9 @@
 </template>
 
 <script>
-  import NtNavbar from './components/Navigation/Navbar.vue'
-  import NtFooter from './components/Navigation/Footer.vue'
+  import NtNavbar from './components/Navigation/Navbar.vue';
+  import NtModal from './components/Modals/Modal.vue';
+  import NtFooter from './components/Navigation/Footer.vue';
   import decode from 'jwt-decode';
 
   export default {
@@ -32,9 +34,12 @@
       },
     },
     components: {
-      NtNavbar, NtFooter
+      NtNavbar, NtFooter, NtModal
     },
     methods: {
+      showMe: function() {
+        console.log("Test from main div");
+      },
 
       getTokenExpirationDate: function (encodedToken) {
         const token = decode(encodedToken);

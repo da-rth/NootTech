@@ -46,8 +46,10 @@
           </b-input-group>
 
           <b-nav-item>
-            <a @click="$refs.uploadModalContainer.$refs.uploadModal.show()"><font-awesome-icon icon="upload"/>&nbsp; Upload</a>
-            <nt-upload-modal ref="uploadModalContainer"></nt-upload-modal>
+            <a @click="testFunction">
+
+              <font-awesome-icon icon="upload"/>&nbsp; Upload
+            </a>
           </b-nav-item>
 
           <b-nav-item>
@@ -88,7 +90,15 @@
         showUploadKey: false
       };
     },
-    components: {NtPopup, NtUploadModal}
+    components: {NtPopup, NtUploadModal},
+    methods: {
+      testFunction() {
+        if(this.$store.state.modal === 'upload')
+            this.$store.commit('CHANGE_MODAL', 'chissene');
+        else
+            this.$store.commit('CHANGE_MODAL', 'upload');
+      }
+    }
   }
 
 </script>

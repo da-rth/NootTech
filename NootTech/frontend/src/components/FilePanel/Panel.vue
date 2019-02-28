@@ -2,6 +2,7 @@
 
   <div class="file-panel">
 
+
     <notifications group="FileDeletion" />
 
     <b-navbar toggleable="lg" type="dark" class="file-menubar">

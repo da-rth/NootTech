@@ -10,11 +10,15 @@ import * as authentication from '../api.js';
 
 Vue.use(Vuex);
 
-const state = {
-  user: null,
-  token: null,
-  settings: null,
-};
+
+const default_state = {
+    user: null,
+    token: null,
+    settings: null,
+    modal: null
+}
+
+const state = default_state;
 
 const mutations = {
   [types.LOGIN]: (state, payload) => {
@@ -26,9 +30,10 @@ const mutations = {
     state.settings = settings;
   },
   [types.LOGOUT]: (state, payload) => {
-    state.token = null;
-    state.user = null;
-    state.settings = null;
+    state = default_state;
+    //state.token = null;
+    //state.user = null;
+    //state.settings = null;
     router.push(payload.redirect);
   },
   [types.REFRESH]: (state, data) => {
@@ -36,6 +41,9 @@ const mutations = {
   },
   [types.REGISTER]: (state, payload) => {
     router.push(payload.redirect);
+  },
+  [types.CHANGE_MODAL]: (state, payload) => {
+    state.modal = payload;
   }
 };
 
@@ -89,7 +97,7 @@ const actions = {
       let response = await authentication.verifyToken(payload.token);
       if(response.data.token) {
         console.log('The token has been verified');
-      } 
+      }
     } catch(error) {
       console.log("Can't authenticate the token, cause: ", error);
       console.log('Un-authenticated token, logging out.');
