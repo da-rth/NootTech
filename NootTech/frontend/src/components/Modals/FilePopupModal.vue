@@ -19,7 +19,7 @@
 
     </template>
 
-    <b-input-group class="copy-sharelink-group">
+    <b-input-group class="copy-sharelink-group" v-if="!value.is_private">
         <b-form-input v-bind:value="getShareLink()" readonly/>
         <b-input-group-append>
           <a :href="getShareLink()"><b-button>Open</b-button></a>
@@ -114,5 +114,7 @@ export default {
 
   .hljs {
     text-align: left !important;
+    margin: 0 !important;
+    min-height: 50% !important;
   }
 </style>

@@ -34,7 +34,7 @@ class ListFilesAPIView(generics.ListAPIView):
     serializer_class = serializers.ListFilesSerializer
 
     def get_queryset(self):
-        return File.objects.filter(user=self.request.user)
+        return File.objects.filter(user=self.request.user).order_by('-date')
 
 
 class GetSetSettingsAPIView(generics.ListCreateAPIView):

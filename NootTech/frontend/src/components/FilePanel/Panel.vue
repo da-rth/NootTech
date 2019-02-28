@@ -55,6 +55,7 @@
           <div class="col-sm">
 
             <select @change="changedSelectionValue" class="custom-select file-sort">
+              <option value="-date">Sorty by...</option>
 
               <option value="-date">Upload date (Latest)</option>
               <option value="date">Upload date (Oldest)</option>
@@ -70,6 +71,9 @@
 
               <option value="-views">Views (Most)</option>
               <option value="views">Views (Least)</option>
+
+              <option value="-file_size_bytes">Filesize (Largest)</option>
+              <option value="file_size_bytes">Filesize (Smallest)</option>
             </select>
 
           </div>
@@ -101,6 +105,7 @@
                       width: `${thumb_size.width}rem`,
                       height: `${thumb_size.height}rem`
                       }"
+                    
                     class="file-badge"
                     v-if="file.is_private"
                     :key="file.id" :value="file"
@@ -202,14 +207,14 @@
     methods: {
 
       increaseWH() {
-        if (this.thumb_size.width < 24 && this.thumb_size.height < 14 && this.row_height < 18) {
+        if (this.thumb_size.width < 28 && this.row_height < 18) {
           this.thumb_size.width += 0.5;
           this.thumb_size.height += 0.5;
           this.row_height += 0.5;
         }
       },
       decreaseWH() {
-        if (this.thumb_size.width > 9 && this.thumb_size.height > 5 && this.row_height >= 10) {
+        if (this.thumb_size.width > 4 && this.row_height >= 7) {
           this.thumb_size.width -= 0.5;
           this.thumb_size.height -= 0.5;
           this.row_height -= 0.5;

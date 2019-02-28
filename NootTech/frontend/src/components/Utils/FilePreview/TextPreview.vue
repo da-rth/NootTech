@@ -36,10 +36,9 @@
 <style>
 .hljs {
     background-color: rgba(0,0,0,0.2) !important;
-    margin: 0px 50px !important;
+    margin: 0px 50px;
     padding: 20px !important;
     overflow-y: scroll !important;
-    max-height: 75vh !important;
 }
 </style>
 
