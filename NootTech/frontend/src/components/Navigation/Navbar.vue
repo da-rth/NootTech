@@ -46,7 +46,7 @@
           </b-input-group>
 
           <b-nav-item>
-            <a @click="testFunction">
+            <a @click="$store.commit('CHANGE_MODAL', 'upload')">
 
               <font-awesome-icon icon="upload"/>&nbsp; Upload
             </a>
@@ -91,14 +91,6 @@
       };
     },
     components: {NtPopup, NtUploadModal},
-    methods: {
-      testFunction() {
-        if(this.$store.state.modal === 'upload')
-            this.$store.commit('CHANGE_MODAL', 'chissene');
-        else
-            this.$store.commit('CHANGE_MODAL', 'upload');
-      }
-    }
   }
 
 </script>

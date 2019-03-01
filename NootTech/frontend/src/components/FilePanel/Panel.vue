@@ -1,6 +1,7 @@
 <template>
 
   <div class="file-panel">
+      {{action}}
 
 
     <notifications group="FileDeletion" />
@@ -186,6 +187,12 @@
         grid_view: true
       }
     },
+    computed: {
+      action() {
+        console.log(this.$store.state.action)
+        return this.$store.state.action;
+      }
+    },
     watch: {
       searchTerm: function (val) {
         if (val.length !== 0) {
@@ -193,6 +200,9 @@
         } else {
           this.$parent.searched_files = this.$parent.files
         }
+      },
+      action(newAction, oldAction) {
+        alert("HI THERE");
       }
     },
 

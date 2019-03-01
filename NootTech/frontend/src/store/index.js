@@ -1,6 +1,6 @@
 import Vuex from 'vuex'
 import Vue from 'vue'
-import * as types from './mutation-types'
+import * as types from './mutation-types.js'
 import axios from 'axios'
 import createPersistedState from 'vuex-persistedstate'
 import router from '../router'
@@ -11,14 +11,17 @@ import * as authentication from '../api.js';
 Vue.use(Vuex);
 
 
-const default_state = {
+function default_state() {
+  return {
     user: null,
     token: null,
     settings: null,
-    modal: null
+    modal: null,
+    refresh_file_pane: true
+  }
 }
 
-const state = default_state;
+const state = default_state();
 
 const mutations = {
   [types.LOGIN]: (state, payload) => {
@@ -30,7 +33,7 @@ const mutations = {
     state.settings = settings;
   },
   [types.LOGOUT]: (state, payload) => {
-    state = default_state;
+    Object.assign(state, default_state())
     //state.token = null;
     //state.user = null;
     //state.settings = null;
@@ -44,8 +47,12 @@ const mutations = {
   },
   [types.CHANGE_MODAL]: (state, payload) => {
     state.modal = payload;
+  },
+  [types.REFRESH_FILE_PANEL]: (state, payload) => {
+    state.refresh_file_panel = payload;
   }
 };
+
 
 const actions = {
 

@@ -59,11 +59,13 @@ export default {
         .then(response => {
           console.log('Successful server response:', response);
           this.$notify({
-          group: 'FileUpload',
-          title: `Successfully uploaded file(s)!`,
-          text: 'The file panel is now updating...',
-          position: 'bottom right'
-        });
+            group: 'FileUpload',
+            title: `Successfully uploaded file(s)!`,
+            text: 'The file panel is now updating...',
+            position: 'bottom right'
+          });
+          this.$store.commit('REFRESH_FILE_PANEL', true);
+
         })
         .catch(e => {
           // Catch the error and notify user that file cant be deleted

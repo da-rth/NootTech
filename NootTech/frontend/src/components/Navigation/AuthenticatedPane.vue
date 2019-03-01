@@ -18,8 +18,6 @@
         gsize: null,
         files: null,
         searched_files: null,
-        settings: null,
-        isLoading: false,
         filesToDelete: []
       }
     },
@@ -27,41 +25,40 @@
       FilePanel,
       LoadingFiles,
     },
+    computed: {
+      isLoading() {
+        return this.$store.state.refresh_file_panel;
+      }
+    },
+    watch: {
+      async isLoading(newValue, oldValue) {
+        if (newValue)
+          await this.loadFiles();
+      }
+    },
 
     methods: {
-
       async loadFiles() {
         await this.$api.GetFiles()
         .then(response => {
           console.log('GET FILES SUCCESS', response);
           this.files = response.data;
           this.searched_files = response.data;
-          this.isLoading = false;
         })
         .catch(e => {
           console.log('GET FILES ERROR', e.response);
-          this.isLoading = false;
-        });
-      },
-
-      async loadSettings() {
-        await this.$api.GetSettings()
-        .then(response => {
-          console.log('SETTINGS SUCCESS', response);
-          this.settings = response.data;
         })
-        .catch(e => {
-          console.log('SETTINGS ERROR', e.response);
-        });
+        .finally(() => {
+          this.$store.commit('REFRESH_FILE_PANEL', false); 
+        })
       },
 
     },
     async beforeMount () {
         this.sharelinkColour = null;
-        this.isLoading = true;
-        await this.loadSettings();
+        if(!this.$store.state.refresh_file_panel)
+          this.$store.commit('REFRESH_FILE_PANEL', true);
         await this.loadFiles();
-
     },
   }
 </script>
