@@ -11,9 +11,14 @@ const SETTINGS_URL = API_URL + '/settings/';
 const SHARELINK_URL = API_URL + '/sharelink/';
 const UPLOAD_URL = API_URL + '/upload/';
 const VERIFY_URL = API_URL + '/token/verify/';
+const DELETE_FILE_URL = API_URL + '/file/delete/';
 
 axios.defaults.xsrfHeaderName = "X-CSRFToken"
 
+var axios_unauth = axios.create({
+  baseURL: config.API_URL,
+  timeout: 1000
+});
 /**
  * Configures AXIOS to send JWT token in header of each API request for
  * user.is_authenticated API calls.
@@ -127,11 +132,11 @@ export async function GetFiles () {
 
 export async function DeleteFile (file_id) {
   console.log("Attempting to delete file with ID: "+file_id);
-  return await axios.delete(FILE_URL+'delete/'+file_id)}
+  return await axios.delete(DELETE_FILE_URL+file_id)}
 
 
 export async function GetShareData (username, gen_name) {
-  return await axios.get(SHARELINK_URL+`${username}/${gen_name}`)
+  return await axios_unauth.get(SHARELINK_URL+`${username}/${gen_name}`)
 }
 
 /**
@@ -152,4 +157,10 @@ export async function UploadFiles(payload) {
   }));
 
   return await axios.post(UPLOAD_URL, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+}
+
+
+export async function GetFile(url) {
+  // Gets the content of a specified URL (used for highlightjs)
+  return await axios_unauth.get(url);
 }

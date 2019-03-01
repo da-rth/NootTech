@@ -4,7 +4,7 @@
     toggleable="lg"
     variant="dark"
     type="dark"
-    :style="{borderBottom: ($store.state.settings != null) ? `1px solid ${$store.state.settings.colour}` : `1px solid ${$default_colour}`}">
+    :style="{borderBottom: `1px solid ${$root.colour}`}">
 
       <notifications group="FileUpload" />
 
@@ -12,31 +12,46 @@
       <b-collapse is-nav id="nav_collapse">
 
         <template v-if="$store.state.user != null">
-
-          <b-button class="settings-modal-btn">
+          <b-button class="settings-modal-btn" v-if="$store.state.user">
               <font-awesome-icon icon="user-ninja"/>&nbsp; {{ $store.state.user.username }}
           </b-button>
-
-          &nbsp;&nbsp;
-          <router-link to="/how-to">
-            <font-awesome-icon icon="question-circle"/>
-            &nbsp;How to...
-          </router-link>
+          &nbsp;
+          <b-button class="favs-modal-btn">
+              <font-awesome-icon icon="bookmark"/>&nbsp; Favourites
+          </b-button>
         </template>
 
         <b-navbar-nav v-else>
           <b-nav-item>
-            <router-link to="/about">About</router-link>
+            <router-link to="/about">
+            <font-awesome-icon icon="info-circle"/>&nbsp; About
+            </router-link>
           </b-nav-item>
         </b-navbar-nav>
 
+          &nbsp;
+          <router-link to="/how-to">
+            <font-awesome-icon icon="question-circle"/>
+            &nbsp;How to...
+          </router-link>
+
         <!-- Keep this centered -->
         <b-navbar-brand>
-          <router-link class="navbar-brand" to="/">Noot<span class="brand-right">tech</span></router-link>
+
+          <router-link class="navbar-brand" to="/">
+
+            <template v-if="$root.sharelinkName">
+              {{ $root.sharelinkName }}.<span v-bind:style="{color: $root.colour}">Noot</span>.Tech
+            </template>
+
+            <template v-else>
+              Noot<span v-bind:style="{color: $root.colour}" class="tech">Tech</span>
+            </template>
+
+          </router-link>
         </b-navbar-brand>
 
-        <b-navbar-nav class="ml-auto" v-if="$store.state.user != null">
-
+        <b-navbar-nav class="ml-auto" v-if="$store.state.user">
           <b-input-group class="filebar-uploadkey" v-if="showUploadKey">
             <b-form-input class="key-field" v-bind:value="$store.state.settings.upload_key" readonly/>
             <b-input-group-append>
@@ -98,8 +113,12 @@
   .navbar.bg-dark {
     background-color: #202020 !important;
     border-bottom: 1px solid #121212;
+    transition: 0.5s ease-in-out;
   }
 
+  .tech {
+    transition: 0.5s ease-in-out;
+  }
   .navbar.bg-dark .navbar-brand {
     position: absolute;
     left: 50%;
@@ -150,13 +169,14 @@
   .user-dropdown button {
     color: red;
   }
+  .favs-modal-btn,
   .settings-modal-btn {
     padding: 0px 10px;
     border: none;
     background: transparent;
     color: #909090;
   }
-
+  .favs-modal-btn:hover,
   .settings-modal-btn:hover {
     color: #FFFFFF;
   }

@@ -64,7 +64,7 @@
               >
 
                 <slider id="colourSigninField" v-model="register_credentials.colour" />
-             </b-form-group>
+              </b-form-group>
               <b-button type="submit" variant="primary" class="auth-button" :style="{backgroundColor: getColour()}">Register</b-button>
             </b-form>
           </b-tab>
@@ -80,8 +80,6 @@ import Password from 'vue-password-strength-meter'
 
 import {Slider} from 'vue-color';
 
-let colour = "#00cccc";
-
 export default {
   components: {Slider, Password},
   data () {
@@ -95,7 +93,7 @@ export default {
         email: '',
         password: '',
         confirm_password: '',
-        colour: '#00cccc'
+        colour: this.$root.colour
       },
       error: null,
       formatted_error: null,
@@ -115,7 +113,8 @@ export default {
     getColour() {
       var colour = this.register_credentials.colour
       if(typeof (colour) !== "string")
-        colour = colour.hex
+        colour = colour.hex;
+        this.$root.colour = colour;
       return colour
     },
     updateTab(tabIndex) {

@@ -57,44 +57,41 @@
           <div class="col-sm">
 
             <select @change="changedSelectionValue" class="custom-select file-sort">
+              <option class="opt" value="-date">Sorty by...</option>
 
-              <option value="-date">Upload date (Latest)</option>
-              <option value="date">Upload date (Oldest)</option>
+              <option class="opt" value="-date">Upload date (Latest)</option>
+              <option class="opt" value="date">Upload date (Oldest)</option>
 
-              <option value="original_filename">Original Filename (A-Z)</option>
-              <option value="-original_filename">Original Filename (Z-A)</option>
+              <option class="opt" value="original_filename">Original Filename (A-Z)</option>
+              <option class="opt" value="-original_filename">Original Filename (Z-A)</option>
 
-              <option value="generated_filename">Generated Filename (A-Z)</option>
-              <option value="-generated_filename">Generated Filename (Z-A)</option>
+              <option class="opt" value="generated_filename">Generated Filename (A-Z)</option>
+              <option class="opt" value="-generated_filename">Generated Filename (Z-A)</option>
 
-              <option value="file_ext">Extension (Ascending)</option>
-              <option value="-file_ext">Extension (Descending)</option>
+              <option class="opt" value="file_ext">Extension (Ascending)</option>
+              <option class="opt" value="-file_ext">Extension (Descending)</option>
 
-              <option value="-views">Views (Most)</option>
-              <option value="views">Views (Least)</option>
+              <option class="opt" value="-views">Views (Most)</option>
+              <option class="opt" value="views">Views (Least)</option>
+
+              <option class="opt" value="-file_size_bytes">Filesize (Largest)</option>
+              <option class="opt" value="file_size_bytes">Filesize (Smallest)</option>
             </select>
-
           </div>
-
         </b-navbar-nav>
-
       </b-collapse>
-
     </b-navbar>
 
-    <paginate name="searched_files" :list="$parent.searched_files" :per="paginate_by" tag="div" class="row file-row">
+    <paginate name="searched_files" :list="$parent.searched_files" :per="paginate_by" tag="div" class="row file-row" v-if="$parent.searched_files">
       <b-row class="file-grid justify-content-center">
         <template v-if="paginated('searched_files').length <= 0">
           <h1>You haven't uploaded any files yet! <font-awesome-icon icon="sad-tear"/></h1>
         </template>
 
         <template v-else>
-
           <template v-for="file in  paginated('searched_files')">
-
             <template v-if="grid_view">
               <template v-if="showPrivateFiles">
-
                 <NtBadge
                   :style="{
                     width: `${thumb_size.width}rem`,
@@ -106,23 +103,18 @@
                   :selectionStatus="selectFiles"
                   :selected="isSelected(file.id)"/>
               </template>
-
               <template v-else>
-
                 <NtBadge
                   :style="{
                     width: `${thumb_size.width}rem`,
                     height: `${thumb_size.height}rem`
                     }"
                   class="file-badge"
-                  v-if="!file.is_private"
                   :key="file.id" :value="file"
                   :selectionStatus="selectFiles"
                   :selected="isSelected(file.id)"/>
-
               </template>
             </template>
-
             <template v-else>
               <template v-if="showPrivateFiles">
                 <nt-row-badge :key="file.id" :height="row_height" :file="file" v-if="file.is_private"/>
@@ -133,9 +125,7 @@
             </template>
           </template>
         </template>
-
       </b-row>
-
     </paginate>
 
     <paginate-links
@@ -145,6 +135,7 @@
       :classes="{'ul': 'pagination', 'li': 'page-item', 'a' : 'page-link'}"
       :show-step-links="true"
       :step-links="{next: 'Next', prev: 'Previous'}"
+      v-if="$parent.searched_files"
       >
     </paginate-links>
 
@@ -176,7 +167,8 @@
           height: 10
         },
         row_height: 10,
-        grid_view: true
+        grid_view: true,
+        openedFile: null
       }
     },
     computed: {
@@ -206,14 +198,14 @@
     methods: {
 
       increaseWH() {
-        if (this.thumb_size.width < 24 && this.thumb_size.height < 14 && this.row_height < 18) {
+        if (this.thumb_size.width < 28 && this.row_height < 18) {
           this.thumb_size.width += 0.5;
           this.thumb_size.height += 0.5;
           this.row_height += 0.5;
         }
       },
       decreaseWH() {
-        if (this.thumb_size.width > 9 && this.thumb_size.height > 5 && this.row_height >= 10) {
+        if (this.thumb_size.width > 4 && this.row_height >= 7) {
           this.thumb_size.width -= 0.5;
           this.thumb_size.height -= 0.5;
           this.row_height -= 0.5;
@@ -221,6 +213,7 @@
       },
 
       async deleteSelectedFiles() {
+
         let deleteCount = 0;
 
         for (var i = 0; i < this.selectedFiles.length; i++) {
@@ -308,7 +301,7 @@
 
 </script>
 
-<style scoped>
+<style>
   * {
     color: #b8b8b8;
   }
@@ -338,7 +331,7 @@
   .file-grid {
     height: auto;
     max-height: 74vh;
-    overflow: scroll;
+    /*overflow: scroll;*/
   }
 
   .file-pagination {
@@ -386,5 +379,7 @@
     border: 1px solid #202020;
   }
 
-
+  .opt {
+    color: black;
+  }
 </style>

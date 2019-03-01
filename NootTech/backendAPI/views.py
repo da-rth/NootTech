@@ -34,7 +34,7 @@ class ListFilesAPIView(generics.ListAPIView):
     serializer_class = serializers.ListFilesSerializer
 
     def get_queryset(self):
-        return File.objects.filter(user=self.request.user)
+        return File.objects.filter(user=self.request.user).order_by('-date')
 
 
 class GetSetSettingsAPIView(generics.ListCreateAPIView):
@@ -142,7 +142,7 @@ class SubdomainViewSet(viewsets.ViewSet):
 
         user = User.objects.filter(username=username).first()
         file = File.objects.filter(user=user, generated_filename=gen_name).first()
-        serializer = serializers.ListFilesSerializer(file)
+        serializer = serializers.PublicFileSerializer(file)
         data = serializer.data
         if user and file:
             file.views += 1
