@@ -24,11 +24,8 @@
      class="large-fa-icon"
     />
 
-    <NtFilePopupModal :ref="popup_id" v-model="value" />
-    <b-form-checkbox class="badge-checkbox" v-if="selectionStatus" v-bind:value="value.id"></b-form-checkbox>
-
-    <div class="overlay" v-else @click="showModal">
-      <b-form-checkbox class="badge-checkbox" v-if="selectionStatus" v-bind:value="value.id"></b-form-checkbox>
+    <div class="overlay" @click="onClick">
+      <NtFilePopupModal :ref="popup_id" v-model="value" />
       <h2>{{value.original_filename}}</h2>
       <div class="overlay-footer">
         <div class="icon">
@@ -57,15 +54,11 @@
     data() {
       return {
         popup_id: 'popup-' + this.value.id,
-        isSelected: this.selected ? true : false // get rid of vue's warning
       }
     },
     methods: {
       showModal() {
         this.$refs[this.popup_id].showModal();
-      },
-      selectionIsOn() {
-        return this.$parent.selectFiles;
       },
       isImage() {
         return this.value.file_mime_type.startsWith("image/")
@@ -84,8 +77,15 @@
         if(views > 1000)
           return (views / 1e3).toFixed(1) + "K";
         return views;
+      },
+      onClick() {
+        if(this.selectionStatus) {
+          this.selected ^= true;
+          this.$store.commit('TOGGLE_FILE', this.value.id)
+        }
+        else this.showModal();
       }
-    },
+    }
   }
 </script>
 

@@ -1,6 +1,6 @@
 import Vuex from 'vuex'
 import Vue from 'vue'
-import * as types from './mutation-types'
+import * as types from './mutation-types.js'
 import axios from 'axios'
 import createPersistedState from 'vuex-persistedstate'
 import router from '../router'
@@ -10,11 +10,19 @@ import * as authentication from '../api.js';
 
 Vue.use(Vuex);
 
-const state = {
-  user: null,
-  token: null,
-  settings: null,
-};
+
+function default_state() {
+  return {
+    user: null,
+    token: null,
+    settings: null,
+    modal: null,
+    refresh_file_panel: true,
+    selected_files: new Array()
+  }
+}
+
+const state = default_state();
 
 const mutations = {
   [types.LOGIN]: (state, payload) => {
@@ -26,9 +34,7 @@ const mutations = {
     state.settings = settings;
   },
   [types.LOGOUT]: (state, payload) => {
-    state.token = null;
-    state.user = null;
-    state.settings = null;
+    Object.assign(state, default_state())
     router.push(payload.redirect);
   },
   [types.REFRESH]: (state, data) => {
@@ -36,8 +42,26 @@ const mutations = {
   },
   [types.REGISTER]: (state, payload) => {
     router.push(payload.redirect);
+  },
+  [types.CHANGE_MODAL]: (state, payload) => {
+    state.modal = payload;
+  },
+  [types.REFRESH_FILE_PANEL]: (state, payload) => {
+    state.refresh_file_panel = payload;
+    // forget everything once you refresh
+    if(payload)
+      state.selected_file = new Array();
+  },
+  [types.TOGGLE_FILE]: (state, fileId) => {
+    if(state.selected_files.includes(fileId))
+      state.selected_files.splice(state.selected_files.indexOf(fileId), 1);
+    else state.selected_files.push(fileId);
+  },
+  [types.EMPTY_FILE_SELECTION]: (state, payload) => {
+    state.selected_files = new Array();
   }
 };
+
 
 const actions = {
 
@@ -89,7 +113,7 @@ const actions = {
       let response = await authentication.verifyToken(payload.token);
       if(response.data.token) {
         console.log('The token has been verified');
-      } 
+      }
     } catch(error) {
       console.log("Can't authenticate the token, cause: ", error);
       console.log('Un-authenticated token, logging out.');

@@ -17,8 +17,6 @@
         gsize: null,
         files: null,
         searched_files: null,
-        settings: null,
-        isLoading: false,
         filesToDelete: []
       }
     },
@@ -26,9 +24,19 @@
       FilePanel,
       LoadingFiles,
     },
+    computed: {
+      isLoading() {
+        return this.$store.state.refresh_file_panel;
+      }
+    },
+    watch: {
+      async isLoading(newValue, oldValue) {
+        if (newValue)
+          await this.loadFiles();
+      }
+    },
 
     methods: {
-
       async loadFiles() {
         this.isLoading = true;
         await this.$api.GetFiles()
@@ -39,8 +47,10 @@
         })
         .catch(e => {
           console.log('GET FILES ERROR', e.response);
-        });
-        this.isLoading = false;
+        })
+        .finally(() => {
+          this.$store.commit('REFRESH_FILE_PANEL', false); 
+        })
       },
 
       changeColour() {
@@ -49,13 +59,15 @@
         }
       }
     },
-
-    async mounted() {
-      await this.loadFiles();
-      this.changeColour();
-      this.$root.sharelinkName = null;
-    }
-  }
+    async beforeMount () {
+        this.sharelinkColour = null;
+        if(!this.$store.state.refresh_file_panel)
+          this.$store.commit('REFRESH_FILE_PANEL', true);
+        await this.loadFiles();
+        this.changeColour;
+        this.$root.sharelinkName = null;
+    },
+ }
 </script>
 
 <style scoped>

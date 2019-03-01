@@ -61,8 +61,10 @@
           </b-input-group>
 
           <b-nav-item>
-            <a @click="$refs.uploadModalContainer.$refs.uploadModal.show()"><font-awesome-icon icon="upload"/>&nbsp; Upload</a>
-            <nt-upload-modal ref="uploadModalContainer"></nt-upload-modal>
+            <a @click="$store.commit('CHANGE_MODAL', 'upload')">
+
+              <font-awesome-icon icon="upload"/>&nbsp; Upload
+            </a>
           </b-nav-item>
 
           <b-nav-item>
@@ -103,7 +105,7 @@
         showUploadKey: false
       };
     },
-    components: {NtPopup, NtUploadModal}
+    components: {NtPopup, NtUploadModal},
   }
 
 </script>
