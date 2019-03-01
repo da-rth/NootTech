@@ -12,72 +12,60 @@
 
           <b-tab ref="loginTab" title="Login" active>
             <b-form @submit.prevent="login">
-              <b-form-group id="usernameFormGroup" label="Your username" label-for="usernameLoginField">
-                <b-form-input
-                  id="usernameLoginField" type="text" placeholder="Username" v-model="login_credentials.username" required />
-              </b-form-group>
-              <b-form-group id="passwordFormGroup" label="Your password" label-for="passwordFormGroup">
-                <b-form-input id="passwordLoginField" type="password" v-model="login_credentials.password" required/>
-              </b-form-group>
-              <b-button type="submit" variant="primary">Log in</b-button>
+                <b-form-input id="usernameLoginField" type="text" placeholder="Username" class="log-reg-field" v-model="login_credentials.username" required />
+                <b-form-input id="passwordLoginField" class="log-reg-field"  placeholder="Password" type="password" v-model="login_credentials.password" required/>
+              <b-button type="submit" variant="primary" class="auth-button" :style="{backgroundColor: getColour()}">Log in</b-button>
             </b-form>
           </b-tab>
 
           <b-tab title="Register">
             <b-form @submit.prevent="register">
-              <b-form-group
-                id="usernameFormGroup"
-                label="Insert your username"
-                description="This will uniquely distinguish you"
-                label-for="usernameSigninField"
-                required>
-
-
                 <b-form-input
                   id="usernameSigninField"
                   type="text"
-                  placeholder="Username"
+                  class="log-reg-field"
+                  placeholder="Enter a username!"
                   v-model="register_credentials.username"
                   required
                 />
-              </b-form-group>
-              <b-form-group
-                id="emailFormGroup"
-                label="Insert your email"
-                label-for="emailSigninField"
-                required>
-
                 <b-form-input
                   id="emailSigninField"
                   type="email"
-                  placeholder="user@example.com"
+                  class="log-reg-field"
+                  placeholder="Enter a your email address"
                   v-model="register_credentials.email"
                   required
                 />
-              </b-form-group>
-              <b-form-group
-                id="passwordSigninFormGroup"
-                label="Insert your password"
-                label-for="emailSigninField"
-                required
-                >
 
                 <b-form-input
                   id="emailSignupField"
                   type="password"
-                  placeholder="user@example.com"
+                  class="log-reg-field"
+                  placeholder="Enter a secure password"
                   v-model="register_credentials.password"
                   required
                 />
-              </b-form-group>
+
+                <b-form-input
+                  id="emailSignupField"
+                  type="password"
+                  class="log-reg-field"
+                  placeholder="Confirm your password"
+                  v-model="register_credentials.confirm_password"
+                  required
+                />
+
+                <password v-model="register_credentials.password" :strength-meter-only="true"/>
+
               <b-form-group
                 id="colourForGroup"
-                label="Insert your colour"
-                label-for="colourSigninField">
+                label="Pick a colour!"
+                label-for="colourSigninField"
+              >
 
                 <slider id="colourSigninField" v-model="register_credentials.colour" />
-             </b-form-group>
-              <b-button type="submit" variant="primary">Register</b-button>
+              </b-form-group>
+              <b-button type="submit" variant="primary" class="auth-button" :style="{backgroundColor: getColour()}">Register</b-button>
             </b-form>
           </b-tab>
         </b-tabs>
@@ -88,14 +76,12 @@
 
 <script>
 import * as types from '../../store/mutation-types'
+import Password from 'vue-password-strength-meter'
 
 import {Slider} from 'vue-color';
-import {TinyColor} from '@ctrl/tinycolor';
-
-let colour = "#00cccc";
 
 export default {
-  components: {Slider},
+  components: {Slider, Password},
   data () {
     return {
       login_credentials: {
@@ -106,19 +92,29 @@ export default {
         username: '',
         email: '',
         password: '',
-        colour: '#00cccc'
+        confirm_password: '',
+        colour: this.$root.colour
       },
       error: null,
       formatted_error: null,
       creationIsSuccessful: false,
-      currentTab: 0
+      currentTab: 0,
+      password: null,
     }
   },
   methods: {
+    showFeedback ({suggestions, warning}) {
+      console.log('🙏', suggestions)
+      console.log('⚠', warning)
+    },
+    showScore (score) {
+      console.log('💯', score)
+    },
     getColour() {
       var colour = this.register_credentials.colour
       if(typeof (colour) !== "string")
-        colour = colour.hex
+        colour = colour.hex;
+        this.$root.colour = colour;
       return colour
     },
     updateTab(tabIndex) {
@@ -149,6 +145,12 @@ export default {
     },
 
     async register(evt) {
+
+      if (this.register_credentials.password != this.register_credentials.confirm_password) {
+        this.formatted_error = "<strong>Whoops!</strong> Something went wrong...<br/> - Your passwords don't match!";
+        return
+      }
+
       let params = {
         credentials: this.register_credentials,
         redirect: decodeURIComponent(this.$route.query.redirect || '/')
@@ -172,9 +174,8 @@ export default {
 
 .container-login {
   width: 320px;
-  margin: 0 auto;
-  margin-bottom: 40px;
-  padding: 20px;
+  margin: 17vh auto;
+  padding: 4px;
   background-color: rgba(0,0,0,0.2);
   border: 1px solid rgba(0,0,0,0.4);
   border-radius: 5px;
@@ -184,32 +185,27 @@ export default {
 }
 
 .registration-page {
-  width: 500px;
+  width: 464px;
+}
+
+.card {
+  background-color: #191919;
+  color: #bababa;
 }
 
 .auth-error {
+  position: absolute;
+  left: 0; right: 0;
+  top: 10vh;
   padding-bottom: 0;
-  width: 34%;
   margin: 0 auto;
-  background: rgba(0,0,0,0.3);
+  width: 464px;
+  background: #191919;
   color: #ffffffbb;
   border: 1px solid rgba(255,0,0,0.6);
-  margin-top: 40px;
-  margin-bottom: 60px;
   transition: all 0.2s ease-in-out;
 }
-.btn-login {
-  width: 100%;
-  padding: 8px;
-  background-color: rgba(0,0,0,0.2);
-  border: 1px solid rgba(120,120,120,0.3);
-  color: #ffffffdd;
-}
-.btn-login:hover {
-  border-color: #00cccc;
-  color: white;
-  cursor: pointer;
-}
+
 
 .nav-tabs .nav-link.active,
 .nav-tabs .nav-item.show .nav-link {
@@ -222,5 +218,31 @@ export default {
 .nav-tabs .nav-item.show .nav-link:hover {
   opacity: 1;
 }
+.auth-button {
+  border: none;
+  -webkit-transition: none;
+  -moz-transition: none;
+  -ms-transition: none;
+  -o-transition: none;
+  transition: none;
+  width: 100%;
+}
 
+  .log-reg-field {
+    margin: 20px 0px;
+  }
+
+  .card-body {
+    margin-top: -20px;
+  }
+
+  .tab-content:focus {
+    border: none !important;
+    box-shadow: none !important;
+  }
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link a {
+    color: #fff !important;
+    background-color: #3d3d !important;
+}
 </style>

@@ -1,5 +1,5 @@
 <template>
-   <nt-main-pane title="NootTech: More than meets the m-eye-nd" >
+   <!--<nt-main-pane title="NootTech: More than meets the m-eye-nd" >-->
     <div class="container-fluid">
       <div class="row">
         <b-jumbotron header="Discover NooTech!"
@@ -46,7 +46,7 @@
         </b-jumbotron>
       </div>
     </div>
-   </nt-main-pane>
+   <!--</nt-main-pane> -->
 </template>
 
 <script>
@@ -62,6 +62,14 @@
     methods: {
       onSlideStart(slide) { this.sliding = true},
       onSlideEnd(slide) { this.sliding = false}
+    },
+    async updated() {
+      this.$root.colour = this.$default_colour;
+      this.$root.sharelinkName = null;
+    },
+    async mounted() {
+      this.$root.colour = this.$default_colour;
+      this.$root.sharelinkName = null;
     }
   }
 </script>

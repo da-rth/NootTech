@@ -2,7 +2,6 @@
   <div>
     <LoadingFiles :multiple="true" v-if="isLoading"></LoadingFiles>
     <template v-else>
-      <!--FileMenu></ileMenu-->
       <FilePanel></FilePanel>
     </template>
   </div>
@@ -29,21 +28,33 @@
     },
 
     methods: {
-      async getData() {
+
+      async loadFiles() {
         this.isLoading = true;
-        this.settings = await this.$api.GetSettings();
-        await this.loadFiles()
+        await this.$api.GetFiles()
+        .then(response => {
+          console.log('GET FILES SUCCESS', response);
+          this.files = response.data;
+          this.searched_files = response.data;
+        })
+        .catch(e => {
+          console.log('GET FILES ERROR', e.response);
+        });
         this.isLoading = false;
       },
-      async loadFiles() {
-        this.files = await this.$api.GetFiles();
-        this.searched_files = this.files;
-        return true
+
+      changeColour() {
+        if (this.$store.state.settings) {
+          this.$root.colour = this.$store.state.settings.colour;
+        }
       }
     },
-    beforeMount () {
-      this.getData()
-    },
+
+    async mounted() {
+      await this.loadFiles();
+      this.changeColour();
+      this.$root.sharelinkName = null;
+    }
   }
 </script>
 

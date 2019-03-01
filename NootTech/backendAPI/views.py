@@ -21,7 +21,7 @@ class ErrorVideoAPIView(generics.ListAPIView):
     """
     Returns a list of videos used (randomly) at website 404 page.
     """
-    permission_class = AllowAny
+    permission_classes = (AllowAny,)
     serializer_class = serializers.ErrorVideoSerializer
     queryset = ErrorVideo.objects.all()
 
@@ -34,7 +34,7 @@ class ListFilesAPIView(generics.ListAPIView):
     serializer_class = serializers.ListFilesSerializer
 
     def get_queryset(self):
-        return File.objects.filter(user=self.request.user)
+        return File.objects.filter(user=self.request.user).order_by('-date')
 
 
 class GetSetSettingsAPIView(generics.ListCreateAPIView):
@@ -116,13 +116,13 @@ class DeleteFavouriteAPIView(generics.DestroyAPIView):
 
 
 class ReportListAPIView(generics.ListAPIView):
-    permission_class = IsAdminUser
+    permission_classes = (IsAdminUser,)
     serializer_class = serializers.ReportList
     queryset = ReportedFile.objects.all()
 
 
 class ReportAddAPIView(generics.CreateAPIView):
-    permission_class = IsAdminUser
+    permission_classes = (IsAdminUser,)
     serializer_class = serializers.ReportAdd
     queryset = ReportedFile.objects.all()
 
@@ -136,18 +136,17 @@ class DeleteFileAPIView(generics.DestroyAPIView):
 
 class SubdomainViewSet(viewsets.ViewSet):
 
-    permission_class = AllowAny
+    permission_classes = (AllowAny,)
 
     def field(self, request, username, gen_name):
 
         user = User.objects.filter(username=username).first()
         file = File.objects.filter(user=user, generated_filename=gen_name).first()
-        file.views += 1
-        file.save()
-
-        serializer = serializers.SubdomainSerializer(file)
+        serializer = serializers.PublicFileSerializer(file)
         data = serializer.data
         if user and file:
+            file.views += 1
+            file.save()
             return Response({'file': data if not file.is_private else None, 'colour': user.colour})
         else:
             return Response({'file': None, 'colour': user.colour if user else None})
@@ -155,7 +154,7 @@ class SubdomainViewSet(viewsets.ViewSet):
 
 class BanViewSet(viewsets.ViewSet):
 
-    permission_class = IsAdminUser
+    permission_classes = (IsAdminUser,)
 
     def field(self, request, pk):
         user = User.objects.filter(id=pk).first()
@@ -181,7 +180,7 @@ class BanViewSet(viewsets.ViewSet):
 
 class WarnViewSet(viewsets.ViewSet):
 
-    permission_class = IsAdminUser
+    permission_classes = (IsAdminUser,)
 
     def field(self, request, pk):
         # reason = ...
