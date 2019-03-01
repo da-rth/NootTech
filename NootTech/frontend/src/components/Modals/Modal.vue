@@ -11,27 +11,26 @@
 import NtUploadModal from './UploadModal.vue';
 
 export default {
-    name: 'NtModal',
-    components: {NtUploadModal},
+  name: 'NtModal',
+  components: {NtUploadModal},
     created() {
-        this.$store.commit('CHANGE_MODAL', null);
+      this.$store.commit('CHANGE_MODAL', null);
     },
     computed: {
-        modal () {
-            return this.$store.state.modal;
-        }
+      modal () {
+        return this.$store.state.modal;
+      }
     },
     watch: {
-        modal (newModalState, oldModalState) {
-            switch(newModalState) {
-                case 'upload':
-                    this.$refs.uploadModal.show();
+      modal (newModalState, oldModalState) {
+        switch(newModalState) {
+          case 'upload':
+            this.$refs.uploadModal.show();
 
-            }
-            this.$store.commit('CHANGE_MODAL', null);
-        }
-    }
-    
+          }
+          this.$store.commit('CHANGE_MODAL', null);
+      }
+  }
 }
 </script>
 
@@ -47,8 +46,8 @@ export default {
 }
 
 .file-selection-area {
-    overflow-y: hidden;
-    height: 35px;
-    border-radius: 5px;
+  overflow-y: hidden;
+  height: 35px;
+  border-radius: 5px;
 }
 </style>
