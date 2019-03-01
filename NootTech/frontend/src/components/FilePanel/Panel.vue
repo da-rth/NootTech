@@ -83,63 +83,58 @@
     </b-navbar>
 
     <paginate name="searched_files" :list="$parent.searched_files" :per="paginate_by" tag="div" class="row file-row">
+      <b-row class="file-grid justify-content-center">
+        <template v-if="paginated('searched_files').length <= 0">
+          <h1>You haven't uploaded any files yet! <font-awesome-icon icon="sad-tear"/></h1>
+        </template>
 
-      <b-form-checkbox-group v-model="selectedFiles">
+        <template v-else>
 
-        <b-row class="file-grid justify-content-center">
-          <template v-if="paginated('searched_files').length <= 0">
-            <h1>You haven't uploaded any files yet! <font-awesome-icon icon="sad-tear"/></h1>
-          </template>
+          <template v-for="file in  paginated('searched_files')">
 
-          <template v-else>
+            <template v-if="grid_view">
+              <template v-if="showPrivateFiles">
 
-            <template v-for="file in  paginated('searched_files')">
-
-              <template v-if="grid_view">
-                <template v-if="showPrivateFiles">
-
-                  <NtBadge
-                    :style="{
-                      width: `${thumb_size.width}rem`,
-                      height: `${thumb_size.height}rem`
-                      }"
-                    class="file-badge"
-                    v-if="file.is_private"
-                    :key="file.id" :value="file"
-                    :selectionStatus="selectFiles"
-                    :selected="isSelected(file.id)"/>
-                </template>
-
-                <template v-else>
-
-                  <NtBadge
-                    :style="{
-                      width: `${thumb_size.width}rem`,
-                      height: `${thumb_size.height}rem`
-                      }"
-                    class="file-badge"
-                    v-if="!file.is_private"
-                    :key="file.id" :value="file"
-                    :selectionStatus="selectFiles"
-                    :selected="isSelected(file.id)"/>
-
-                </template>
+                <NtBadge
+                  :style="{
+                    width: `${thumb_size.width}rem`,
+                    height: `${thumb_size.height}rem`
+                    }"
+                  class="file-badge"
+                  v-if="file.is_private"
+                  :key="file.id" :value="file"
+                  :selectionStatus="selectFiles"
+                  :selected="isSelected(file.id)"/>
               </template>
 
               <template v-else>
-                <template v-if="showPrivateFiles">
-                  <nt-row-badge :key="file.id" :height="row_height" :file="file" v-if="file.is_private"/>
-                </template>
-                <template v-else>
-                  <nt-row-badge :key="file.id" :height="row_height" :file="file"/>
-                </template>
+
+                <NtBadge
+                  :style="{
+                    width: `${thumb_size.width}rem`,
+                    height: `${thumb_size.height}rem`
+                    }"
+                  class="file-badge"
+                  v-if="!file.is_private"
+                  :key="file.id" :value="file"
+                  :selectionStatus="selectFiles"
+                  :selected="isSelected(file.id)"/>
+
+              </template>
+            </template>
+
+            <template v-else>
+              <template v-if="showPrivateFiles">
+                <nt-row-badge :key="file.id" :height="row_height" :file="file" v-if="file.is_private"/>
+              </template>
+              <template v-else>
+                <nt-row-badge :key="file.id" :height="row_height" :file="file"/>
               </template>
             </template>
           </template>
+        </template>
 
-        </b-row>
-
-      </b-form-checkbox-group>
+      </b-row>
 
     </paginate>
 
@@ -157,9 +152,7 @@
 </template>
 
 <script>
-  /**
-   * MODAL currently broken by setting .file-grid "overflow: scroll". Perhaps because modal is inside badge component...
-   */
+  import * as types from '../../store/mutation-types.js';
   import NtBadge from "../Utils/Badge";
   import NtRowBadge from "../Utils/RowBadge"
 
@@ -169,7 +162,6 @@
     data() {
       return {
         searchTerm: null,
-        selectedFiles: [],
         selectFiles: false,
         showPrivateFiles: false,
         showUploadKey: false,
@@ -189,8 +181,10 @@
     },
     computed: {
       action() {
-        console.log(this.$store.state.action)
         return this.$store.state.action;
+      },
+      selectedFiles() {
+        return this.$store.state.selected_files;
       }
     },
     watch: {
@@ -201,8 +195,9 @@
           this.$parent.searched_files = this.$parent.files
         }
       },
-      action(newAction, oldAction) {
-        alert("HI THERE");
+      selectFiles(newValue, oldValue) {
+        if(newValue)
+          this.$store.commit(types.EMPTY_FILE_SELECTION);
       }
     },
 
@@ -235,9 +230,6 @@
             console.log('DELETE SUCCESS', response);
             // Increment delete count by 1
             deleteCount += 1;
-            // Remove id from selectedFiles
-            this.selectedFiles.splice(i, 1);
-
           })
           .catch(e => {
             // Catch the error and notify user that file cant be deleted
@@ -254,6 +246,8 @@
           text: 'The file panel is now updating...',
           position: 'bottom right'
         });
+        this.$store.commit('EMPTY_FILE_SELECTION');
+        this.$store.commit('REFRESH_FILE_PANEL', true);
       },
 
       privateSelectedFiles() {

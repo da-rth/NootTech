@@ -17,7 +17,8 @@ function default_state() {
     token: null,
     settings: null,
     modal: null,
-    refresh_file_pane: true
+    refresh_file_panel: true,
+    selected_files: new Array()
   }
 }
 
@@ -34,9 +35,6 @@ const mutations = {
   },
   [types.LOGOUT]: (state, payload) => {
     Object.assign(state, default_state())
-    //state.token = null;
-    //state.user = null;
-    //state.settings = null;
     router.push(payload.redirect);
   },
   [types.REFRESH]: (state, data) => {
@@ -50,6 +48,17 @@ const mutations = {
   },
   [types.REFRESH_FILE_PANEL]: (state, payload) => {
     state.refresh_file_panel = payload;
+    // forget everything once you refresh
+    if(payload)
+      state.selected_file = new Array();
+  },
+  [types.TOGGLE_FILE]: (state, fileId) => {
+    if(state.selected_files.includes(fileId))
+      state.selected_files.splice(state.selected_files.indexOf(fileId), 1);
+    else state.selected_files.push(fileId);
+  },
+  [types.EMPTY_FILE_SELECTION]: (state, payload) => {
+    state.selected_files = new Array();
   }
 };
 
