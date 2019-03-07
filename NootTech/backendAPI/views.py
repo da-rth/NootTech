@@ -2,6 +2,7 @@ from .utils import get_upload_key, upload_authentication_failure, get_ip, get_id
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework import generics, viewsets
 from rest_framework.response import Response
+from rest_framework import status
 from django.utils.decorators import method_decorator
 from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.csrf import csrf_exempt
@@ -11,6 +12,8 @@ from django.http import HttpResponse
 from . import serializers
 from .models import *
 import traceback
+import logging
+log = logging.getLogger(__name__)
 
 htp = "https" if settings.HTTPS else "http"
 
@@ -41,7 +44,6 @@ class GetSetSettingsAPIView(generics.ListCreateAPIView):
     """
     Returns a list of settings on GET request for an AUTHENTICATED user
     Updates specific settings sent over via POST request for an AUTENTICATED user
-    TODO: Validate the email address and colour chosen by the user. Is the colour a hex? Is the email real?
     """
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.SettingsSerializer
@@ -60,16 +62,16 @@ class GetSetSettingsAPIView(generics.ListCreateAPIView):
         # Update user object with these values...
         if serializer.validated_data.get('colour'):
             # if "colour" exists and isn't an empty string
-
             u.colour = serializer.validated_data.get('colour')
+        
         if serializer.validated_data.get('email'):
-
             # If "email" exists and isn't an empty string
             u.email = serializer.validated_data.get('email')
+        
         if serializer.validated_data.get('gen_upload_key'):
             # If "upload_key" exists and is set to True
             u.upload_key = get_upload_key()
-
+        
         u.save()
 
 
@@ -126,12 +128,39 @@ class ReportAddAPIView(generics.CreateAPIView):
     serializer_class = serializers.ReportAdd
     queryset = ReportedFile.objects.all()
 
+class WarningListAPIView(generics.ListAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.WarningList
+
+    def get_queryset(self):
+        return Warned.objects.filter(warned_user=self.request.user)
+
 
 class DeleteFileAPIView(generics.DestroyAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return File.objects.filter(user=self.request.user)
+
+class ToggleFilePrivacyAPIView(generics.UpdateAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.PrivacyFile
+
+    def get_queryset(self):
+        return File.objects.filter(user=self.request.user)
+
+    def update(self, request, pk):
+        try:
+            file = File.objects.get(user=self.request.user, id=pk)
+            file.is_private = not file.is_private
+            file.save()
+            log.info(f"[FILE-PRIVACY] : USER: {self.request.user.username} TOGGLED PRIVACY FOR FILE WITH ID {pk}")
+            return Response({'is_private': file.is_private}, status=status.HTTP_200_OK)
+        except File.DoesNotExist:
+            log.warn(f"[FILE-PRIVACY] : USER: {self.request.user.username} TRIED TO TOGGLE PRIVACY FOR NON EXISTING FILE WITH ID {pk}")
+            return Response({'detail':f'The file with id {pk} uploaded by {self.request.user.username} could not be found.'},
+                            status=status.HTTP_404_NOT_FOUND
+            )
 
 
 class SubdomainViewSet(viewsets.ViewSet):
@@ -147,74 +176,95 @@ class SubdomainViewSet(viewsets.ViewSet):
         if user and file:
             file.views += 1
             file.save()
-            return Response({'file': data if not file.is_private else None, 'colour': user.colour})
+            return Response({'file': data if not file.is_private else None, 'colour': user.colour}, status=status.HTTP_200_OK)
         else:
-            return Response({'file': None, 'colour': user.colour if user else None})
+            return Response({'detail': f'The file with gen id {gen_name} belonging to {username} does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class BanViewSet(viewsets.ViewSet):
+class BanAPIView(generics.CreateAPIView):
 
     permission_classes = (IsAdminUser,)
+    serializer_class = serializers.WarningAdd
+    queryset = BannedUser.objects.all()
 
-    def field(self, request, pk):
-        user = User.objects.filter(id=pk).first()
+    def create(self, request, *args, **kwargs):
 
-        if user:
-            user.is_active = False
-            files = File.objects.filter(user=user)
+        reason = request.POST.get('reason', None)
+        ban_uid = request.POST.get('warned_user', None)
+        ban_user = User.objects.get(id=ban_uid)
+
+        if ban_user:
+
+            if ban_user.is_staff:
+                log.warn(f"[BAN-USER] : USER: {request.user.username} TRIED TO BAN STAFF MEMBER {ban_user.username}.")
+                return Response({'detail':'You cannot ban another staff member.'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            ban_user.is_active = False
+            files = File.objects.filter(user=ban_user)
             files.delete()
-            user.save()
+            ban_user.save()
 
             banned_user = BannedUser(
                 banned_by=self.request.user,
-                banned_user=user,
-                reason="User was very very bad! >:("
+                banned_user=ban_user,
+                reason=reason if reason != None else "Reason not given by admin."
             )
             banned_user.save()
-            # LOG BAN HERE
-            # LOG FILES DELETED HERE
-            return Response({'banned': True})
+            log.info(f"[BAN-USER] : USER: {ban_user.username} BANNED BY: {self.request.user.username}")
+            return Response({'banned': True}, status=status.HTTP_201_CREATED)
         else:
-            return Response({'banned': False})
+            log.warn(f"[BAN-USER] : FAILED TO BAN USER WITH ID: {ban_uid}, REQUESTED BY: {self.request.user.username}")
+            return Response({'detail':'The user you tried to ban does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class WarnViewSet(viewsets.ViewSet):
+class WarnAPIView(generics.CreateAPIView):
 
     permission_classes = (IsAdminUser,)
+    serializer_class = serializers.WarningAdd
+    queryset = Warned.objects.all()
 
-    def field(self, request, pk):
-        # reason = ...
-        user = User.objects.filter(id=pk).first()
+    def create(self, request, *args, **kwargs):
+        
+        autoban = False
+        reason = request.POST.get('reason', None)
 
-        if user:
+        warned_uid = request.POST.get('warned_user', None)
+        warned_user = User.objects.get(id=warned_uid)
 
-            user.warnings += 1
-            autoban = False
+        if warned_user:
+            
+            if warned_user.is_staff:
+                log.warn(f"[WARN-USER] : USER: {request.user.username} TRIED TO WARN STAFF MEMBER {warned_user.username}.")
+                return Response({'detail': 'You cannot warn another staff member.'}, status=status.HTTP_403_FORBIDDEN)
 
-            warning = Warnings(
+            warned_user.warnings += 1
+            
+            warning = Warned(
                 warned_by=self.request.user,
-                warned_user=user,
-                reason="User was a little bad..."
+                warned_user=warned_user,
+                reason=reason if reason != None else "Reason not given by admin."
             )
             warning.save()
 
-            if user.warnings > 3:
+            if warned_user.warnings > 3:
                 autoban = True
-                user.is_active = False
-                files = File.objects.filter(user=user)
+                warned_user.is_active = False
+                files = File.objects.filter(user=warned_user)
                 files.delete()
                 ban = BannedUser(
-                    banned_by=self.request.user,
-                    banned_user=user,
-                    reason="User was very very bad! >:("
+                    banned_by=request.user,
+                    banned_user=warned_user,
+                    reason=reason if reason != None else "Reason not given by admin. " \
+                    "You have exceeded 3 warnings and have been auto-banned."
                 )
+                log.info(f"[WARN-USER] : USER: {warned_user.username} AUTO-BANNED DUE TO EXCEEDING 3 WARNINGS.")
                 ban.save()
-            user.save()
-
-            # LOG WARNING HERE
-            return Response({'warned': True, 'autoban': autoban, 'warnings': user.warnings})
+            warned_user.save()
+            log.info(f"[WARN-USER] : USER: {warned_user.username} WARNED BY: {self.request.user.username}")
+            return Response({'warned': True, 'autoban': autoban, 'warnings': warned_user.warnings}, status=status.HTTP_201_CREATED)
         else:
-            return Response({'warned': False, 'autoban': False, 'warnings': None})
+            log.warn(f"[WARN-USER] : FAILED TO WARN USER WITH ID: {warned_uid}, REQUESTED BY: {self.request.user.username}")
+            return Response({'detail': 'The user you tried to warn does not exist.'}, status=status.HTTP_404_NOT_FOUND)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -236,6 +286,7 @@ class UploadView(View):
             upload_user = get_object_or_404(User, username=username, upload_key=request.POST["upload_key"])
 
             if not upload_user.is_active:
+                log.warn(f"[FILE-UPLOAD] : BANNED USER: {upload_user.username} ATTEMPTED TO UPLOAD FILE.")
                 return HttpResponse(f"Your account is no longer active.\n"
                                     f"If you think this is a mistake, "
                                     f"please visit: {htp}://{settings.DOMAIN_NAME}/contact")
@@ -261,23 +312,24 @@ class UploadView(View):
                         ip=ip,
                         file_content=user_file
                     )
-
+                
                 uploaded_file.save()
 
-                print(uploaded_file.original_filename, uploaded_file.generated_filename)
-
+                log.info(f"[FILE-UPLOAD] : USER: {upload_user.username} UPLOADED FILE WITH ID: {uploaded_file.id} FROM IP: {uploaded_file.ip}")
+                
                 if settings.SUBDOMAIN:
                     uploaded_files.append(f"{htp}://{username}.{settings.DOMAIN_NAME}/{uploaded_file.generated_filename}")
                 else:
                     uploaded_files.append(f"{htp}://{settings.DOMAIN_NAME}/u/{username}/{uploaded_file.generated_filename}")
 
             except Exception as e:
-
+                
+                log.warn(f"[FILE-UPLOAD] : USER: {upload_user.username} FAILED TO UPLOADED FILE WITH ID: {user_file} FROM IP: {uploaded_file.ip}")
                 print(f"Upload for {user_file} failed")
                 traceback.print_exc()
                 uploaded_files.append(f"Failed to upload: {user_file}\n")
 
-        return HttpResponse(" \n".join(uploaded_files))
+        return HttpResponse("\n".join(uploaded_files))
 
     def get(self, request):
         return redirect('/')

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from collections import OrderedDict
-from .models import User, ErrorVideo, File, FavouritedFile, ReportedFile, Image, Video, Audio, Text, VirusTotalScan
+from .models import *
 from django.contrib.auth.password_validation import validate_password
 from django.core import exceptions
 from . import validators
@@ -12,6 +12,15 @@ class VirusSerializer(serializers.ModelSerializer):
     class Meta:
         model = VirusTotalScan
         fields = '__all__'
+
+class PrivacyFile(serializers.ModelSerializer):
+    """
+    Serializer used for File Sub-type : Image
+    Exclusdes the file-pointer and id fields from being serialized
+    """
+    class Meta:
+        model = File
+        fields = ('is_private',)
 
 class ImageFileSerializer(serializers.ModelSerializer):
     """
@@ -200,5 +209,29 @@ class ReportAdd(serializers.ModelSerializer):
         exclude = ('date',)
 
 
+class WarningList(serializers.ModelSerializer):
+    """
+    Serializer for a list of warnings recieved by a user from an admin.
+    """
+    warned_user_name = serializers.CharField(source="warned_user.username", read_only=True)
+    warned_by_name = serializers.CharField(source="warned_by.username", read_only=True)
 
+    class Meta:
+        model = Warned
+        exclude = ('warned_user', 'warned_by')
 
+class WarningAdd(serializers.ModelSerializer):
+    """
+    Basic serializer for warning a user
+    """
+    class Meta:
+        model = Warned
+        exclude = ('date', 'warned_by')
+
+class BanAdd(serializers.ModelSerializer):
+    """
+    Basic serializer for warning a user
+    """
+    class Meta:
+        model = BannedUser
+        exclude = ('date', 'banned_by')

@@ -6,8 +6,8 @@ from django.db import models
 from django.utils import timezone
 from mimetypes import MimeTypes
 from moviepy.editor import VideoFileClip, AudioFileClip
-import PIL.Image
 from . import utils
+import PIL.Image
 
 """
 File:   models.py
@@ -53,7 +53,7 @@ class ErrorVideo(models.Model):
         return self.title
 
 
-class Warnings(models.Model):
+class Warned(models.Model):
     """
     This model stores information about all users that have been WARNED by an administrator.
 
@@ -65,8 +65,8 @@ class Warnings(models.Model):
     All deleted files and banned users will be logged.
     """
     class Meta:
-        verbose_name_plural = 'Banned Users'
-
+        verbose_name_plural = 'Warned Users'
+    
     warned_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='warned_user_set')
     warned_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='warned_by_admin_set')
     date = models.DateTimeField(default=timezone.now)
