@@ -1,5 +1,8 @@
 <template>
 	<div :value="value" @input="$emit('input', $event.target.value)">
+
+    <notifications group="CopySharelink" />
+
 		<b-modal size="lg" centered scrollable :ref="modalId" :title="value.original_filename">
 
     <template v-if="value">
@@ -24,7 +27,7 @@
         <b-input-group-append>
           <a :href="getShareLink()"><b-button>Open</b-button></a>
           <input type="hidden" id="sharelink" :value="getShareLink()">
-          <b-button>Copy</b-button>
+          <b-button @click="copySharelink">Copy</b-button>
         </b-input-group-append>
       </b-input-group>
 		</b-modal>
@@ -64,6 +67,28 @@ export default {
         return `${this.$site_url}/u/${username}/${this.value.generated_filename}`
       }
     },
+    copySharelink () {
+        let testingCodeToCopy = document.querySelector('#sharelink')
+        testingCodeToCopy.setAttribute('type', 'text')
+        testingCodeToCopy.select()
+        try {
+          var successful = document.execCommand('copy');
+          this.showUploadKey = false;
+          this.$notify({
+            group: 'CopySharelink',
+            title: `Copied the URL to clipboard!`,
+            text: 'Go ahead! Paste it like crazy!',
+          });
+        } catch (err) {
+          this.$notify({
+            group: 'CopySharelink',
+            title: 'Oh no! We couldn\'t copy the URL',
+            text: 'Try using CTRL+C! Sorry about that...',
+          });
+        }
+        testingCodeToCopy.setAttribute('type', 'hidden')
+        window.getSelection().removeAllRanges()
+      },
 		// wrappers
 		showModal () {
 			this.$refs[this.modalId].show();

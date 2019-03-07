@@ -1,5 +1,7 @@
 <template>
   <div>
+    <notifications group="CopyKey" />
+
     <b-navbar
     toggleable="lg"
     variant="dark"
@@ -53,9 +55,9 @@
 
         <b-navbar-nav class="ml-auto" v-if="$store.state.user">
           <b-input-group class="filebar-uploadkey" v-if="showUploadKey">
-            <b-form-input class="key-field" v-bind:value="$store.state.settings.upload_key" readonly/>
+            <b-form-input id="uploadKey" class="key-field" v-bind:value="$store.state.settings.upload_key" readonly/>
             <b-input-group-append>
-              <b-button>Copy</b-button>
+              <b-button @click="copyUploadKey">Copy</b-button>
             </b-input-group-append>
             &nbsp;&nbsp;
           </b-input-group>
@@ -104,6 +106,30 @@
         brandName: "NootTech",
         showUploadKey: false
       };
+    },
+    methods: {
+      copyUploadKey () {
+          let testingCodeToCopy = document.querySelector('#uploadKey')
+          testingCodeToCopy.setAttribute('type', 'text')
+          testingCodeToCopy.select()
+          try {
+            var successful = document.execCommand('copy');
+            this.showUploadKey = false;
+            this.$notify({
+              group: 'CopyKey',
+              title: `Copied Upload Key to clipboard!`,
+              text: 'Remember to keep it safe!',
+            });
+          } catch (err) {
+            this.$notify({
+              group: 'CopyKey',
+              title: 'Oh no! We couldn\'t copy the upload key',
+              text: 'Try using CTRL+C! Sorry about that...',
+            });
+          }
+          testingCodeToCopy.setAttribute('type', 'hidden')
+          window.getSelection().removeAllRanges()
+        }
     },
     components: {NtPopup, NtUploadModal},
   }

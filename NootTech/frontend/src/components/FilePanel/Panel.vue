@@ -4,7 +4,7 @@
       {{action}}
 
 
-    <notifications group="FileDeletion" />
+    <notifications group="FileUpdate" />
 
     <b-navbar toggleable="lg" type="dark" class="file-menubar">
 
@@ -33,7 +33,7 @@
             </a>
 
           <b-button class="filebar-btn" variant="danger" v-if="selectFiles" v-on:click="deleteSelectedFiles()">Delete {{ selectedFiles.length }} file(s)</b-button>
-          <b-button class="filebar-btn" variant="primary" v-if="selectFiles" v-on:click="privateSelectedFiles()">Make {{ selectedFiles.length }} file(s) private</b-button>
+          <b-button class="filebar-btn" variant="primary" v-if="selectFiles" v-on:click="privateSelectedFiles()">Toggle Privacy ({{ selectedFiles.length }} file(s))</b-button>
 
           <b-dropdown text="File List" v-if="selectedFiles.length > 0 && selectFiles">
             <b-dropdown-item v-bind:key="file.id" v-for="file in getCheckedFiles()" disabled>
@@ -109,6 +109,7 @@
                     width: `${thumb_size.width}rem`,
                     height: `${thumb_size.height}rem`
                     }"
+                  v-if="!file.is_private"
                   class="file-badge"
                   :key="file.id" :value="file"
                   :selectionStatus="selectFiles"
@@ -226,15 +227,12 @@
           })
           .catch(e => {
             // Catch the error and notify user that file cant be deleted
-            console.log('ERROR', e.response);
-            console.log("Could not delete file...")
-            return null
+            console.log('ERROR', e);
           });
         }
-        console.log(`Removed ${deleteCount} files...`);
         await this.$parent.loadFiles()
         this.$notify({
-          group: 'FileDeletion',
+          group: 'FileUpdate',
           title: `Removed <strong>${deleteCount}</strong> files...`,
           text: 'The file panel is now updating...',
           position: 'bottom right'
@@ -243,8 +241,32 @@
         this.$store.commit('REFRESH_FILE_PANEL', true);
       },
 
-      privateSelectedFiles() {
-        console.log(`Attempting to privatise  ${this.selectedFiles.length} files`)
+      async privateSelectedFiles() {
+        let privateCount = 0;
+
+        for (var i = 0; i < this.selectedFiles.length; i++) {
+
+          await this.$api.TogglePrivacy(this.selectedFiles[i])
+          .then(response => {
+            console.log('TOGGLE PRIVACY SUCCESS', response);
+            privateCount++;
+          })
+          .catch(e => {
+            console.log('TOGGLE PRIVACY ERROR', e);
+          });
+        }
+
+        await this.$parent.loadFiles()
+
+        this.$notify({
+          group: 'FileUpdate',
+          title: `Toggled the privacy status of <strong>${privateCount}</strong> files...`,
+          text: 'The file panel is now updating...',
+          position: 'bottom right'
+        });
+
+        this.$store.commit('EMPTY_FILE_SELECTION');
+        this.$store.commit('REFRESH_FILE_PANEL', true);
       },
 
       /** Used for "sort by" dropdown **/

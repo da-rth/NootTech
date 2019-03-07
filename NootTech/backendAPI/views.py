@@ -184,7 +184,7 @@ class SubdomainViewSet(viewsets.ViewSet):
 class BanAPIView(generics.CreateAPIView):
 
     permission_classes = (IsAdminUser,)
-    serializer_class = serializers.WarningAdd
+    serializer_class = serializers.BanAdd
     queryset = BannedUser.objects.all()
 
     def create(self, request, *args, **kwargs):
