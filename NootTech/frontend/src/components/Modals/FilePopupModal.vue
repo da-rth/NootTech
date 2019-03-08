@@ -1,29 +1,29 @@
 <template>
-	<div :value="value" @input="$emit('input', $event.target.value)">
-
+	<div>
     <notifications group="CopySharelink" />
 
-		<b-modal size="lg" centered scrollable :ref="modalId" :title="value.original_filename">
+		<b-modal size="lg" centered scrollable ref="modal" :title="file.original_filename">
 
-    <template v-if="value">
+    <template v-if="file">
 
-      <VideoPlayer :file="value" v-if="value.file_video_info" class="fo-container"/>
-      <AudioPlayer :file="value" v-else-if="value.file_audio_info" class="fo-container"/>
-      <ImagePreview :file="value" v-else-if="value.file_image_info" class="fo-container img"/>
-      <TextPreview :file="value" v-else-if="value.file_text_info" class="fo-container"/>
+      <VideoPlayer v-model="file" v-if="file.file_video_info" class="fo-container"/>
+      <AudioPlayer v-model="file" v-else-if="file.file_audio_info" class="fo-container"/>
+      <ImagePreview v-model="file" v-else-if="file.file_image_info" class="fo-container img"/>
+      <TextPreview v-model="file" v-else-if="file.file_text_info" class="fo-container"/>
       
       <br/>
       
       <b-button v-b-toggle.collapseA.collapseB>Toggle File Information</b-button>
-      
+     <!-- 
       <b-collapse id="collapseA" class="mt-2">
-        <b-card><FileInformation :file="value"/></b-card>
+        <b-card><FileInformation :file="file"/></b-card>
       </b-collapse>
+      -->
 
     </template>
 
-    <b-input-group class="copy-sharelink-group" v-if="!value.is_private">
-        <b-form-input v-bind:value="getShareLink()" readonly/>
+    <b-input-group class="copy-sharelink-group" v-if="!file.is_private">
+        <b-form-input :value="getShareLink()" readonly/>
         <b-input-group-append>
           <a :href="getShareLink()"><b-button>Open</b-button></a>
           <input type="hidden" id="sharelink" :value="getShareLink()">
@@ -35,6 +35,8 @@
 	</div>
 </template>
 <script>
+
+  import EventBus from '../../event-bus.js';
   import VideoPlayer from "../Utils/FilePreview/VideoPlayer";
   import AudioPlayer from "../Utils/FilePreview/AudioPlayer";
   import DownloadFile from "../Utils/FilePreview/DownloadFile";
@@ -43,8 +45,7 @@
   import FileInformation from "../Utils/FilePreview/FileInformation";
 
 export default {
-	name: "NtPopupaModal",
-  props: ["value"],
+	name: "NtFilePopupModal",
   components: {
       TextPreview,
       ImagePreview,
@@ -55,16 +56,16 @@ export default {
     },
 	data() {
 		return {
-      modalId: "_popup-" + this.value.id,
+      file: {}
 		}
 	},
 	methods: {
     getShareLink () {
       let username = this.$store.state.user.username;
       if (this.$subdomain_enabled) {
-        return `${this.$site_url.replace("//","//"+username+".")}/${this.value.generated_filename}`
+        return `${this.$site_url.replace("//","//"+username+".")}/${this.file.generated_filename}`
       } else {
-        return `${this.$site_url}/u/${username}/${this.value.generated_filename}`
+        return `${this.$site_url}/u/${username}/${this.file.generated_filename}`
       }
     },
     copySharelink () {
@@ -91,12 +92,20 @@ export default {
       },
 		// wrappers
 		showModal () {
-			this.$refs[this.modalId].show();
+			this.$refs.modal.show();
 		},
 		hideModal () {
-			this.$refs[this.modalId].hide();
+      this.$refs.modal.hide();
+      this.file = {}
 		}
-	},
+  },
+  created() {
+    EventBus.$on("filePopup", file => {
+      this.file = file;
+      console.log(file)
+      this.showModal();
+    })
+  }
 }
 </script>
 

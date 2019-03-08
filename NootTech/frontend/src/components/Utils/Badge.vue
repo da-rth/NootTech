@@ -25,7 +25,6 @@
     />
 
     <div class="overlay" @click="onClick">
-      <NtFilePopupModal :ref="popup_id" v-model="value" />
       <h2>{{value.original_filename}}</h2>
       <div class="overlay-footer">
         <div class="icon">
@@ -46,6 +45,7 @@
 <script>
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import NtFilePopupModal from '../Modals/FilePopupModal'
+  import EventBus from '../../event-bus.js';
 
   export default {
     name: "NtBadge",
@@ -57,9 +57,6 @@
       }
     },
     methods: {
-      showModal() {
-        this.$refs[this.popup_id].showModal();
-      },
       isImage() {
         return this.value.file_mime_type.startsWith("image/")
       },
@@ -83,7 +80,9 @@
           this.selected ^= true;
           this.$store.commit('TOGGLE_FILE', this.value.id)
         }
-        else this.showModal();
+        else {
+          EventBus.$emit('filePopup', this.value);
+        }
       }
     }
   }

@@ -44,50 +44,58 @@
 </template>
 
 <script>
+
+import EventBus from '../../event-bus.js';
+
 export default {
-    name: 'NtUploadModal',
+  name: 'NtUploadModal',
 
-    methods: {
-      show() {
-        this.$refs.modal.show()
-      },
-      clearFiles() {
-        this.upload_data.files.length = 0
-      },
-      async uploadFiles() {
-        await this.$api.UploadFiles(this.upload_data)
-        .then(response => {
-          console.log('Successful server response:', response);
-          this.$notify({
-            group: 'FileUpload',
-            title: `Successfully uploaded file(s)!`,
-            text: 'The file panel is now updating...',
-            position: 'bottom right'
-          });
-          this.$store.commit('REFRESH_FILE_PANEL', true);
-
-        })
-        .catch(e => {
-          // Catch the error and notify user that file cant be deleted
-          console.log('ERROR', e.response);
-          console.log("Could not upload the file...")
-          return null
+  methods: {
+    show() {
+      this.$refs.modal.show()
+    },
+    clearFiles() {
+      this.upload_data.files.length = 0
+    },
+    async uploadFiles() {
+      await this.$api.UploadFiles(this.upload_data)
+      .then(response => {
+        console.log('Successful server response:', response);
+        this.$notify({
+          group: 'FileUpload',
+          title: `Successfully uploaded file(s)!`,
+          text: 'The file panel is now updating...',
+          position: 'bottom right'
         });
-        /**
-         * TODO: implement an Observer with LoadingFiles (or just use a watch with some global vars)
-         */
-      },
+        this.$store.commit('REFRESH_FILE_PANEL', true);
+
+      })
+      .catch(e => {
+        // Catch the error and notify user that file cant be deleted
+        console.log('ERROR', e.response);
+        console.log("Could not upload the file...")
+        return null
+      });
+      /**
+       * TODO: implement an Observer with LoadingFiles (or just use a watch with some global vars)
+       */
     },
-    data() {
-      return {
-        upload_data: {
-          username: this.$store.state.user != null ? this.$store.state.user.username : "",
-          upload_key: this.$store.state.settings != null ? this.$store.state.settings.upload_key : "",
-          is_private: false,
-          files: [],
-          }
-      };
-    },
+  },
+  data() {
+    return {
+      upload_data: {
+        username: this.$store.state.user != null ? this.$store.state.user.username : "",
+        upload_key: this.$store.state.settings != null ? this.$store.state.settings.upload_key : "",
+        is_private: false,
+        files: [],
+        }
+    };
+  },
+  mounted() {
+    EventBus.$on('uploadFile', () => {
+      this.show();
+    });
+  }
 }
 </script>
 

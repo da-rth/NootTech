@@ -63,7 +63,7 @@
           </b-input-group>
 
           <b-nav-item>
-            <a @click="$store.commit('CHANGE_MODAL', 'upload')">
+            <a @click="raiseUploadEvent">
 
               <font-awesome-icon icon="upload"/>&nbsp; Upload
             </a>
@@ -96,8 +96,9 @@
   </div>
 </template>
 <script>
-  import NtPopup from '../Utils/Popup.vue'
-  import NtUploadModal from '../Modals/UploadModal'
+  import NtPopup from '../Utils/Popup.vue';
+  import NtUploadModal from '../Modals/UploadModal.vue';
+  import EventBus from '../../event-bus.js';
 
   export default {
     name: 'NtNavbar',
@@ -109,27 +110,30 @@
     },
     methods: {
       copyUploadKey () {
-          let testingCodeToCopy = document.querySelector('#uploadKey')
-          testingCodeToCopy.setAttribute('type', 'text')
-          testingCodeToCopy.select()
-          try {
-            var successful = document.execCommand('copy');
-            this.showUploadKey = false;
-            this.$notify({
-              group: 'CopyKey',
-              title: `Copied Upload Key to clipboard!`,
-              text: 'Remember to keep it safe!',
-            });
-          } catch (err) {
-            this.$notify({
-              group: 'CopyKey',
-              title: 'Oh no! We couldn\'t copy the upload key',
-              text: 'Try using CTRL+C! Sorry about that...',
-            });
-          }
-          testingCodeToCopy.setAttribute('type', 'hidden')
-          window.getSelection().removeAllRanges()
+        let testingCodeToCopy = document.querySelector('#uploadKey')
+        testingCodeToCopy.setAttribute('type', 'text')
+        testingCodeToCopy.select()
+        try {
+          var successful = document.execCommand('copy');
+          this.showUploadKey = false;
+          this.$notify({
+            group: 'CopyKey',
+            title: `Copied Upload Key to clipboard!`,
+            text: 'Remember to keep it safe!',
+          });
+        } catch (err) {
+          this.$notify({
+            group: 'CopyKey',
+            title: 'Oh no! We couldn\'t copy the upload key',
+            text: 'Try using CTRL+C! Sorry about that...',
+          });
         }
+        testingCodeToCopy.setAttribute('type', 'hidden')
+        window.getSelection().removeAllRanges()
+      },
+      raiseUploadEvent() {
+        EventBus.$emit('uploadFile');
+      }
     },
     components: {NtPopup, NtUploadModal},
   }

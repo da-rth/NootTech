@@ -1,5 +1,5 @@
 <template>
-    <div class="audioplayer">
+    <div class="audioplayer" v-bind:file="file" @input="$emit('input', $event.target.file)">
 
         <div id="waveform"></div>
 
@@ -57,6 +57,10 @@
   export default {
     name: "WaveSurfer",
     props: ['file'],
+    modal: {
+      prop: 'file',
+      event: 'input'
+    },
     data () {
       return {
         timestamp: 0,

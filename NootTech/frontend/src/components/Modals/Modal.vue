@@ -2,35 +2,25 @@
   <div>
     <!-- Upload File modal -->
     <nt-upload-modal ref="uploadModal" />
-    
+    <nt-file-popup-modal ref="filePopupModal" />
   </div>
 </template>
 
 <script>
 
 import NtUploadModal from './UploadModal.vue';
+import NtFilePopupModal from './FilePopupModal.vue';
+import EventBus from '../../event-bus.js';
 
 export default {
   name: 'NtModal',
-  components: {NtUploadModal},
+  components: {NtUploadModal, NtFilePopupModal},
     created() {
       this.$store.commit('CHANGE_MODAL', null);
+      EventBus.$on('hiThere', file => {
+        alert(file);
+      });
     },
-    computed: {
-      modal () {
-        return this.$store.state.modal;
-      }
-    },
-    watch: {
-      modal (newModalState, oldModalState) {
-        switch(newModalState) {
-          case 'upload':
-            this.$refs.uploadModal.show();
-
-          }
-          this.$store.commit('CHANGE_MODAL', null);
-      }
-  }
 }
 </script>
 
