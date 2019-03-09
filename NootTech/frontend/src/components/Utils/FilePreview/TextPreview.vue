@@ -1,7 +1,9 @@
 <template>
+  <div :file="file" @input="$emit('input', $event.target.file)"> 
     <highlight-code :lang="syntax" class="nt-hljs">
       {{ code }}
 		</highlight-code>
+  </div>
 </template>
 
 <script>
@@ -11,15 +13,19 @@
         data () {
           return {
             code: "",
-            syntax: ""
           }
         },
+        computed: {
+          syntax() { return this.file.file_text_info.syntax_highlighting;},
+          url() { return this.file.file_content.startsWith('/') ? this.$backend_url + this.file.file_content : this.file.file_content;}
+        },
+        model: {
+          prop: "file",
+          event: "input"
+        },
         async mounted () {
-          this.syntax = this.file.file_text_info.syntax_highlighting;
-
-          let url = this.file.file_content.startsWith('/') ? this.$backend_url+this.file.file_content : this.file.file_content;
-
-          await this.$api.GetFile(url)
+          console.log("Mounted");
+          await this.$api.GetFile(this.url)
           .then(response => {
             this.code = response.data;
           })
@@ -41,4 +47,3 @@
     overflow-y: scroll !important;
 }
 </style>
-

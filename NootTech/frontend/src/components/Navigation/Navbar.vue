@@ -64,7 +64,6 @@
 
           <b-nav-item>
             <a @click="raiseUploadEvent">
-
               <font-awesome-icon icon="upload"/>&nbsp; Upload
             </a>
           </b-nav-item>

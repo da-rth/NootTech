@@ -17,7 +17,10 @@ export default {
       return this.file.file_content.startsWith('/') ?
              this.$backend_url+this.file.file_content :
              this.file.file_content
-    }
+    },
+  },
+  mounted() {
+      console.log("Hello from ImagePreview");
   }
 }
 </script>

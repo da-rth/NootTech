@@ -2,36 +2,30 @@
 	<div>
     <notifications group="CopySharelink" />
 
-		<b-modal size="lg" centered scrollable ref="modal" :title="file.original_filename">
+		<b-modal size="lg" centered scrollable ref="modal" :title="getTitle" @hidden="file=null">
 
-    <template v-if="file">
+      <template v-if="file">
+        <VideoPlayer v-model="file" v-if="file.file_video_info" class="fo-container"/>
+        <AudioPlayer v-model="file" v-else-if="file.file_audio_info" class="fo-container"/>
+        <image-preview v-model="file" v-else-if="file.file_image_info" class="fo-container img"/>
+        <TextPreview v-model="file" v-else-if="file.file_text_info" class="fo-container"/>
+        <br/>
+        
+        <b-button v-b-toggle.collapseA.collapseB>Toggle File Information</b-button>
+        <b-collapse id="collapseA" class="mt-2">
+          <b-card><FileInformation :file="file"/></b-card>
+        </b-collapse>
 
-      <VideoPlayer v-model="file" v-if="file.file_video_info" class="fo-container"/>
-      <AudioPlayer v-model="file" v-else-if="file.file_audio_info" class="fo-container"/>
-      <ImagePreview v-model="file" v-else-if="file.file_image_info" class="fo-container img"/>
-      <TextPreview v-model="file" v-else-if="file.file_text_info" class="fo-container"/>
-      
-      <br/>
-      
-      <b-button v-b-toggle.collapseA.collapseB>Toggle File Information</b-button>
-     <!-- 
-      <b-collapse id="collapseA" class="mt-2">
-        <b-card><FileInformation :file="file"/></b-card>
-      </b-collapse>
-      -->
-
-    </template>
-
-    <b-input-group class="copy-sharelink-group" v-if="!file.is_private">
-        <b-form-input :value="getShareLink()" readonly/>
-        <b-input-group-append>
-          <a :href="getShareLink()"><b-button>Open</b-button></a>
-          <input type="hidden" id="sharelink" :value="getShareLink()">
-          <b-button @click="copySharelink">Copy</b-button>
-        </b-input-group-append>
-      </b-input-group>
-		</b-modal>
-
+        <b-input-group class="copy-sharelink-group" v-if="!file.is_private">
+          <b-form-input :value="getShareLink()" readonly/>
+          <b-input-group-append>
+            <a :href="getShareLink()"><b-button>Open</b-button></a>
+            <input type="hidden" id="sharelink" :value="getShareLink()">
+            <b-button @click="copySharelink">Copy</b-button>
+          </b-input-group-append>
+       </b-input-group>
+      </template>
+    </b-modal>
 	</div>
 </template>
 <script>
@@ -56,7 +50,7 @@ export default {
     },
 	data() {
 		return {
-      file: {}
+      file: null
 		}
 	},
 	methods: {
@@ -96,15 +90,17 @@ export default {
 		},
 		hideModal () {
       this.$refs.modal.hide();
-      this.file = {}
-		}
+    }
   },
-  created() {
+  mounted() {
+    var that = this;
     EventBus.$on("filePopup", file => {
-      this.file = file;
-      console.log(file)
-      this.showModal();
-    })
+      that.file = file;
+      that.showModal();
+    });
+  },
+  computed: {
+    getTitle() { return this.file ? this.file.original_filename : ""; }
   }
 }
 </script>

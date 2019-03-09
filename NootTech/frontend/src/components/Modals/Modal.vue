@@ -15,12 +15,6 @@ import EventBus from '../../event-bus.js';
 export default {
   name: 'NtModal',
   components: {NtUploadModal, NtFilePopupModal},
-    created() {
-      this.$store.commit('CHANGE_MODAL', null);
-      EventBus.$on('hiThere', file => {
-        alert(file);
-      });
-    },
 }
 </script>
 
