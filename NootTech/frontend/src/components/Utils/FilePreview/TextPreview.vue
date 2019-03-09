@@ -24,7 +24,6 @@
           event: "input"
         },
         async mounted () {
-          console.log("Mounted");
           await this.$api.GetFile(this.url)
           .then(response => {
             this.code = response.data;

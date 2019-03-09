@@ -6,8 +6,8 @@
 
       <template v-if="file">
         <VideoPlayer v-model="file" v-if="file.file_video_info" class="fo-container"/>
-        <AudioPlayer v-model="file" v-else-if="file.file_audio_info" class="fo-container"/>
-        <image-preview v-model="file" v-else-if="file.file_image_info" class="fo-container img"/>
+        <AudioPlayer :file="file" v-else-if="file.file_audio_info" class="fo-container"/>
+        <ImagePreview v-model="file" v-else-if="file.file_image_info" class="fo-container img"/>
         <TextPreview v-model="file" v-else-if="file.file_text_info" class="fo-container"/>
         <br/>
         

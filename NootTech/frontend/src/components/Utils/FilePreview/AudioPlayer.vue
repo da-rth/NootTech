@@ -1,61 +1,55 @@
 <template>
-    <div class="audioplayer" v-bind:file="file" @input="$emit('input', $event.target.file)">
+  <div class="audioplayer">
 
-        <div id="waveform"></div>
+    <div id="waveform"></div>
 
-        <div class="row audioplayer-controls">
+    <div class="row audioplayer-controls">
 
-            <div class="col-sm-4">
-                <div class="row justify-content-center">
-                    <span class="timestamp">
-                        <font-awesome-icon icon="clock"/> &nbsp;
-                        {{ `${fancyTimeFormat(timestamp)} / ${fancyTimeFormat(file.file_audio_info.duration)}` }}
-                    </span>
-                </div>
-            </div>
-
-            <div class="col-sm-4">
-                <div class="row justify-content-center play-pause-controls">
-
-                    <b-button class="audioplayer-btn" @click="stepBackward">
-                        <font-awesome-icon icon="step-backward"/>
-                    </b-button>
-
-                    <b-button class="audioplayer-btn" @click="playPause">
-                      <font-awesome-icon v-if="paused" icon="play"/>
-                      <font-awesome-icon v-else icon="pause"/>
-                    </b-button>
-
-                    <b-button class="audioplayer-btn" @click="stepForward">
-                        <font-awesome-icon icon="step-forward"/>
-                    </b-button>
-                </div>
-
-            </div>
-
-            <div class="col-sm-4">
-                <div class="row justify-content-center">
-
-                    <button class="audioplayer-btn" @click="toggleMute">
-                      <font-awesome-icon v-if="muted" icon="volume-off"/>
-                      <font-awesome-icon v-else icon="volume-up"/>
-                    </button>
-                    &nbsp;
-                    <input class="form-control-range volume-slider" type="range" min="0" max="1" step="0.01" value="0.7" v-model="volume"/>
-
-                </div>
-            </div>
-
+      <div class="col-sm-4">
+        <div class="row justify-content-center">
+          <span class="timestamp">
+              <font-awesome-icon icon="clock"/> &nbsp;
+              {{ `${fancyTimeFormat(timestamp)} / ${fancyTimeFormat(file.file_audio_info.duration)}` }}
+          </span>
         </div>
+      </div>
 
+      <div class="col-sm-4">
+        <div class="row justify-content-center play-pause-controls">
+          <b-button class="audioplayer-btn" @click="stepBackward">
+            <font-awesome-icon icon="step-backward"/>
+          </b-button>
+
+          <b-button class="audioplayer-btn" @click="playPause">
+            <font-awesome-icon v-if="paused" icon="play"/>
+            <font-awesome-icon v-else icon="pause"/>
+          </b-button>
+
+          <b-button class="audioplayer-btn" @click="stepForward">
+            <font-awesome-icon icon="step-forward"/>
+          </b-button>
+        </div>
+      </div>
+
+      <div class="col-sm-4">
+        <div class="row justify-content-center">
+          <button class="audioplayer-btn" @click="toggleMute">
+            <font-awesome-icon v-if="muted" icon="volume-off"/>
+            <font-awesome-icon v-else icon="volume-up"/>
+          </button>
+          &nbsp;
+          <input class="form-control-range volume-slider" type="range" min="0" max="1" step="0.01" value="0.7" v-model="volume"/>
+        </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
   import WaveSurfer from 'wavesurfer.js';
   import CursorPlugin from '../../../assets/js/wavesurfer.cursor.js';
   export default {
-    name: "WaveSurfer",
+    name: "AudioPlayer",
     props: ['file'],
     modal: {
       prop: 'file',
@@ -99,7 +93,9 @@
       }
     },
     mounted () {
+      console.log("Audio player setup");
       this.wavesurfer = WaveSurfer.create(this.waveOptions);
+      console.log(this.audioURL);
       this.resetPlayer(this.audioURL);
       // Initialise events
       this.wavesurfer.on('audioprocess', () => {
@@ -133,7 +129,7 @@
         this.timestamp = 0;
         this.wavesurfer.pause();
         this.wavesurfer.empty();
-        this.wavesurfer.load(file);
+        this.wavesurfer.load(this.file);
         this.wavesurfer.setVolume(this.volume);
       },
       setVolume (val) {
@@ -157,14 +153,13 @@
         ret += "" + mins + ":" + (secs < 10 ? "0" : "");
         ret += "" + secs;
         return ret;
-        }
+      }
     },
     beforeDestroy() {
       console.log('destroying audio player')
       this.wavesurfer.pause();
       this.wavesurfer.destroy();
     },
-
   }
 </script>
 
