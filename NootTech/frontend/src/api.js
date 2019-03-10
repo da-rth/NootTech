@@ -1,8 +1,6 @@
 import axios from 'axios'
 import * as config from './config.js';
 
-
-
 // A second instance of axios to be used for unauthenticated requests, such as previewing a sharelink or viewing an error video.
 var axios_unauth = axios.create({ baseURL: config.API_URL, timeout: 1000 });
 
@@ -50,7 +48,6 @@ axios.defaults.xsrfHeaderName = "X-CSRFToken";
  * Configures AXIOS to send JWT token in header of each API request for
  * user.is_authenticated API calls.
  * This function is invoked every time the user loges in.
- * TODO: choose whether to expose this function or not.
  *
  * @param {string} token - the JWT token
  */
@@ -73,7 +70,6 @@ function setToken(token) {
  * @returns {Promise} an Object `{user, token}`
  */
 export async function login(credentials) {
-  console.log("Attempting to log in...");
   let response = await axios.post(LOGIN_URL, credentials);
   const parsedResponse = {};
   parsedResponse.token = response.data.token;
@@ -125,6 +121,15 @@ export async function refreshToken(old_token) {
   new_token = response.data.token;
   setToken(new_token);
   return new_token;
+}
+
+/**
+ * Configuses AXIOS to "forget" the authentication token.
+ * Useful for logging out.
+ */
+
+export function flushToken() {
+ //setToken('');
 }
 
 /**
@@ -287,3 +292,5 @@ export async function AddFavourite(fileID) {
 export async function DeleteFavourite(fileID) {
   return await axios.delete(`${FAV_DEL_URL}/${fileID}`)
 }
+
+export const _axios = axios;

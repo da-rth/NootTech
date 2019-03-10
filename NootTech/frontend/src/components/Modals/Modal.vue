@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="$store.state.user && $store.state.settings">
     <!-- Upload File modal -->
     <nt-upload-modal ref="uploadModal" />
     <nt-file-popup-modal ref="filePopupModal" />

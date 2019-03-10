@@ -95,7 +95,6 @@
     mounted () {
       console.log("Audio player setup");
       this.wavesurfer = WaveSurfer.create(this.waveOptions);
-      console.log(this.audioURL);
       this.resetPlayer(this.audioURL);
       // Initialise events
       this.wavesurfer.on('audioprocess', () => {

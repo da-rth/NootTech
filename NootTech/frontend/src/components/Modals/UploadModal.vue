@@ -8,7 +8,7 @@
       :ok-disabled='upload_data.files.length == 0'
       ok-title="Upload file(s)"
       @ok="uploadFiles"
-      @cancel="clearFiles"
+      @hidden="clearFiles"
       >
       <h1>File upload</h1>
       You can select one or more files.
@@ -55,9 +55,10 @@ export default {
       this.$refs.modal.show()
     },
     clearFiles() {
-      this.upload_data.files.length = 0
+      this.upload_data.files = new Array()
     },
     async uploadFiles() {
+      console.log("Trying to upload " + this.upload_data.files);
       await this.$api.UploadFiles(this.upload_data)
       .then(response => {
         console.log('Successful server response:', response);
@@ -67,8 +68,7 @@ export default {
           text: 'The file panel is now updating...',
           position: 'bottom right'
         });
-        this.$store.commit('REFRESH_FILE_PANEL', true);
-
+        EventBus.$emit('refreshFilePanel');
       })
       .catch(e => {
         // Catch the error and notify user that file cant be deleted
@@ -76,22 +76,21 @@ export default {
         console.log("Could not upload the file...")
         return null
       });
-      /**
-       * TODO: implement an Observer with LoadingFiles (or just use a watch with some global vars)
-       */
-    },
+   },
   },
   data() {
     return {
       upload_data: {
-        username: this.$store.state.user != null ? this.$store.state.user.username : "",
-        upload_key: this.$store.state.settings != null ? this.$store.state.settings.upload_key : "",
+        username: '',
+        upload_key: '',
         is_private: false,
         files: [],
         }
     };
   },
   mounted() {
+    this.username = this.$store.state.user.username;
+    this.$upload_key = this.$store.state.settings.upload_key;
     EventBus.$on('uploadFile', () => {
       this.show();
     });

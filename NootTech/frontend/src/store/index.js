@@ -1,11 +1,8 @@
 import Vuex from 'vuex'
 import Vue from 'vue'
 import * as types from './mutation-types.js'
-import axios from 'axios'
 import createPersistedState from 'vuex-persistedstate'
 import router from '../router'
-import * as config from '../config.js';
-
 import * as authentication from '../api.js';
 
 Vue.use(Vuex);
@@ -16,8 +13,6 @@ function default_state() {
     user: null,
     token: null,
     settings: null,
-    modal: null,
-    refresh_file_panel: true,
     selected_files: new Array()
   }
 }
@@ -32,9 +27,11 @@ const mutations = {
   },
   [types.SETTINGS]: (state, settings) => {
     state.settings = settings;
+    console.log("The email is: ", settings.email);
   },
   [types.LOGOUT]: (state, payload) => {
-    Object.assign(state, default_state())
+    Object.assign(state, default_state());
+    authentication.flushToken();
     router.push(payload.redirect);
   },
   [types.REFRESH]: (state, data) => {
@@ -42,15 +39,6 @@ const mutations = {
   },
   [types.REGISTER]: (state, payload) => {
     router.push(payload.redirect);
-  },
-  [types.CHANGE_MODAL]: (state, payload) => {
-    state.modal = payload;
-  },
-  [types.REFRESH_FILE_PANEL]: (state, payload) => {
-    state.refresh_file_panel = payload;
-    // forget everything once you refresh
-    if(payload)
-      state.selected_file = new Array();
   },
   [types.TOGGLE_FILE]: (state, fileId) => {
     if(state.selected_files.includes(fileId))

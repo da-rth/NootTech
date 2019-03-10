@@ -10,6 +10,8 @@
 <script>
   import LoadingFiles from '../FilePanel/LoadingFiles';
   import FilePanel from '../FilePanel/Panel';
+  import EventBus from '../../event-bus.js'
+
   export default {
     name: "AuthenticatedPane",
     data () {
@@ -17,25 +19,14 @@
         gsize: null,
         files: null,
         searched_files: null,
-        filesToDelete: []
+        filesToDelete: [],
+        isLoading: true
       }
     },
     components: {
       FilePanel,
       LoadingFiles,
     },
-    computed: {
-      isLoading() {
-        return this.$store.state.refresh_file_panel;
-      }
-    },
-    watch: {
-      async isLoading(newValue, oldValue) {
-        if (newValue)
-          await this.loadFiles();
-      }
-    },
-
     methods: {
       async loadFiles() {
         this.isLoading = true;
@@ -49,24 +40,19 @@
           console.log('GET FILES ERROR', e.response);
         })
         .finally(() => {
-          this.$store.commit('REFRESH_FILE_PANEL', false); 
+          this.isLoading = false;
+          this.$root.shareLinkName = null;
+          this.$root.colour = this.$store.state.settings.colour;
         })
       },
-
-      changeColour() {
-        if (this.$store.state.settings) {
-          this.$root.colour = this.$store.state.settings.colour;
-        }
-      }
+   },
+    created() {
+      EventBus.$on('refreshFilePanel', this.loadFiles);
     },
-    async beforeMount () {
-        this.sharelinkColour = null;
-        if(!this.$store.state.refresh_file_panel)
-          this.$store.commit('REFRESH_FILE_PANEL', true);
-        await this.loadFiles();
-        this.changeColour;
-        this.$root.sharelinkName = null;
-    },
+    mounted() {
+      // it is safe to emit after mouting everything
+      EventBus.$emit('refreshFilePanel');
+    }
  }
 </script>
 
