@@ -94,6 +94,7 @@
     },
     mounted () {
       console.log("Audio player setup");
+      console.log(this.audioURL);
       this.wavesurfer = WaveSurfer.create(this.waveOptions);
       this.resetPlayer(this.audioURL);
       // Initialise events
@@ -106,7 +107,7 @@
         this.wavesurfer.setCurrentTime(0);
         this.timestamp = 0
       });
-    },
+},
     methods: {
       playPause () {
         this.paused = !this.paused;
@@ -128,7 +129,7 @@
         this.timestamp = 0;
         this.wavesurfer.pause();
         this.wavesurfer.empty();
-        this.wavesurfer.load(this.file);
+        this.wavesurfer.load(file);
         this.wavesurfer.setVolume(this.volume);
       },
       setVolume (val) {
