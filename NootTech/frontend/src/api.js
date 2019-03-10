@@ -51,8 +51,11 @@ axios.defaults.xsrfHeaderName = "X-CSRFToken";
  *
  * @param {string} token - the JWT token
  */
+
+var auth_interceptor = null;
+
 function setToken(token) {
-  axios.interceptors.request.use(
+  auth_interceptor = axios.interceptors.request.use(
     config => {
       config.headers.Authorization = `JWT ${token}`;
       return config
@@ -129,11 +132,13 @@ export async function refreshToken(old_token) {
  */
 
 export function flushToken() {
- //setToken('');
+  console.log(auth_interceptor);
+  axios.interceptors.request.eject(auth_interceptor);
+  console.log("Logout done");
 }
 
 /**
- * Gets a list (array) of error videos, no authentication required. 
+ * Gets a list (array) of error videos, no authentication required.
  * Returns the data if promise is successful.
  */
 export async function GetErrorVideos () {
@@ -227,7 +232,7 @@ export async function TogglePrivacy(fileID) {
 
 /**
  * Report a file given sufficient information
- * @param {Object} reportInfo 
+ * @param {Object} reportInfo
  *  * reported_file (int)
  *  * reason_title (str)
  *  * reason_body (str)
@@ -238,7 +243,7 @@ export async function ReportFile(reportInfo) {
 
 /**
  * Report a file, given sufficient information is supplied.
- * @param {Object} reportInfo 
+ * @param {Object} reportInfo
  *  * reason (str, optional)
  *  * warned_user (int, User ID)
  */
@@ -248,7 +253,7 @@ export async function WarnUser(warnInfo) {
 
 /**
  * Ban a user, given the User ID is supplied.
- * @param {Object} banInfo 
+ * @param {Object} banInfo
  *  * reason (str, optional)
  *  * banned_user (int, User ID)
  */
@@ -279,7 +284,7 @@ export async function GetFavourites() {
 
 /**
  * Given a file ID, add the file to the user's favourites list.
- * @param {int} fileID 
+ * @param {int} fileID
  */
 export async function AddFavourite(fileID) {
   return await axios.post(`${FAV_ADD_URL}/${fileID}`)
@@ -287,7 +292,7 @@ export async function AddFavourite(fileID) {
 
 /**
  * Given a file ID, remove the file from the user's favourites list.
- * @param {int} fileID 
+ * @param {int} fileID
  */
 export async function DeleteFavourite(fileID) {
   return await axios.delete(`${FAV_DEL_URL}/${fileID}`)
