@@ -1,6 +1,5 @@
 <template>
   <div id="NTapp" title="More than meets the mind">
-    <nt-modal />
     <nt-navbar></nt-navbar>
     <router-view/>
     <nt-footer></nt-footer>
@@ -9,7 +8,6 @@
 
 <script>
   import NtNavbar from './components/Navigation/Navbar.vue';
-  import NtModal from './components/Modals/Modal.vue';
   import NtFooter from './components/Navigation/Footer.vue';
   import decode from 'jwt-decode';
 
@@ -30,7 +28,7 @@
       },
     },
     components: {
-      NtNavbar, NtFooter, NtModal
+      NtNavbar, NtFooter
     },
 
     methods: {

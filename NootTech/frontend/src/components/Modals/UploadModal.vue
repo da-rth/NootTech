@@ -59,6 +59,7 @@ export default {
     },
     async uploadFiles() {
       console.log("Trying to upload " + this.upload_data.files);
+
       await this.$api.UploadFiles(this.upload_data)
       .then(response => {
         console.log('Successful server response:', response);
@@ -89,8 +90,8 @@ export default {
     };
   },
   mounted() {
-    this.username = this.$store.state.user.username;
-    this.$upload_key = this.$store.state.settings.upload_key;
+    this.upload_data.username = this.$store.state.user.username;
+    this.upload_data.upload_key = this.$store.state.settings.upload_key;
     EventBus.$on('uploadFile', () => {
       this.show();
     });
