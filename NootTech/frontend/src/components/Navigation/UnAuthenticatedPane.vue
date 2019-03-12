@@ -1,16 +1,16 @@
 <template>
-   <nt-main-pane title="NootTech: More than meets the m-eye-nd" >
+   <!--<nt-main-pane title="NootTech: More than meets the m-eye-nd" >-->
     <div class="container-fluid">
       <div class="row">
         <b-jumbotron header="Discover NooTech!"
-                class="bg-dark"
+                class="bg-dark welcome-pane"
                 lead="This is a simple hero unit">
           <b-carousel
             id="mainCarousel"
             style="text-shadow: 1px 1px 2px #333;"
             aria-controls="indicators"
             background="#ABABAB"
-            :interval="3000"
+            :interval="5000"
             img-width="1024"
             img-height="480"
             v-model="slide"
@@ -46,7 +46,7 @@
         </b-jumbotron>
       </div>
     </div>
-   </nt-main-pane>
+   <!--</nt-main-pane> -->
 </template>
 
 <script>
@@ -62,10 +62,30 @@
     methods: {
       onSlideStart(slide) { this.sliding = true},
       onSlideEnd(slide) { this.sliding = false}
+    },
+    async updated() {
+      this.$root.colour = this.$default_colour;
+      this.$root.sharelinkName = null;
+    },
+    async mounted() {
+      this.$root.colour = this.$default_colour;
+      this.$root.sharelinkName = null;
     }
   }
 </script>
 
 <style scoped>
+  .welcome-pane {
+    text-align: center;
+    width: 90vw;
+    background-color: #00000017 !important;
+    border: 1px solid rgba(0,0,0,0.2);
+    justify-content: center;
+    margin: 40px auto;
+}
 
+#mainCarousel {
+  width: 60vw;
+  margin: 0 auto;
+}
 </style>

@@ -1,76 +1,169 @@
 <template>
-    <div>
-        <b-navbar toggleable="lg" variant="dark" type="dark"">
-            <b-navbar-toggle target="nav_collapse" />
-            <b-collapse is-nav id="nav_collapse">
+  <div>
+    <notifications group="CopyKey" />
 
-                <b-dropdown id="userdropdown" v-bind:text="$store.state.user.username" v-if="$store.state.user.authenticated">
-                  <b-dropdown-item href="#">Favourites</b-dropdown-item>
-                  <b-dropdown-item href="#">Upload History</b-dropdown-item>
-                  <b-dropdown-item href="#">Settings</b-dropdown-item>
-                </b-dropdown>
+    <b-navbar
+    toggleable="lg"
+    variant="dark"
+    type="dark"
+    :style="{borderBottom: `1px solid ${$root.colour}`}">
 
-                <b-navbar-nav v-else>
-                  <b-nav-item><router-link to="/about">About</router-link></b-nav-item>
-                  <b-nav-item><router-link to="/tos">Terms of Service</router-link></b-nav-item>
-                </b-navbar-nav>
+      <notifications group="FileUpload" />
 
-                  <!-- Keep this centered -->
-                  <b-navbar-nav class="mx-auto">
-                    <b-navbar-brand><router-link class="navbar-brand" to="/">noot.<span class="brand-right">tech</span></router-link></b-navbar-brand>
-                  </b-navbar-nav>
+      <b-navbar-toggle target="nav_collapse"/>
+      <b-collapse is-nav id="nav_collapse">
 
-                  <b-navbar-nav class="ml-auto" v-if="$store.state.user.authenticated">
-                    <b-nav-item><router-link to="/logout">Logout</router-link></b-nav-item>
-                  </b-navbar-nav>
+        <template v-if="$store.state.user != null">
+          <b-button class="settings-modal-btn" v-if="$store.state.user">
+              <font-awesome-icon icon="user-ninja"/>&nbsp; {{ $store.state.user.username }}
+          </b-button>
+          &nbsp;
+          <b-button class="favs-modal-btn">
+              <font-awesome-icon icon="bookmark"/>&nbsp; Favourites
+          </b-button>
+        </template>
 
-                  <b-navbar-nav class="ml-auto" v-else>
-                    <b-nav-item><router-link to="/login">Login / Register</router-link></b-nav-item>
+        <b-navbar-nav v-else>
+          <b-nav-item>
+            <router-link to="/about">
+            <font-awesome-icon icon="info-circle"/>&nbsp; About
+            </router-link>
+          </b-nav-item>
+        </b-navbar-nav>
 
-                </b-navbar-nav>
-            </b-collapse>
+          &nbsp;
+          <router-link to="/how-to">
+            <font-awesome-icon icon="question-circle"/>
+            &nbsp;How to...
+          </router-link>
 
-        </b-navbar>
-    </div>
+        <!-- Keep this centered -->
+        <b-navbar-brand>
+
+          <router-link class="navbar-brand" to="/">
+
+            <template v-if="$root.sharelinkName">
+              {{ $root.sharelinkName }}.<span v-bind:style="{color: $root.colour}">Noot</span>.Tech
+            </template>
+
+            <template v-else>
+              Noot<span v-bind:style="{color: $root.colour}" class="tech">Tech</span>
+            </template>
+
+          </router-link>
+        </b-navbar-brand>
+
+        <b-navbar-nav class="ml-auto" v-if="$store.state.user">
+          <b-input-group class="filebar-uploadkey" v-if="showUploadKey">
+            <b-form-input id="uploadKey" class="key-field" v-bind:value="$store.state.settings.upload_key" readonly/>
+            <b-input-group-append>
+              <b-button @click="copyUploadKey">Copy</b-button>
+            </b-input-group-append>
+            &nbsp;&nbsp;
+          </b-input-group>
+
+          <b-nav-item>
+            <a @click="raiseUploadEvent">
+              <font-awesome-icon icon="upload"/>&nbsp; Upload
+            </a>
+          </b-nav-item>
+
+          <b-nav-item>
+            <a v-on:click="showUploadKey = !showUploadKey" name="check-button">
+              <font-awesome-icon icon="eye-slash" v-if="showUploadKey"/>
+              <font-awesome-icon icon="eye" v-else/>&nbsp;
+              {{ showUploadKey ? "&nbsp;Hide Key" : "Show Key" }}
+            </a>
+            &nbsp;&nbsp;
+            <router-link to="/logout">
+              <font-awesome-icon :icon="['fas', 'sign-out-alt']"/> Logout
+            </router-link>
+          </b-nav-item>
+        </b-navbar-nav>
+
+        <b-navbar-nav class="ml-auto" v-else>
+          <b-nav-item>
+            <router-link to="/login">
+              <font-awesome-icon :icon="['fas', 'sign-in-alt']"/> &nbsp;Login / Register
+            </router-link>
+          </b-nav-item>
+
+        </b-navbar-nav>
+      </b-collapse>
+
+    </b-navbar>
+  </div>
 </template>
 <script>
-    import NtPopup from '../Utils/Popup.vue'
-    import axios from 'axios'
+  import NtPopup from '../Utils/Popup.vue';
+  import NtUploadModal from '../Modals/UploadModal.vue';
+  import EventBus from '../../event-bus.js';
 
-    export default {
-        name: 'NtNavbar',
-        data: function() {
-            return {
-                brandName: "NootTech",
-                text: "To Load"
-            };
-        },
-
-        components: {NtPopup}
-
-    }
-</script>
-<style scoped>
-  .navbar.bg-dark {
-    background-color: #202020 !important;
-    border-bottom: 1px solid #00cccc;
+  export default {
+    name: 'NtNavbar',
+    data() {
+      return {
+        brandName: "NootTech",
+        showUploadKey: false
+      };
+    },
+    methods: {
+      copyUploadKey () {
+        let testingCodeToCopy = document.querySelector('#uploadKey')
+        testingCodeToCopy.setAttribute('type', 'text')
+        testingCodeToCopy.select()
+        try {
+          var successful = document.execCommand('copy');
+          this.showUploadKey = false;
+          this.$notify({
+            group: 'CopyKey',
+            title: `Copied Upload Key to clipboard!`,
+            text: 'Remember to keep it safe!',
+          });
+        } catch (err) {
+          this.$notify({
+            group: 'CopyKey',
+            title: 'Oh no! We couldn\'t copy the upload key',
+            text: 'Try using CTRL+C! Sorry about that...',
+          });
+        }
+        testingCodeToCopy.setAttribute('type', 'hidden')
+        window.getSelection().removeAllRanges()
+      },
+      raiseUploadEvent() {
+        EventBus.$emit('uploadFile');
+      }
+    },
+    components: {NtPopup, NtUploadModal},
   }
 
+</script>
+<style>
+  .navbar.bg-dark {
+    background-color: #202020 !important;
+    border-bottom: 1px solid #121212;
+    transition: 0.5s ease-in-out;
+  }
+
+  .tech {
+    transition: 0.5s ease-in-out;
+  }
   .navbar.bg-dark .navbar-brand {
     position: absolute;
     left: 50%;
     top: 2px;
     transform: translateX(-50%);
     font-size: 24px;
-    border-bottom: 1px solid black;
   }
 
   .brand-right {
     color: #00cccc;
   }
+
   .navbar a {
     color: #8f8f8f;
   }
+
   .navbar a:hover {
     color: #d1d1d1;
     text-decoration: none;
@@ -80,5 +173,40 @@
     background-color: transparent !important;
     border: none;
     color: #969696;
+  }
+
+  .filebar-uploadkey {
+    margin-top: 4px;
+    width: 230px;
+    text-align: center;
+  }
+
+  .filebar-uploadkey .btn,
+  .filebar-uploadkey .input-group-text,
+  .filebar-uploadkey .key-field {
+    font-size: 12px;
+  }
+
+  .filebar-uploadkey .input-group-text,
+  .filebar-uploadkey .key-field {
+    color: #242424;
+  }
+
+  .filebar-uploadkey .btn {
+    height: 32px;
+  }
+  .user-dropdown button {
+    color: red;
+  }
+  .favs-modal-btn,
+  .settings-modal-btn {
+    padding: 0px 10px;
+    border: none;
+    background: transparent;
+    color: #909090;
+  }
+  .favs-modal-btn:hover,
+  .settings-modal-btn:hover {
+    color: #FFFFFF;
   }
 </style>

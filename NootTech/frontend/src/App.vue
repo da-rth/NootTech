@@ -1,5 +1,5 @@
 <template>
-  <div id="NTapp">
+  <div id="NTapp" title="More than meets the mind">
     <nt-navbar></nt-navbar>
     <router-view/>
     <nt-footer></nt-footer>
@@ -7,18 +7,15 @@
 </template>
 
 <script>
-  import NtNavbar from './components/Navigation/Navbar.vue'
-  import NtFooter from './components/Navigation/Footer.vue'
-import decode from 'jwt-decode';
+  import NtNavbar from './components/Navigation/Navbar.vue';
+  import NtFooter from './components/Navigation/Footer.vue';
+  import decode from 'jwt-decode';
 
   export default {
     name: 'app',
     data () {
       return {
-        settings: null,
-        files: null,
-        isLoading: false,
-        subdomain: false,
+        title: "NootTech",
         domain: 'noot.tech'
       }
     },
@@ -28,12 +25,16 @@ import decode from 'jwt-decode';
       },
       user () {
         return this.$store.state.user
-      }
+      },
     },
     components: {
       NtNavbar, NtFooter
     },
+
     methods: {
+      showMe: function() {
+        console.log("Test from main div");
+      },
 
       getTokenExpirationDate: function (encodedToken) {
         const token = decode(encodedToken);
@@ -53,7 +54,7 @@ import decode from 'jwt-decode';
       },
 
       checkToken: function () {
-        if (this.user.authenticated) {
+        if (this.user) {
           if (this.token && this.isTokenAlmostExpired(this.token)) {
             console.log('Token about to expire, refreshing!');
             this.$store.dispatch('REFRESH', {token: this.token});
@@ -62,12 +63,12 @@ import decode from 'jwt-decode';
       }
     },
     async beforeMount () {
-      this.$store.dispatch('VERIFY', {token: this.token});
-      this.checkToken()
       if (this.token) {
-        this.settings = await this.$api.GetSettings();
+        this.$store.dispatch('VERIFY', {token: this.token});
+        this.checkToken()
       }
-    }
+      document.title = this.title;
+    },
   }
 </script>
 

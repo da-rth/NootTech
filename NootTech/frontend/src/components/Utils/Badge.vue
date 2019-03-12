@@ -1,28 +1,38 @@
 <template>
+
   <b-card
     overlay
     img-alg="Image"
     img-top
     tag="article"
-    style="width: 18rem;"
     class="mb-2 hovereffect"
-    :border-variant="selected ? 'primary' : 'white'"
+    :border-variant="selected ? 'danger' : 'secondary'"
     v-bind:value="value"
     text-variant="dark"
     v-on:input="$emit('input', $event.target.value); "
     :img-src="value.file_thumbnail"
   >
-    <nt-image-badge :ref="popup_id" v-if="isImage()" v-model="value" />
+    <font-awesome-icon 
+     icon="play"
+     v-if="value.file_thumbnail && value.file_mime_type.startsWith('video')" 
+     class="large-fa-icon"
+     />
 
-    <b-form-checkbox class="badge-checkbox" v-if="selectionStatus" v-bind:value="value.id"></b-form-checkbox>
+    <font-awesome-icon 
+     :icon="getIcon()" 
+     v-else-if="value.file_thumbnail == null" 
+     class="large-fa-icon"
+    />
 
-    <div class="overlay" v-else @click="showModal">
-      <b-form-checkbox class="badge-checkbox" v-if="selectionStatus" v-bind:value="value.id"></b-form-checkbox>
+    <div class="overlay" @click="onClick">
       <h2>{{value.original_filename}}</h2>
       <div class="overlay-footer">
         <div class="icon">
-          <font-awesome-icon :icon="getIcon()"/>
+          <font-awesome-icon :icon="getIcon()" v-if="value.file_thumbnail != null"/>
+          <font-awesome-icon icon="file-archive" v-else/>
+          <span style="padding-left: 2px">{{ value.file_size_str }}</span>
         </div>
+
         <div class="views">
           <font-awesome-icon icon="eye"/>
           <span style="padding-left: 2px">{{getViews()}}</span>
@@ -34,24 +44,19 @@
 
 <script>
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-  import NtImageBadge from './ImageBadge.vue';
+  import NtFilePopupModal from '../Modals/FilePopupModal'
+  import EventBus from '../../event-bus.js';
+
   export default {
     name: "NtBadge",
-    components: {NtImageBadge, FontAwesomeIcon},
+    components: {FontAwesomeIcon, NtFilePopupModal},
     props: ['value', 'selected', 'selectionStatus'],
     data() {
       return {
         popup_id: 'popup-' + this.value.id,
-        isSelected: this.selected ? true : false // get rid of vue's warning
       }
     },
     methods: {
-      showModal() {
-        this.$refs[this.popup_id].showModal();
-      },
-      selectionIsOn() {
-        return this.$parent.selectFiles;
-      },
       isImage() {
         return this.value.file_mime_type.startsWith("image/")
       },
@@ -69,13 +74,23 @@
         if(views > 1000)
           return (views / 1e3).toFixed(1) + "K";
         return views;
+      },
+      onClick() {
+        if(this.selectionStatus) {
+          this.selected ^= true;
+          this.$store.commit('TOGGLE_FILE', this.value.id)
+        }
+        else {
+          EventBus.$emit('filePopup', this.value);
+        }
       }
-    },
+    }
   }
 </script>
 
-<style scoped>
+<style>
   .hovereffect {
+    background-size: cover;
     overflow: hidden;
     display: inline-block;
   }
@@ -139,5 +154,41 @@
     -webkit-transform:translatey(0);
     transform: translatey(0);
   }
+  .card-img-overlay {
+    /*background-color: #202020;*/
+    text-align: center;
+  }
 
+  .large-fa-icon {
+    font-size: 400%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+  }
+
+  .badge-checkbox {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,.2);
+  }
+
+  .badge-checkbox .custom-control-label,
+  .badge-checkbox .custom-control-label::before,
+  .badge-checkbox .custom-control-label::after  {
+    cursor: pointer;
+    border-radius: 0px;
+    width: 105% !important;
+    height: auto !important;
+    background: transparent !important;
+    margin: -5px;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    top: 0;
+  }
 </style>

@@ -11,7 +11,7 @@ from random import choices, randint
 from django.http import HttpResponseBadRequest
 
 DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-all_chars = "".join(['1234567890-_=$+!*', ascii_uppercase, ascii_lowercase])
+all_chars = "".join(['1234567890_', ascii_uppercase, ascii_lowercase])
 vt = VirusTotalPublicApi(settings.VT_API_KEY)
 
 

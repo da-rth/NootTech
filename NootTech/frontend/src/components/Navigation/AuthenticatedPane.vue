@@ -1,8 +1,8 @@
 <template>
   <div>
+    <nt-modal/>
     <LoadingFiles :multiple="true" v-if="isLoading"></LoadingFiles>
     <template v-else>
-      <!--FileMenu></ileMenu-->
       <FilePanel></FilePanel>
     </template>
   </div>
@@ -11,6 +11,9 @@
 <script>
   import LoadingFiles from '../FilePanel/LoadingFiles';
   import FilePanel from '../FilePanel/Panel';
+  import EventBus from '../../event-bus.js';
+  import NtModal from '../Modals/Modal';
+
   export default {
     name: "AuthenticatedPane",
     data () {
@@ -18,29 +21,42 @@
         gsize: null,
         files: null,
         searched_files: null,
-        settings: null,
-        isLoading: false,
-        filesToDelete: []
+        filesToDelete: [],
+        isLoading: true
       }
     },
     components: {
       FilePanel,
       LoadingFiles,
+      NtModal
     },
-
     methods: {
-      async getData() {
+      async loadFiles() {
         this.isLoading = true;
-        this.settings = await this.$api.GetSettings();
-        this.files = await this.$api.GetFiles();
-        this.searched_files = this.files;
-        this.isLoading = false;
-      }
+        await this.$api.GetFiles()
+        .then(response => {
+          console.log('GET FILES SUCCESS', response);
+          this.files = response.data;
+          this.searched_files = response.data;
+        })
+        .catch(e => {
+          console.log('GET FILES ERROR', e.response);
+        })
+        .finally(() => {
+          this.isLoading = false;
+          this.$root.shareLinkName = null;
+          this.$root.colour = this.$store.state.settings.colour;
+        })
+      },
+   },
+    created() {
+      EventBus.$on('refreshFilePanel', this.loadFiles);
     },
-    beforeMount () {
-      this.getData()
-    },
-  }
+    mounted() {
+      // it is safe to emit after mouting everything
+      EventBus.$emit('refreshFilePanel');
+    }
+ }
 </script>
 
 <style scoped>

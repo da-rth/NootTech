@@ -1,11 +1,51 @@
 /* 'cause dark colour is eye-candy for developers */
+@import url('https://fonts.googleapis.com/css?family=Roboto:300');
 
 .bg-dark {
-    background-color: #242424;
-    color: #eeeeee;
+  background-color: #242424;
+  color: #eeeeee;
 }
 
 /* fix image size */
-div.carousel-item img{
-    background-size: cover;
+div.carousel-item img {
+  background-size: cover;
+}
+
+.footer-copyright {
+  font-size: 0.8em;
+  background-color: #242424;
+  padding-top: 10px;
+  padding-bottom: 0px;
+  bottom:0;
+  width:100%;
+  opacity: 0.9;
+}
+
+footer a {
+  color: #1574d3 !important;
+}
+
+#PrivacyPolicy, #TermsOfService {
+  margin: 0 auto;
+  color: #cfcfcf;
+  height: 88vh;
+  overflow: auto;
+  background-color: #1d1d1d;
+  padding: 30px;
+  border-radius: 5px;
+  border: 1px solid #181818;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #3c3c3c;
+  border-radius: 3px;
 }

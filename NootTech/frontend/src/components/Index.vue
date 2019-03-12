@@ -1,5 +1,5 @@
 <template>
-  <NtAuthenticatedPane v-if="$store.state.user.authenticated && tokenVerified()"/>
+  <NtAuthenticatedPane v-if="$store.state.user && tokenVerified()"/>
   <NtUnAuthenticatedPane v-else />
 </template>
 

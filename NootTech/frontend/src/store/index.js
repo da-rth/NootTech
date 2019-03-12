@@ -1,102 +1,121 @@
 import Vuex from 'vuex'
 import Vue from 'vue'
-import * as types from './mutation-types'
-import axios from 'axios'
+import * as types from './mutation-types.js'
 import createPersistedState from 'vuex-persistedstate'
 import router from '../router'
-
-
-const API_URL = 'http://' + window.location.hostname + ':8000/api';
-const LOGIN_URL = API_URL + '/token/auth/';
-const REGISTER_URL = API_URL + '/create-user/';
-const REFRESH_URL = API_URL + '/token/refresh/';
-const VERIFY_URL = API_URL + '/token/verify/';
+import * as authentication from '../api.js';
 
 Vue.use(Vuex);
 
-const state = {
-  user: {},
-  token: null
-};
+
+function default_state() {
+  return {
+    user: null,
+    token: null,
+    settings: null,
+    selected_files: new Array()
+  }
+}
+
+const state = default_state();
 
 const mutations = {
   [types.LOGIN]: (state, payload) => {
     state.token = payload.token;
     state.user = payload.user;
-    router.push(payload.redirect)
+    router.push(payload.redirect);
+  },
+  [types.SETTINGS]: (state, settings) => {
+    state.settings = settings;
+    console.log("The email is: ", settings.email);
   },
   [types.LOGOUT]: (state, payload) => {
-    state.token = null;
-    state.user = {};
-    router.push(payload.redirect)
+    Object.assign(state, default_state());
+    authentication.flushToken();
+    router.push(payload.redirect);
   },
   [types.REFRESH]: (state, data) => {
-    state.token = data.token
+    state.token = data.token;
   },
-    [types.REGISTER]: (state, payload) => {
-    router.push(payload.redirect)
+  [types.REGISTER]: (state, payload) => {
+    router.push(payload.redirect);
+  },
+  [types.TOGGLE_FILE]: (state, fileId) => {
+    if(state.selected_files.includes(fileId))
+      state.selected_files.splice(state.selected_files.indexOf(fileId), 1);
+    else state.selected_files.push(fileId);
+  },
+  [types.EMPTY_FILE_SELECTION]: (state, payload) => {
+    state.selected_files = new Array();
   }
 };
 
+
 const actions = {
 
-  [types.LOGIN] ({ commit }, payload) {
-      return new Promise((resolve, reject) => {
-          axios.post(LOGIN_URL, payload.credentials)
-              .then( (response) => {
-                console.log("Logging user in...")
-                  if (response.data.token) {
-                      const mutationPayload = {};
-                      mutationPayload.token = response.data.token;
-                      mutationPayload.user = JSON.parse(atob(response.data.token.split('.')[1]));
-                      mutationPayload.user.authenticated = true;
-                      mutationPayload.redirect = payload.redirect;
-                      commit(types.LOGIN, mutationPayload);
-                      resolve();
-                  }
-              }, (error) => reject(error))
-      });
+  /**
+   * Try to log in, store the user token and the settings
+   * @param {Object} payload
+   * @param {Object} payload.credentials - username+password
+   * @param {string} payload.redirect - the url to redirect to if the authentication succeeds
+   */
+  async [types.LOGIN] ({ commit, dispatch }, payload) {
+    const mutationPayload = await authentication.login(payload.credentials);
+    mutationPayload.redirect = payload.redirect;
+    console.log("Authentication successfully performed");
+    dispatch(types.SETTINGS);
+    commit(types.LOGIN, mutationPayload);
   },
-
-    [types.REGISTER] ({ commit, dispatch }, payload) {
-        return new Promise((resolve, reject) => {
-            axios.post(REGISTER_URL, payload.credentials)
-                .then( (response) => {
-                      console.log('Account created!')
-                      dispatch(types.LOGIN, payload)
-                      commit(types.REGISTER, payload.redirect);
-                      resolve();
-                }, (error) => reject(error))
-        });
-    },
-
-  [types.VERIFY] ({ commit }, payload) {
-    let mutationPayload = {redirect: payload.redirect};
-    axios.post(VERIFY_URL, {token: payload.token})
-      .then(response => {
-        if (response.data.token) {
-          console.log('Token verified.')
-        }
-      })
-      .catch(e => {
-        console.log('Un-authenticated token, logging out.');
-        commit(types.LOGOUT, mutationPayload)
-      })
+  /**
+   * Update the user settings
+   */
+  async [types.SETTINGS] ({ commit }) {
+    commit(types.SETTINGS, await authentication.GetSettings());
   },
-
-  [types.REFRESH] ({ commit }, payload) {
-    axios.post(REFRESH_URL, payload)
-      .then(response => {
-        if (response.data.token) {
-          var mutationPayload = {token: response.data.token};
-          commit(types.REFRESH, mutationPayload)
-        }
-      })
-      .catch(e => {
-        console.log('REFRESH TOKEN ERROR', e.response)
-      })
+  /**
+   * Register a new user and logs in with the newly created account
+   * @param {Object} payload
+   * @param {Object} payload.credentials email+username+password
+   * @param {Object} payload.redirect redirect url after registration succeeds
+   */
+  async [types.REGISTER] ({ commit, dispatch }, payload) {
+    await authentication.register(payload.credentials);
+    console.log("Account created!");
+    dispatch(types.LOGIN, payload);
+    // this step is not necessary as the route will be propagated anyway
+    commit(types.REGISTER, payload.redirect);
+},
+  /**
+   * Verify the current token. In case the token is invalid, apply for another
+   * one
+   * @param {Object} payload
+   * @param {String} payload.token
+   * @param {String} payload.redirect In case of failure, redirect to this page
+   */
+  async [types.VERIFY] ({ commit }, payload) {
+    try {
+      let response = await authentication.verifyToken(payload.token);
+      if(response.data.token) {
+        console.log('The token has been verified');
+      }
+    } catch(error) {
+      console.log("Can't authenticate the token, cause: ", error);
+      console.log('Un-authenticated token, logging out.');
+      commit(types.LOGOUT, {redirect: payload.redirect});
+    }
   },
-
+  /**
+   * Refresh the current token with a new token.
+   * @param {Object} payload
+   * @param {String} payload.token
+   */
+  async [types.REFRESH] ({ commit }, payload) {
+    try {
+      commit(types.REFRESH, {token: await authentication.refreshToken(payload.token)});
+    } catch(error) {
+      console.log("Couldn't refresh the token: ", error);
+    }
+  },
 };
 
 const store = new Vuex.Store({
@@ -108,4 +127,4 @@ const store = new Vuex.Store({
   ]
 });
 
-export default store
+export default store;

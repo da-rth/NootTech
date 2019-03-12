@@ -1,15 +1,13 @@
 <template>
-<!-- Footer -->
-<footer class="page-footer text-light">
-
-  <!-- Copyright -->
-  <div class="footer-copyright text-center py-3">© 2019 Copyright:
-    <a href="#">Noot.Tech</a>
-  </div>
-  <!-- Copyright -->
-
-</footer>
-<!-- Footer -->
+  <footer class="page-footer text-light">
+    <div class="footer-copyright text-center py-3">
+      <router-link to="/privacy"><font-awesome-icon icon="shield-alt"/> Privacy Policy</router-link>
+      &nbsp;&nbsp;|&nbsp;&nbsp;
+      <router-link to="/"><font-awesome-icon icon="copyright"/> 2019 Copyright: Noot.Tech</router-link>
+      &nbsp;&nbsp;|&nbsp;&nbsp;
+      <router-link to="/terms"><font-awesome-icon icon="info-circle"/> Terms of Service</router-link>
+    </div>
+  </footer>
 </template>
 
 <script>
@@ -17,16 +15,3 @@
         name: "NtFooter"
     }
 </script>
-
-<style scoped>
-  .footer-copyright {
-    border-top: 1px solid #2a2a2a;
-    background-color: #242424;
-    padding-top: 10px;
-    padding-bottom: 0px;
-    position:fixed;
-    bottom:0;
-    width:100%;
-    opacity: 0.9;
-}
-</style>
