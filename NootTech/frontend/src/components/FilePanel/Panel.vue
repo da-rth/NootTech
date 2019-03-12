@@ -292,7 +292,6 @@
 
       /** Used for "search" input **/
       searchArray: function (term, array) {
-        console.log(term)
         var results = [];
         for (var i=0; i < array.length; i++) {
           var has_gen_name = array[i].generated_filename.toString().toLowerCase().includes(term);
@@ -311,7 +310,6 @@
 
       getCheckedFiles() {
         let files = this.$parent.files.filter(f => this.selectedFiles.includes(f.id));
-        console.log(files)
         return files
       },
 

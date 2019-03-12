@@ -79,16 +79,12 @@ const actions = {
    * @param {Object} payload.redirect redirect url after registration succeeds
    */
   async [types.REGISTER] ({ commit, dispatch }, payload) {
-    try {
-      await authentication.register(payload.credentials);
-      console.log("Account created!");
-      dispatch(types.LOGIN, payload);
-      // this step is not necessary as the route will be propagated anyway
-      commit(types.REGISTER, payload.redirect);
-    } catch(error) {
-      console.log("Can't register a new user: ", error);
-    }
-  },
+    await authentication.register(payload.credentials);
+    console.log("Account created!");
+    dispatch(types.LOGIN, payload);
+    // this step is not necessary as the route will be propagated anyway
+    commit(types.REGISTER, payload.redirect);
+},
   /**
    * Verify the current token. In case the token is invalid, apply for another
    * one

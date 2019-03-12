@@ -132,9 +132,8 @@ export async function refreshToken(old_token) {
  */
 
 export function flushToken() {
-  console.log(auth_interceptor);
   axios.interceptors.request.eject(auth_interceptor);
-  console.log("Logout done");
+  console.log("The token has been forgotten");
 }
 
 /**
