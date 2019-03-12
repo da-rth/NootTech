@@ -25,6 +25,8 @@
   import TextPreview from "../Utils/FilePreview/TextPreview";
   import FileInformation from "../Utils/FilePreview/FileInformation";
 
+  import router from '../../router/index.js';
+
   export default {
     name: "ShareLinkPage",
     data () {
@@ -57,7 +59,9 @@
           this.$root.colour = response.data.colour;
         })
         .catch(e => {
+          console.log(e.response.data);
           console.log('SHARELINK ERROR...');
+          router.push('/404');
         });
     },
   }
