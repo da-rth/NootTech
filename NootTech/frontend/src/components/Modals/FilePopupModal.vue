@@ -5,10 +5,10 @@
 		<b-modal size="lg" centered scrollable ref="modal" :title="getTitle" @hidden="file=null">
 
       <template v-if="file">
-        <VideoPlayer v-model="file" v-if="file.file_video_info" class="fo-container"/>
+        <VideoPlayer :file="file" v-if="file.file_video_info" class="fo-container"/>
         <AudioPlayer :file="file" v-else-if="file.file_audio_info" class="fo-container"/>
-        <ImagePreview v-model="file" v-else-if="file.file_image_info" class="fo-container img"/>
-        <TextPreview v-model="file" v-else-if="file.file_text_info" class="fo-container"/>
+        <ImagePreview :file="file" v-else-if="file.file_image_info" class="fo-container img"/>
+        <TextPreview :file="file" v-else-if="file.file_text_info" class="fo-container"/>
         <br/>
         
         <b-button v-b-toggle.collapseA.collapseB>Toggle File Information</b-button>
@@ -31,11 +31,11 @@
 <script>
 
   import EventBus from '../../event-bus.js';
-  import VideoPlayer from "../Utils/FilePreview/VideoPlayer";
+  import VideoPlayer from "../Utils/FilePreview/VideoPlayer.vue";
   import AudioPlayer from "../Utils/FilePreview/AudioPlayer";
   import DownloadFile from "../Utils/FilePreview/DownloadFile";
   import ImagePreview from "../Utils/FilePreview/ImagePreview";
-  import TextPreview from "../Utils/FilePreview/TextPreview";
+  import TextPreview from "../Utils/FilePreview/TextPreview.vue";
   import FileInformation from "../Utils/FilePreview/FileInformation";
 
 export default {

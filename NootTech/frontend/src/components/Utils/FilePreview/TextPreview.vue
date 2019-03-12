@@ -1,5 +1,5 @@
 <template>
-  <div :file="file" @input="$emit('input', $event.target.file)"> 
+  <div> 
     <highlight-code :lang="syntax" class="nt-hljs">
       {{ code }}
 		</highlight-code>
