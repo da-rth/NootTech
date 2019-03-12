@@ -72,7 +72,8 @@ def validate_email(email):
 
 def validate_username(username):
 
-    usernameset = Q(email__icontains=username)
+
+    usernameset = Q(username__icontains=username) | Q(email__icontains=username)
     usernameres = User.objects.filter(usernameset)
     if usernameres:
         raise ValidationError(_(mark_safe("This username has already been taken.")))
