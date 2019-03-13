@@ -160,6 +160,11 @@ class File(models.Model):
         self.file_size_bytes = self.file_content.size
         self.file_size_str = utils.get_filesize_str(self.file_content.size)
         self.file_mime_type = mime.guess_type(self.file_content.name)[0]
+
+        # see https://github.com/denBot/WAD2-Group-Project/issues/35#issuecomment-472485161
+        if self.file_mime_type is None:
+            self.file_mime_type = 'application/octet-stream'
+
         self.icon = utils.get_fontawesome(self.file_mime_type, self.file_ext)
         super(File, self).save(*args, **kwargs)
 
