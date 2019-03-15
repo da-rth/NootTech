@@ -2,6 +2,8 @@ var path = require('path')
 var webpack = require('webpack')
 var BundleTracker = require('webpack-bundle-tracker');
 var WriteFilePlugin = require('write-file-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 
 module.exports = {
@@ -76,7 +78,8 @@ module.exports = {
     new BundleTracker({
       filename: 'webpack-stats.json'
     }),
-    new WriteFilePlugin()
+    new WriteFilePlugin(),
+    new VueLoaderPlugin()
   ],
   resolve: {
     alias: {
@@ -89,6 +92,9 @@ module.exports = {
     noInfo: true,
     overlay: true
   },
+    optimization: {
+        minimizer: [new TerserPlugin()]
+    },
   performance: {
     hints: false
   },
@@ -102,12 +108,6 @@ if (process.env.NODE_ENV === 'production') {
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: '"production"'
-      }
-    }),
-    new webpack.optimize.UglifyJsPlugin({
-      sourceMap: true,
-      compress: {
-        warnings: false
       }
     }),
     new webpack.LoaderOptionsPlugin({

@@ -73,11 +73,4 @@
 </script>
 
 <style>
-  body {
-    background-color: #242424;
-  }
-
-  h1 {
-    color: white;
-  }
 </style>
