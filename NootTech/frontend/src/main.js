@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import BootstrapVue from 'bootstrap-vue'
-import 'babel-polyfill'
+//import 'babel-polyfill'
 import router from './router'
 import store from './store'
 import * as backendAPI from './api.js'
