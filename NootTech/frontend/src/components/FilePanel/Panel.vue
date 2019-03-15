@@ -330,6 +330,8 @@
     margin: 20px auto;
     max-height: 90vh;
     width: 90vw;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   .file-menubar {
