@@ -2,7 +2,7 @@
 	<div>
     <notifications group="CopySharelink" />
 
-		<b-modal size="lg" centered scrollable ref="modal" :title="getTitle" @hidden="file=null">
+		<b-modal size="lg" centered scrollable ref="modal" :title="getTitle" @hidden="file=null" bodyBgVariant="dark" headerBgVariant="dark" footerBgVariant="dark">
 
       <template v-if="file">
         <VideoPlayer :file="file" v-if="file.file_video_info" class="fo-container"/>

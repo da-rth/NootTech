@@ -5,7 +5,7 @@
     img-alg="Image"
     img-top
     tag="article"
-    class="mb-2 hovereffect"
+    class="mb-2 hovereffect bg-dark"
     :border-variant="selected ? 'danger' : 'secondary'"
     v-bind:value="value"
     text-variant="dark"

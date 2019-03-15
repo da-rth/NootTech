@@ -1,8 +1,9 @@
 /* 'cause dark colour is eye-candy for developers */
 @import url('https://fonts.googleapis.com/css?family=Roboto:300');
 
-.bg-dark {
-  background-color: #242424;
+
+body {
+  background-color: #242424 !important;
   color: #eeeeee;
 }
 
