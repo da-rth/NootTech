@@ -60,7 +60,11 @@ module.exports = {
           // other vue-loader options go here
         }
       },
-    ]
+      {
+        test: '/\.json$/',
+        use: 'json-es6-loader'
+      }
+   ]
   },
   plugins: [
     new BundleTracker({

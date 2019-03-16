@@ -15,7 +15,6 @@
 </template>
 
 <script>
-  import {BACKEND_URL} from '../../../config.js';
   import BButton from "bootstrap-vue/src/components/button/button";
   import axios from 'axios';
 
