@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.mail import send_mail
+from django.template.loader import render_to_string
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from easy_thumbnails.fields import ThumbnailerImageField
@@ -479,23 +480,6 @@ def create_file_text_subtype(sender, instance, **kwargs):
     f.file_text = instance
     f.save()
 
-@receiver(post_save, sender=User)
-def create_user_acc(sender, instance, created, **kwargs):
-    if created:
-        title = 'Woohoo! Your super cool NootTech account has been created!'
-
-        message = (f"Dear {instance.username},\n"
-            "\n"
-            "Welcome to NootTech!\n"
-            "To find out how you can upload off-site, checkout https://noot.tech/how-to for more information.\n"
-            "\nThank you,\n"
-            "\n"
-            "Team NootTech."
-        )
-
-        print(message)
-        
-        send_mail(title, message, 'info@noot.tech', [instance.email], fail_silently=False)
 
 """
 The below functions are called whenever:
@@ -506,67 +490,59 @@ The below functions are called whenever:
 
 On these events, an email is sent out either to the user or an administrator depending on the context of the email.
 """
+@receiver(post_save, sender=User)
+def create_user_acc(sender, instance, created, **kwargs):
+    if created:
+        title = 'Woohoo! Your super cool NootTech account has been created!'
+
+        msg_html = render_to_string('email/new_report.html', {
+            'username': instance.username,
+            'upload_key': instance.upload_key,
+        })
+        
+        send_mail(
+            title,
+            '',
+            'info@noot.tech',
+            [instance.email],
+            html_message=msg_html,
+        )
+
 @receiver(post_save, sender=ReportedFile)
 def new_report_submitted(sender, instance, created, **kwargs):
     if created:
         title = f"New file report: {instance.reported_file.generated_filename} by {instance.reported_file.user.username}"
-        message = (
-            f"A new file report has been submitted by a user.\n"
-            "\n\n"
-            "File information:\n"
-            f"- ID: {instance.reported_file.id}\n"
-            f"- Upload date: {instance.reported_file.date}\n"
-            f"- Gen name: {instance.reported_file.generated_filename}\n"
-            f"- Original Filenaame: {instance.reported_file.original_filename}\n"
-            f"- IP Address: {instance.reported_file.ip}\n"
-            "\n"
-            "Uploader information:\n"
-            f"- Username: {instance.reported_file.user.username}\n"
-            f"- Email Address: {instance.reported_file.user.email}\n"
-            f"- Last login: {instance.reported_file.user.last_login}\n"
-            "\n"
-            f"Reason for report: {instance.reason_title}\n"
-            "\n"
-            f"Detailed report message: {instance.reason_body}\n"
-            "\n"
-            f"Reported by: {instance.reported_by.username}\n"
-            "\n"
-            f"Date: {instance.date}\n"
-            "\n\n"
-            "Administrators, please respond to this report."
-        )
-
-        print(message)
         
-        send_mail(title, message, 'info@noot.tech', ['contact@noot.tech'], fail_silently=False)
+        msg_html = render_to_string('email/new_report.html', {
+            'username': instance.reported_file.user.username,
+            'instance' : instance,
+            'admin': True
+        })
+        
+        send_mail(
+            title,
+            '',
+            'info@noot.tech',
+            ['contact@noot.tech'],
+            html_message=msg_html,
+        )
 
 @receiver(post_save, sender=Warned)
 def notify_warned_user(sender, instance, created, **kwargs):
     if created:
         title = 'You have recieved a warning from an administrator.'
 
-        message = (
-            f"Dear {instance.warned_user.username},\n"
-            "\n"
-            f"Date of warning: {instance.date}\n"
-            "\n"
-            f"Reason: {instance.reason}\n"
-            "\n"
-            f"Total warnings: {instance.warned_user.warnings}\n"
-            "\n"
-            "If you think this was unjustified or a mistake, please contact us via contact@noot.tech\n"
-            "\n"
-            "Thank you,\n"
-            "\n"
-            "Team NootTech."
-        )
+        msg_html = render_to_string('email/user_warned.html', {
+            "username": instance.banned_user.username,
+            "instance": instance
+        })
         
         send_mail(
             title,
-            message,
+            '',
             'info@noot.tech',
-            [instance.warned_user.email], 
-            fail_silently=False
+            [instance.warned_user.email],
+            html_message=msg_html,
         )
 
 @receiver(post_save, sender=BannedUser)
@@ -574,19 +550,15 @@ def notify_banned_user(sender, instance, created, **kwargs):
     if created:
         title = "Your account has been banned... here's why."
 
-        message = (
-            f"Dear {instance.banned_user.username},\n"
-            "\n"
-            f"Date of ban: {instance.date}\n"
-            "\n"
-            f"Reason: {instance.reason}\n"
-            "\n"
-            "Your account has been disabled and all of your files have been deleted.\n"
-            "If you think this was unjustified or a mistake, please contact us via contact@noot.tech\n"
-            "\n"
-            "Thank you,\n"
-            "\n"
-            "Team NootTech."
-        )
-        send_mail(title, message, 'info@noot.tech', [instance.banned_user.email], fail_silently=False)
+        msg_html = render_to_string('email/user_banned.html', {
+            "username": instance.banned_user.username,
+            "instance": instance
+        })
 
+        send_mail(
+            title,
+            '',
+            'info@noot.tech',
+            [instance.banned_user.email],
+            html_message=msg_html,
+        )

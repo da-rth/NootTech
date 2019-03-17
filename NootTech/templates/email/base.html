@@ -1,0 +1,25 @@
+<!-- Inline styles usually aren't stripped by GMail etc... -->
+
+<div style="background-color: #181818; width: 100%; height: 40px; border-bottom: 1px solid #00cccc; text-align: center; font-size: 1.8em; padding: 5px;">
+        <span style="color: #fff;">Noot</span><span style="color: #00cccc;">Tech</span>
+</div>
+
+<div style="background-color: #242424; color: #c5c5c5; padding: 30px;">
+    
+    <h1 style="text-align: center;">
+        Dear <span style="color: #fff;">{% if admin %}Administrator{% else %}{{ username }}{% endif %}</span>,
+    </h1>
+
+    <div style="margin: 30px; padding: 10px; background-color: rgba(0,0,0,0.2); border-radius: 5px; border: 1px solid rgba(0,0,0,0.2);">
+            {% block content %}
+            {% endblock %}
+    </div>
+
+    <div style="text-align: center;">
+        Thank you,
+        <br/><br/>
+        <h4>
+            Team <span style="color: #fff;">Noot</span><span style="color: #00cccc;">Tech</span>.
+        </h4>
+    </div>
+</body>

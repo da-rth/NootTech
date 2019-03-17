@@ -1,0 +1,11 @@
+{% extends 'email/base.html' %}
+
+{% block content %}
+Date of ban: {{ instance.date }}
+<br/><br/>
+Reason: {{ instance.reason }}
+<br/><br/>
+Your account has been <strong>disabled</strong> and all of your files have been <strong>deleted</strong>.
+<br/><br/>
+If you think this was a mistake, please <a href="mailto:contact@noot.tech">contact us</a>. However, please note: any deleted files cannot be reovered.
+{% endblock %}

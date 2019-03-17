@@ -1,0 +1,12 @@
+{% extends 'email/base.html' %}
+
+{% block content %}
+<h4>Welcome to NootTech!</h4>
+
+<br/>
+Your super secret upload key is: <strong>{{ upload_key }}</strong>
+<br/><br/>
+Keep it safe! But don't worry if someone steals it, you can always get a new one!
+<br/><br/>
+To find out more about the various ways you can upload your files, checkout our <a href="https://noot.tech/how-to">How-to guide</a> for more info.
+{% endblock %}

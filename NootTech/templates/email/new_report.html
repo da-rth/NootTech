@@ -1,0 +1,32 @@
+{% extends 'email/base.html' %}
+
+{% block content %}
+<h4>A new file report has been submitted by a user.</h4>
+
+<br/>
+
+<strong>File information:</strong><br/>
+- ID: {{ instance.reported_file.id }}<br/>
+- Upload date: {{ instance.reported_file.date }}<br/>
+- Gen name: {{ instance.reported_file.generated_filename }}<br/>
+- Original Filenaame: {{ instance.reported_file.original_filename }}<br/>
+- IP Address: {{ instance.reported_file.ip }}
+
+<br/><br/>
+
+<strong>Uploader information:</strong><br/>
+- Username: {{ instance.reported_file.user.username }}<br/>
+- Email Address: {{ instance.reported_file.user.email }}<br/>
+
+<br/><br/>
+
+Reason for report: {{ instance.reason_title }}
+<br/><br/>
+Detailed report message: {{ instance.reason_body }}
+<br/><br/>
+Reported by: {{ instance.reported_by.username }}
+<br/><br/>
+Date: {{ instance.date }}<br/>
+<br/><br/>
+Please respond to this report if it hasn't already been handled.
+{% endblock %}
