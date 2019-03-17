@@ -7,56 +7,60 @@
     <notifications group="FileUpdate" />
 
     <b-navbar toggleable="lg" type="dark" class="file-menubar">
-
+      <b-navbar-brand>Files</b-navbar-brand>
       <b-navbar-toggle target="nav_file_collapse" />
 
       <b-collapse is-nav id="nav_file_collapse">
 
-        <div class="col-md">
-
+        <div class="col-md d-flex justify-content-between">
           <b-button-group class="filebar-btn-group">
             <b-button class="filebar-btn" v-on:click="decreaseWH()"><font-awesome-icon icon="minus"/></b-button>
             <b-button class="filebar-btn" v-on:click="increaseWH()"><font-awesome-icon icon="plus"/></b-button>
           </b-button-group>
+        </div>
 
-          <!-- Popup modal here? -->
-          <b-button-group class="filebar-btn-group">
-            <b-button class="filebar-btn" v-on:click="grid_view = true"><font-awesome-icon icon="th"/></b-button>
-            <b-button class="filebar-btn" v-on:click="grid_view = false"><font-awesome-icon icon="list"/></b-button>
-          </b-button-group>
-          &nbsp;
-
-          <a v-on:click="showPrivateFiles = !showPrivateFiles" name="check-button">
+        <div class="col-md-2">
+          <b-button class="file-panel-btn" v-on:click="showPrivateFiles = !showPrivateFiles" name="check-button">
               <font-awesome-icon icon="share" v-if="showPrivateFiles"/>
               <font-awesome-icon icon="user-secret" v-else/>
               {{ showPrivateFiles ? "&nbsp;View Public files" : "&nbsp;View Private Files" }}
-            </a>
+            </b-button>
+        </div>
 
-          <b-button class="filebar-btn" variant="danger" v-if="selectFiles" v-on:click="deleteSelectedFiles()">Delete {{ selectedFiles.length }} file(s)</b-button>
-          <b-button class="filebar-btn" variant="primary" v-if="selectFiles" v-on:click="privateSelectedFiles()">Toggle Privacy ({{ selectedFiles.length }} file(s))</b-button>
+        <div class="col-md-2">
+          <b-button class="file-panel-btn file-selection-btn" v-on:click="selectFiles = !selectFiles">
+            <font-awesome-icon icon="hand-pointer"/>&nbsp; <template v-if="selectFiles">Disable</template><template v-else>Enable</template> File Selection
+          </b-button>
+        </div>
+        
+        <div class="col-md">
+          <b-button class="file-panel-btn" variant="danger" v-if="selectFiles" v-on:click="deleteSelectedFiles()">Delete</b-button>
+        </div>
 
+        <div class="col-md">
+          <b-button class="file-panel-btn" variant="primary" v-if="selectFiles" v-on:click="privateSelectedFiles()">Toggle Privacy</b-button>
+        </div>
+
+        <div class="col-md">
           <b-dropdown text="File List" v-if="selectedFiles.length > 0 && selectFiles">
-            <b-dropdown-item v-bind:key="file.id" v-for="file in getCheckedFiles()" disabled>
+            <b-dropdown-item class="file-panel-btn" v-bind:key="file.id" v-for="file in getCheckedFiles()" disabled>
               {{ file.generated_filename }} | {{ file.original_filename }}
             </b-dropdown-item>
           </b-dropdown>
-
         </div>
 
-        <b-form-checkbox class="select-files-switch" switch v-model="selectFiles" name="check-button">
-          Select Files
-        </b-form-checkbox>
+
 
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
 
           <div class="col-sm">
-            <input v-model="searchTerm" class="form-control file-search" type="search" :icon="['fas', 'search']" placeholder="Search..." aria-label="Search">
+            <input v-model="searchTerm" class="form-control file-panel-btn file-search" type="search" :icon="['fas', 'search']" placeholder="Search..." aria-label="Search">
           </div>
 
           <div class="col-sm">
 
-            <select @change="changedSelectionValue" class="custom-select file-sort">
+            <select @change="changedSelectionValue" class="custom-select file-panel-btn file-sort">
               <option class="opt" value="-date">Sorty by...</option>
 
               <option class="opt" value="-date">Upload date (Latest)</option>
@@ -322,8 +326,23 @@
 </script>
 
 <style>
+  .file-panel {
+    overflow: hidden !important;
+  }
   * {
     color: #b8b8b8;
+  }
+  .filebar-btn-group {
+    width: 100%;
+  }
+  .file-panel-btn {
+    width: 100%;
+    background-color: transparent !important;
+    margin: 5px 0px;
+  }
+
+  .file-selection-btn {
+    padding: 7px 0px;
   }
 
   .file-panel {
@@ -334,13 +353,12 @@
     overflow-y: auto;
   }
 
-  .file-menubar {
-    width: 92.2vw;
+.file-menubar {
+    width: 100%;
     background-color: rgba(0,0,0,0.1);
     padding: 3px;
     border: 1px solid #121212;
-    margin-left: -29px;
-  }
+}
 
   .file-grid {
     padding: 10px;
@@ -349,11 +367,18 @@
     border: 1px solid #121212;
     background-color: #1e1e1e !important;
   }
+  .row {
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+      justify-content: center;
+  }
 
   .file-grid {
     height: auto;
     max-height: 74vh;
-    /*overflow: scroll;*/
+    overflow: scroll;
   }
 
   .file-pagination {
@@ -382,14 +407,16 @@
 
   .file-search, .file-sort {
     background-color: rgba(0,0,0,0.2);
-    border: 1px solid #3d3d3d;
+    border: 1px solid #555b60 !important;
   }
 
   .filebar-btn-group .filebar-btn {
     background-color: transparent;
-    border: none;
+    border: 1px solid #555b60;
     border-radius: 5px;
-    margin: 4px;
+    margin: 5px 0px;
+    padding: 10px;
+    height: 40px;
   }
 
   .filebar-btn-group .filebar-btn:focus {
