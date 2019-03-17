@@ -45,6 +45,14 @@ $ .\venv\Scripts\activate.bat
 
 # Configure and run django server
 $ (venv) cd NootTech
+
+# create a config.json file and add your settings
+$ (venv) cd frontend/src
+$ (venv) cp config_example.json config.json
+$ (venv) vim config.json # or any editor you like
+
+# Start django
+$ (venv) cd ../../
 $ (venv) python manage.py makemigrations 
 $ (venv) python manage.py migrate
 $ (venv) python manage.py createsuperuser

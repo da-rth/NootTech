@@ -3,5 +3,6 @@
     "BACKEND_URL":"http://localhost:8000",
     "API_URL": "http://localhost:8000/api",
     "ENABLE_SUBDOMAINS": false,
-    "DEFAULT_HIGHLIGHT": "#00cccc"
+    "DEFAULT_HIGHLIGHT": "#00cccc",
+    "EMAIL_HOST_PASSWORD": "ADD_PASSWORD_HERE"
 }
