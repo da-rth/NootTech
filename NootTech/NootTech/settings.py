@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os, datetime
+import json
+
+GENERAL_SETTINGS = json.load(open("frontend/src/config.json"))
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -23,13 +26,12 @@ VT_API_KEY = 'cce2a338c4f46b082ab39a88076aa4ab2f8f8da5d850a7e6814e052f75f0d3a0'
 SECRET_KEY = '8lixf+hs1+go!pu#cg95dwpr7ye!kx^zi2(-7$bciyiq#^fir#'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+
 DEBUG = True
-SUBDOMAIN = False
-
+SUBDOMAIN = GENERAL_SETTINGS["ENABLE_SUBDOMAINS"]
 ALLOWED_HOSTS = []
-
-DOMAIN_NAME = "localhost:8000"
-HTTPS = False
+DOMAIN_NAME = GENERAL_SETTINGS["BACKEND_URL"]
+HTTPS = GENERAL_SETTINGS["HTTPS"]
 
 
 # Application definition
@@ -250,7 +252,7 @@ LOGGING = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en-gb'
 
 TIME_ZONE = 'UTC'
 

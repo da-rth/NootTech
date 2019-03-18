@@ -61,18 +61,10 @@ module.exports = {
         }
       },
       {
-        test: /\.js$/,
-        loader: 'babel-loader',
-        exclude: /node_modules/
-      },
-      {
-        test: /\.(png|jpg|gif|svg)$/,
-        loader: 'file-loader',
-        options: {
-          name: '[name].[ext]?[hash]'
-        }
+        test: '/\.json$/',
+        use: 'json-es6-loader'
       }
-    ]
+   ]
   },
   plugins: [
     new BundleTracker({

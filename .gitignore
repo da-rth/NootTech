@@ -451,3 +451,6 @@ webpack-stats.json
 
 # the frontend developer has a love for VSCode...
 *.code-workspace
+
+# never leave config files public
+config.json

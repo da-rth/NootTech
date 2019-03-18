@@ -1,5 +1,5 @@
 import axios from 'axios'
-import * as config from './config.js';
+import config from './config.json';
 
 // A second instance of axios to be used for unauthenticated requests, such as previewing a sharelink or viewing an error video.
 var axios_unauth = axios.create({ baseURL: config.API_URL, timeout: 1000 });

@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import App from './App.vue'
 import BootstrapVue from 'bootstrap-vue'
-import 'babel-polyfill'
+//import 'babel-polyfill'
 import router from './router'
 import store from './store'
 import * as backendAPI from './api.js'
-import * as config from './config.js'
+import config from '../src/config.json';
 import VuePaginate from 'vue-paginate'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'
