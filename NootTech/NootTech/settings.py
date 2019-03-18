@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os, datetime
 import json
+from urllib.parse import urlparse
 
 GENERAL_SETTINGS = json.load(open("frontend/src/config.json"))
 
@@ -30,7 +31,7 @@ SECRET_KEY = '8lixf+hs1+go!pu#cg95dwpr7ye!kx^zi2(-7$bciyiq#^fir#'
 DEBUG = True
 SUBDOMAIN = GENERAL_SETTINGS["ENABLE_SUBDOMAINS"]
 ALLOWED_HOSTS = []
-DOMAIN_NAME = GENERAL_SETTINGS["BACKEND_URL"]
+DOMAIN_NAME = urlparse(GENERAL_SETTINGS["BACKEND_URL"]).netloc
 HTTPS = GENERAL_SETTINGS["HTTPS"]
 
 #if not DEBUG: # Disable email system while debugging
