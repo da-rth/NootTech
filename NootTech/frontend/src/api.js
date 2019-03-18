@@ -2,7 +2,7 @@ import axios from 'axios'
 import * as config from './config.js';
 
 // A second instance of axios to be used for unauthenticated requests, such as previewing a sharelink or viewing an error video.
-var axios_unauth = axios.create({ baseURL: config.API_URL, timeout: 1000 });
+var axios_unauth = axios.create({ baseURL: config.API_URL });
 
 const API_URL = config.API_URL
 // Authentication & Settings
@@ -237,7 +237,7 @@ export async function TogglePrivacy(fileID) {
  *  * reason_body (str)
  */
 export async function ReportFile(reportInfo) {
-  return await axios.post(REPORT_FILE_URL, reportInfo);
+  return await axios_unauth.post(REPORT_FILE_URL, reportInfo);
 }
 
 /**

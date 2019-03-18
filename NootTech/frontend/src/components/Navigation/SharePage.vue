@@ -13,17 +13,24 @@
 
       <h4 class="file-header">File Information</h4>
       <FileInformation :file="file"/>
+
+      <ReportFileModal :file="file"/>
+
+      <!-- v-if="this.$store.state.user.username != this.username" -->
+      <b-button @click="onClick">Report File</b-button>
     </template>
   </div>
 </template>
 
 <script>
+  import EventBus from '../../event-bus.js';
   import VideoPlayer from "../Utils/FilePreview/VideoPlayer";
   import AudioPlayer from "../Utils/FilePreview/AudioPlayer";
   import DownloadFile from "../Utils/FilePreview/DownloadFile";
   import ImagePreview from "../Utils/FilePreview/ImagePreview";
   import TextPreview from "../Utils/FilePreview/TextPreview";
   import FileInformation from "../Utils/FilePreview/FileInformation";
+  import ReportFileModal from "../Modals/ReportFileModal";
 
   import router from '../../router/index.js';
 
@@ -43,7 +50,15 @@
       DownloadFile,
       AudioPlayer,
       VideoPlayer,
-      FileInformation
+      FileInformation,
+      ReportFileModal
+    },
+
+    methods: {
+      onClick () {
+        console.log("test");
+        EventBus.$emit('reportPopup', this.file);
+      }
     },
 
     async beforeMount() {
