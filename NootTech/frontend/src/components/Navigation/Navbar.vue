@@ -23,16 +23,19 @@
 
       <notifications group="FileUpload" />
 
+      <b-navbar-nav v-if="$store.state.user != null">
+        <b-nav-item>
+          <b-button class="navbar-btn" v-if="$store.state.user">
+              <font-awesome-icon icon="user-ninja"/>&nbsp;&nbsp;&nbsp; {{ $store.state.user.username }}
+          </b-button>
+        </b-nav-item>
+      </b-navbar-nav>
+
       <b-navbar-toggle class="float-xs-right" target="nav_collapse"/>
 
       <b-collapse is-nav id="nav_collapse">
 
         <b-navbar-nav v-if="$store.state.user != null">
-          <b-nav-item>
-            <b-button class="navbar-btn" v-if="$store.state.user">
-                <font-awesome-icon icon="user-ninja"/>&nbsp;&nbsp;&nbsp; {{ $store.state.user.username }}
-            </b-button>
-          </b-nav-item>
           
           <b-nav-item>
             <b-button class="navbar-btn">

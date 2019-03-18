@@ -12,14 +12,14 @@
 
       <b-collapse is-nav id="nav_file_collapse">
 
-        <div class="col-md d-flex justify-content-between">
+        <div class="col d-flex justify-content-between">
           <b-button-group class="filebar-btn-group">
             <b-button class="filebar-btn" v-on:click="decreaseWH()"><font-awesome-icon icon="minus"/></b-button>
             <b-button class="filebar-btn" v-on:click="increaseWH()"><font-awesome-icon icon="plus"/></b-button>
           </b-button-group>
         </div>
 
-        <div class="col-md-2">
+        <div class="col">
           <b-button class="file-panel-btn" v-on:click="showPrivateFiles = !showPrivateFiles" name="check-button">
               <font-awesome-icon icon="share" v-if="showPrivateFiles"/>
               <font-awesome-icon icon="user-secret" v-else/>
@@ -27,21 +27,21 @@
             </b-button>
         </div>
 
-        <div class="col-md-2">
+        <div class="col">
           <b-button class="file-panel-btn file-selection-btn" v-on:click="selectFiles = !selectFiles">
             <font-awesome-icon icon="hand-pointer"/>&nbsp; <template v-if="selectFiles">Disable</template><template v-else>Enable</template> File Selection
           </b-button>
         </div>
         
-        <div class="col-md">
+        <div class="col">
           <b-button class="file-panel-btn" variant="danger" v-if="selectFiles" v-on:click="deleteSelectedFiles()">Delete</b-button>
         </div>
 
-        <div class="col-md">
+        <div class="col">
           <b-button class="file-panel-btn" variant="primary" v-if="selectFiles" v-on:click="privateSelectedFiles()">Toggle Privacy</b-button>
         </div>
 
-        <div class="col-md">
+        <div class="col">
           <b-dropdown text="File List" v-if="selectedFiles.length > 0 && selectFiles">
             <b-dropdown-item class="file-panel-btn" v-bind:key="file.id" v-for="file in getCheckedFiles()" disabled>
               {{ file.generated_filename }} | {{ file.original_filename }}
@@ -49,40 +49,33 @@
           </b-dropdown>
         </div>
 
+        <div class="col-md-2">
+          <input v-model="searchTerm" class="form-control file-panel-btn file-search" type="search" :icon="['fas', 'search']" placeholder="Search..." aria-label="Search">
+        </div>
 
+        <div class="col-md-1">
+          <select @change="changedSelectionValue" class="custom-select file-panel-btn file-sort">
+            <option class="opt" value="-date">Sorty by...</option>
 
-        <!-- Right aligned nav items -->
-        <b-navbar-nav class="ml-auto">
+            <option class="opt" value="-date">Upload date (Latest)</option>
+            <option class="opt" value="date">Upload date (Oldest)</option>
 
-          <div class="col-sm">
-            <input v-model="searchTerm" class="form-control file-panel-btn file-search" type="search" :icon="['fas', 'search']" placeholder="Search..." aria-label="Search">
-          </div>
+            <option class="opt" value="original_filename">Original Filename (A-Z)</option>
+            <option class="opt" value="-original_filename">Original Filename (Z-A)</option>
 
-          <div class="col-sm">
+            <option class="opt" value="generated_filename">Generated Filename (A-Z)</option>
+            <option class="opt" value="-generated_filename">Generated Filename (Z-A)</option>
 
-            <select @change="changedSelectionValue" class="custom-select file-panel-btn file-sort">
-              <option class="opt" value="-date">Sorty by...</option>
+            <option class="opt" value="file_ext">Extension (Ascending)</option>
+            <option class="opt" value="-file_ext">Extension (Descending)</option>
 
-              <option class="opt" value="-date">Upload date (Latest)</option>
-              <option class="opt" value="date">Upload date (Oldest)</option>
+            <option class="opt" value="-views">Views (Most)</option>
+            <option class="opt" value="views">Views (Least)</option>
 
-              <option class="opt" value="original_filename">Original Filename (A-Z)</option>
-              <option class="opt" value="-original_filename">Original Filename (Z-A)</option>
-
-              <option class="opt" value="generated_filename">Generated Filename (A-Z)</option>
-              <option class="opt" value="-generated_filename">Generated Filename (Z-A)</option>
-
-              <option class="opt" value="file_ext">Extension (Ascending)</option>
-              <option class="opt" value="-file_ext">Extension (Descending)</option>
-
-              <option class="opt" value="-views">Views (Most)</option>
-              <option class="opt" value="views">Views (Least)</option>
-
-              <option class="opt" value="-file_size_bytes">Filesize (Largest)</option>
-              <option class="opt" value="file_size_bytes">Filesize (Smallest)</option>
-            </select>
-          </div>
-        </b-navbar-nav>
+            <option class="opt" value="-file_size_bytes">Filesize (Largest)</option>
+            <option class="opt" value="file_size_bytes">Filesize (Smallest)</option>
+          </select>
+        </div>
       </b-collapse>
     </b-navbar>
 
@@ -339,6 +332,10 @@
     width: 100%;
     background-color: transparent !important;
     margin: 5px 0px;
+    font-size: 14px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
   }
 
   .file-selection-btn {
