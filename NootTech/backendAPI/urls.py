@@ -15,6 +15,12 @@ urlpatterns = format_suffix_patterns([
     
     # POST account credentials {username, email, password, colour}. If credentials are validated, return successful status. Frontend then posts to /api/token/auth to log user in.
     url(r'^create-user', CreateUserAPIView.as_view(), name='CreateUser'),
+
+     # POST with {password_confirmation}. If credentials are validated, return successful status and delete account and all files.
+    url(r'^delete-account', DeleteAccountAPIView.as_view(), name='DeleteUser'),
+    
+    # POST account credentials {old_password, new_password}. If credentials are validated, return change user password to new_password.
+    url(r'^change-password', ChangePasswordAPIView.as_view(), name='ChangeUserPassword'),
     
     # GET to get JSON object representing user settings of currently authenticated user. If not authenticated, forbidden. Or POST new settings along with JWT In header to authenticate. Update settings. 
     url(r'^settings', GetSetSettingsAPIView.as_view(), name='GetSetSettings'),
@@ -25,12 +31,9 @@ urlpatterns = format_suffix_patterns([
     # GET list of files uploaded by currently authenticated user (through verifying JWT Header). If no files, return empty array. If not verified, respond with forbidden.
     url(r'^files', ListFilesAPIView.as_view(), name='ListFiles'),
 
-    # POST to below url where <pk> is the ID of the file to be deleted. If file exists, delete it and respond with success. Else, respond with 404.
-    url(r'^file/delete/(?P<pk>\d+)', DeleteFileAPIView.as_view(), name='DeleteFile'),
-    
-    # POST to below url where <pk> is the ID Of the file to have it's privacy toggled. If file exists, toggle it's privacy and respond with success. Else, respond with 404.
-    url(r'^toggle-privacy/(?P<pk>\d+)', ToggleFilePrivacyAPIView.as_view(), name='ToggleFilePrivacy'),
-    
+    # POST to below url where <pk> is the ID of the file to be renamed. If file exists, delete it and respond with success. Else, respond with 404.
+    url(r'^file/(?P<pk>\d+)', UpdateFileAPIView.as_view(), name='RenameFile'),
+
     # GET a list of all files favourited by the currently authenticated user (again, verified through JWT token in header). If no favourites, return empty array. If not authenticated, respond with forbidden.
     url(r'^favourites', ListFavouritesAPIView.as_view(), name='ListFavourites'),
 
