@@ -3,6 +3,7 @@
     <!-- Upload File modal -->
     <nt-upload-modal ref="uploadModal" />
     <nt-file-popup-modal ref="filePopupModal" />
+    <nt-favourites-modal ref="favouritesPopupModal" />
   </div>
 </template>
 
@@ -10,11 +11,16 @@
 
 import NtUploadModal from './UploadModal.vue';
 import NtFilePopupModal from './FilePopupModal.vue';
+import NtFavouritesModal from './FavouritesModal.vue';
 import EventBus from '../../event-bus.js';
 
 export default {
   name: 'NtModal',
-  components: {NtUploadModal, NtFilePopupModal},
+  components: {
+    NtUploadModal,
+    NtFilePopupModal,
+    NtFavouritesModal
+  },
 }
 </script>
 

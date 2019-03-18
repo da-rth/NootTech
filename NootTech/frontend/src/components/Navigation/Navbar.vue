@@ -38,7 +38,7 @@
         <b-navbar-nav v-if="$store.state.user != null">
           
           <b-nav-item>
-            <b-button class="navbar-btn">
+            <b-button class="navbar-btn" @click="raiseEvent('favouriteModal')">
                 <font-awesome-icon icon="bookmark"/>&nbsp;&nbsp;&nbsp; Favourites
             </b-button>
           </b-nav-item>
@@ -64,7 +64,7 @@
 
         <b-navbar-nav class="ml-auto" v-if="$store.state.user">
           <b-nav-item>
-            <b-button class="navbar-btn" @click="raiseUploadEvent">
+            <b-button class="navbar-btn" @click="raiseEvent('uploadFile')">
               <font-awesome-icon icon="upload"/>&nbsp;&nbsp; Upload
             </b-button>
           </b-nav-item>
@@ -110,8 +110,6 @@
   </div>
 </template>
 <script>
-  import NtPopup from '../Utils/Popup.vue';
-  import NtUploadModal from '../Modals/UploadModal.vue';
   import EventBus from '../../event-bus.js';
 
   export default {
@@ -145,11 +143,10 @@
         testingCodeToCopy.setAttribute('type', 'hidden')
         window.getSelection().removeAllRanges()
       },
-      raiseUploadEvent() {
-        EventBus.$emit('uploadFile');
-      }
-    },
-    components: {NtPopup, NtUploadModal},
+      raiseEvent(eventType) {
+        EventBus.$emit(eventType);
+      },
+   },
   }
 
 </script>

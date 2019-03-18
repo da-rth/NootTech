@@ -16,6 +16,9 @@
 </template>
 
 <script>
+
+import EventBus from "../../event-bus.js";
+
 export default {
     name: 'NtFavouritesModal',
 
@@ -45,6 +48,10 @@ export default {
         favourites: this.$store.state.favourites
       };
     },
+    mounted() {
+      // register the favourite popup
+      EventBus.$on('favouriteModal', () => {this.show()})
+    }
 }
 </script>
 
