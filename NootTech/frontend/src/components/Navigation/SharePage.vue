@@ -16,8 +16,9 @@
 
       <ReportFileModal :file="file"/>
 
-      <!-- v-if="this.$store.state.user.username != this.username" -->
-      <b-button @click="onClick">Report File</b-button>
+      <div v-if="this.$store.state.user.username != this.username" class="report-btn-container">
+        <b-button class="report-btn" @click="onClick"><font-awesome-icon icon="flag"/>&nbsp; Report this file</b-button>
+      </div>
     </template>
   </div>
 </template>
@@ -96,5 +97,22 @@
 
   .AudioPlayerContainer {
     margin: 0 100px;
+  }
+  .report-btn-container {
+    padding: 40px;
+  }
+
+  .report-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #202020;
+    border: 1px solid #3d3d3d;
+  }
+
+  .report-btn:hover {
+    background-color: transparent;
+    border-color: #FF0000;
+    opacity: 0.9;
   }
 </style>
