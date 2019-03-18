@@ -34,11 +34,11 @@
         </div>
         
         <div class="col">
-          <b-button class="file-panel-btn" variant="danger" v-if="selectFiles" v-on:click="deleteSelectedFiles()">Delete</b-button>
+          <b-button class="file-panel-btn" variant="danger" v-if="selectFiles" v-on:click="deleteSelectedFiles()" :disabled="selectedFiles.length < 1">Delete</b-button>
         </div>
 
         <div class="col">
-          <b-button class="file-panel-btn" variant="primary" v-if="selectFiles" v-on:click="privateSelectedFiles()">Toggle Privacy</b-button>
+          <b-button class="file-panel-btn" variant="primary" v-if="selectFiles" v-on:click="privateSelectedFiles()" :disabled="selectedFiles.length < 1">Toggle Privacy</b-button>
         </div>
 
         <div class="col">
@@ -185,8 +185,7 @@
           this.$parent.searched_files = this.$parent.files
         }
       },
-      selectFiles(newValue, oldValue) {
-        if(newValue)
+      selectFiles: function (val) {
           this.$store.commit(types.EMPTY_FILE_SELECTION);
       }
     },
