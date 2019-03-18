@@ -18,7 +18,7 @@
 
 <script>
   export default {
-    name: "NtSettings",
+    name: "NtFileSettings",
     props: ["file"],
     data() {
       return {
@@ -27,7 +27,6 @@
     computed: {
       fileName() {
         return this.file.original_filename.split(this.file.file_ext)[0]
-
       }
     },
     methods: {

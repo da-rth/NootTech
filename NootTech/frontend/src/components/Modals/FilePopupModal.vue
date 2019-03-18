@@ -24,7 +24,7 @@
             <b-button @click="copySharelink">Copy</b-button>
           </b-input-group-append>
         </b-input-group>
-        <nt-settings :file="file"/>
+        <nt-file-settings :file="file"/>
       </template>
     </b-modal>
 	</div>
@@ -38,7 +38,7 @@
   import ImagePreview from "../Utils/FilePreview/ImagePreview";
   import TextPreview from "../Utils/FilePreview/TextPreview.vue";
   import FileInformation from "../Utils/FilePreview/FileInformation";
-  import NtSettings from '../Utils/Settings.vue';
+  import NtFileSettings from '../Utils/FileSettings.vue';
 
 export default {
 	name: "NtFilePopupModal",
@@ -49,7 +49,7 @@ export default {
       AudioPlayer,
       VideoPlayer,
       FileInformation,
-      NtSettings
+      NtFileSettings
     },
 	data() {
 		return {
