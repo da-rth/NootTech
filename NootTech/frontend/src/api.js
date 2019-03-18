@@ -297,4 +297,7 @@ export async function DeleteFavourite(fileID) {
   return await axios.delete(`${FAV_DEL_URL}/${fileID}`)
 }
 
+/**
+ * Export the current state of axios. USE WITH CARE!
+ */
 export const _axios = axios;
