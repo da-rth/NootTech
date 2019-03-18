@@ -119,13 +119,16 @@ class GetSetSettingsAPIView(generics.ListCreateAPIView):
         # So a member cannot get other members settings (upload key, etc...).
         return User.objects.filter(id=self.request.user.id)
 
-    def perform_create(self, serializer):
+    def create(self, request, *args, **kwargs):
         # Override the perform_create method to UPDATE a user instead of CREATE one.
         # Get the object for the current authenticated user (logged in)
         u = User.objects.get(id=self.request.user.id)
 
         # If the variables colour, email or upload_key have been recieved via POST request
         # Update user object with these values...
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
         if serializer.validated_data.get('colour'):
             # if "colour" exists and isn't an empty string
             u.colour = serializer.validated_data.get('colour')

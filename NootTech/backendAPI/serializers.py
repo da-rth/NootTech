@@ -193,9 +193,9 @@ class SettingsSerializer(serializers.ModelSerializer):
     This serializer is used to convert colour, email, warnings and upload_key of the currently authenticated user
     The aforementioned fields can also be set through a POST request
     """
-    gen_upload_key = serializers.BooleanField(default=False, allow_null=True, write_only=True)
-    email = serializers.CharField(validators =[validators.validate_email], allow_null=True)
-    colour = serializers.CharField(validators =[validators.validate_colour], allow_null=True)
+    gen_upload_key = serializers.BooleanField(default=False, allow_null=True, write_only=True, required=False)
+    email = serializers.CharField(validators =[validators.validate_email], allow_null=True, required=False)
+    colour = serializers.CharField(validators =[validators.validate_colour], allow_null=True, required=False)
 
     class Meta:
         model = User
