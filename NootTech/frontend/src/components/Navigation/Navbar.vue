@@ -25,7 +25,7 @@
 
       <b-navbar-nav v-if="$store.state.user != null">
         <b-nav-item>
-          <b-button class="navbar-btn" v-if="$store.state.user">
+          <b-button class="navbar-btn" v-if="$store.state.user" @click="raiseEvent('settingsModal')">
               <font-awesome-icon icon="user-ninja"/>&nbsp;&nbsp;&nbsp; {{ $store.state.user.username }}
           </b-button>
         </b-nav-item>
