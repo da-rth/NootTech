@@ -13,17 +13,25 @@
 
       <h4 class="file-header">File Information</h4>
       <FileInformation :file="file"/>
+
+      <ReportFileModal :file="file"/>
+
+      <div v-if="this.$store.state.user.username != this.username" class="report-btn-container">
+        <b-button class="report-btn" @click="onClick"><font-awesome-icon icon="flag"/>&nbsp; Report this file</b-button>
+      </div>
     </template>
   </div>
 </template>
 
 <script>
+  import EventBus from '../../event-bus.js';
   import VideoPlayer from "../Utils/FilePreview/VideoPlayer";
   import AudioPlayer from "../Utils/FilePreview/AudioPlayer";
   import DownloadFile from "../Utils/FilePreview/DownloadFile";
   import ImagePreview from "../Utils/FilePreview/ImagePreview";
   import TextPreview from "../Utils/FilePreview/TextPreview";
   import FileInformation from "../Utils/FilePreview/FileInformation";
+  import ReportFileModal from "../Modals/ReportFileModal";
 
   import router from '../../router/index.js';
 
@@ -43,7 +51,15 @@
       DownloadFile,
       AudioPlayer,
       VideoPlayer,
-      FileInformation
+      FileInformation,
+      ReportFileModal
+    },
+
+    methods: {
+      onClick () {
+        console.log("test");
+        EventBus.$emit('reportPopup', this.file);
+      }
     },
 
     async beforeMount() {
@@ -81,5 +97,22 @@
 
   .AudioPlayerContainer {
     margin: 0 100px;
+  }
+  .report-btn-container {
+    padding: 40px;
+  }
+
+  .report-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #202020;
+    border: 1px solid #3d3d3d;
+  }
+
+  .report-btn:hover {
+    background-color: transparent;
+    border-color: #FF0000;
+    opacity: 0.9;
   }
 </style>

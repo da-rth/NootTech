@@ -49,11 +49,11 @@
           </b-dropdown>
         </div>
 
-        <div class="col-md-2">
+        <div class="col">
           <input v-model="searchTerm" class="form-control file-panel-btn file-search" type="search" :icon="['fas', 'search']" placeholder="Search..." aria-label="Search">
         </div>
 
-        <div class="col-md-1">
+        <div class="col">
           <select @change="changedSelectionValue" class="custom-select file-panel-btn file-sort">
             <option class="opt" value="-date">Sorty by...</option>
 

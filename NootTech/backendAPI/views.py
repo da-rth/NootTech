@@ -124,7 +124,7 @@ class ReportListAPIView(generics.ListAPIView):
 
 
 class ReportAddAPIView(generics.CreateAPIView):
-    permission_classes = (IsAdminUser,)
+    permission_classes = (AllowAny,)
     serializer_class = serializers.ReportAdd
     queryset = ReportedFile.objects.all()
 
