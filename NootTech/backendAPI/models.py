@@ -1,4 +1,6 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from easy_thumbnails.fields import ThumbnailerImageField
@@ -190,8 +192,7 @@ class ReportedFile(models.Model):
     def __str__(self):
         return f'File: {self.reported_file.generated_filename}{self.reported_file.file_ext} ' \
                f'Reported by: {self.reported_by.username}'
-
-    reported_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reported_user_set')
+    
     reported_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reported_by_set', blank=True)
     reported_file = models.ForeignKey(File, on_delete=models.CASCADE)
     date = models.DateTimeField(default=timezone.now)
@@ -479,3 +480,85 @@ def create_file_text_subtype(sender, instance, **kwargs):
     f.file_text = instance
     f.save()
 
+
+"""
+The below functions are called whenever:
+- a new file is reported
+- a user is warned
+- a user creates an account
+- a user is banned.
+
+On these events, an email is sent out either to the user or an administrator depending on the context of the email.
+"""
+@receiver(post_save, sender=User)
+def create_user_acc(sender, instance, created, **kwargs):
+    if created:
+        title = 'Woohoo! Your super cool NootTech account has been created!'
+
+        msg_html = render_to_string('email/new_report.html', {
+            'username': instance.username,
+            'upload_key': instance.upload_key,
+        })
+        
+        send_mail(
+            title,
+            '',
+            'info@noot.tech',
+            [instance.email],
+            html_message=msg_html,
+        )
+
+@receiver(post_save, sender=ReportedFile)
+def new_report_submitted(sender, instance, created, **kwargs):
+    if created:
+        title = f"New file report: {instance.reported_file.generated_filename} by {instance.reported_file.user.username}"
+        
+        msg_html = render_to_string('email/new_report.html', {
+            'username': instance.reported_file.user.username,
+            'instance' : instance,
+            'admin': True
+        })
+        
+        send_mail(
+            title,
+            '',
+            'info@noot.tech',
+            ['contact@noot.tech'],
+            html_message=msg_html,
+        )
+
+@receiver(post_save, sender=Warned)
+def notify_warned_user(sender, instance, created, **kwargs):
+    if created:
+        title = 'You have recieved a warning from an administrator.'
+
+        msg_html = render_to_string('email/user_warned.html', {
+            "username": instance.banned_user.username,
+            "instance": instance
+        })
+        
+        send_mail(
+            title,
+            '',
+            'info@noot.tech',
+            [instance.warned_user.email],
+            html_message=msg_html,
+        )
+
+@receiver(post_save, sender=BannedUser)
+def notify_banned_user(sender, instance, created, **kwargs):
+    if created:
+        title = "Your account has been banned... here's why."
+
+        msg_html = render_to_string('email/user_banned.html', {
+            "username": instance.banned_user.username,
+            "instance": instance
+        })
+
+        send_mail(
+            title,
+            '',
+            'info@noot.tech',
+            [instance.banned_user.email],
+            html_message=msg_html,
+        )

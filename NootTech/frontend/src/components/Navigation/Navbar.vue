@@ -8,76 +8,91 @@
     type="dark"
     :style="{borderBottom: `1px solid ${$root.colour}`}">
 
+      <!-- Keep this centered -->
+      <b-navbar-brand>
+        <a class="navbar-brand" v-bind:href="this.$site_url">
+          <template v-if="$root.sharelinkName">
+            {{ $root.sharelinkName }}.<span v-bind:style="{color: $root.colour}">Noot</span>.Tech
+          </template>
+          <template v-else>
+            Noot<span v-bind:style="{color: $root.colour}" class="tech">Tech</span>
+          </template>
+        </a>
+      </b-navbar-brand>
+      
+
       <notifications group="FileUpload" />
 
-      <b-navbar-toggle target="nav_collapse"/>
+      <b-navbar-nav v-if="$store.state.user != null">
+        <b-nav-item>
+          <b-button class="navbar-btn" v-if="$store.state.user">
+              <font-awesome-icon icon="user-ninja"/>&nbsp;&nbsp;&nbsp; {{ $store.state.user.username }}
+          </b-button>
+        </b-nav-item>
+      </b-navbar-nav>
+
+      <b-navbar-toggle class="float-xs-right" target="nav_collapse"/>
+
       <b-collapse is-nav id="nav_collapse">
 
-        <template v-if="$store.state.user != null">
-          <b-button class="settings-modal-btn" v-if="$store.state.user">
-              <font-awesome-icon icon="user-ninja"/>&nbsp; {{ $store.state.user.username }}
-          </b-button>
-          &nbsp;
-          <b-button class="favs-modal-btn">
-              <font-awesome-icon icon="bookmark"/>&nbsp; Favourites
-          </b-button>
-        </template>
+        <b-navbar-nav v-if="$store.state.user != null">
+          
+          <b-nav-item>
+            <b-button class="navbar-btn">
+                <font-awesome-icon icon="bookmark"/>&nbsp;&nbsp;&nbsp; Favourites
+            </b-button>
+          </b-nav-item>
+        </b-navbar-nav>
 
         <b-navbar-nav v-else>
+
           <b-nav-item>
             <router-link to="/about">
             <font-awesome-icon icon="info-circle"/>&nbsp; About
             </router-link>
           </b-nav-item>
+          
+          <b-nav-item>
+            <router-link to="/how-to">
+              <font-awesome-icon icon="question-circle"/>
+              &nbsp;How to...
+            </router-link>
+          </b-nav-item>
         </b-navbar-nav>
 
-          &nbsp;
-          <router-link to="/how-to">
-            <font-awesome-icon icon="question-circle"/>
-            &nbsp;How to...
-          </router-link>
 
-        <!-- Keep this centered -->
-        <b-navbar-brand>
-
-          <router-link class="navbar-brand" to="/">
-
-            <template v-if="$root.sharelinkName">
-              {{ $root.sharelinkName }}.<span v-bind:style="{color: $root.colour}">Noot</span>.Tech
-            </template>
-
-            <template v-else>
-              Noot<span v-bind:style="{color: $root.colour}" class="tech">Tech</span>
-            </template>
-
-          </router-link>
-        </b-navbar-brand>
 
         <b-navbar-nav class="ml-auto" v-if="$store.state.user">
-          <b-input-group class="filebar-uploadkey" v-if="showUploadKey">
-            <b-form-input id="uploadKey" class="key-field" v-bind:value="$store.state.settings.upload_key" readonly/>
-            <b-input-group-append>
-              <b-button @click="copyUploadKey">Copy</b-button>
-            </b-input-group-append>
-            &nbsp;&nbsp;
-          </b-input-group>
-
           <b-nav-item>
-            <a @click="raiseUploadEvent">
-              <font-awesome-icon icon="upload"/>&nbsp; Upload
-            </a>
+            <b-button class="navbar-btn" @click="raiseUploadEvent">
+              <font-awesome-icon icon="upload"/>&nbsp;&nbsp; Upload
+            </b-button>
           </b-nav-item>
 
-          <b-nav-item>
-            <a v-on:click="showUploadKey = !showUploadKey" name="check-button">
+          <b-nav-item v-on:click="showUploadKey = !showUploadKey">
+            <b-button class="navbar-btn">
               <font-awesome-icon icon="eye-slash" v-if="showUploadKey"/>
               <font-awesome-icon icon="eye" v-else/>&nbsp;
               {{ showUploadKey ? "&nbsp;Hide Key" : "Show Key" }}
-            </a>
-            &nbsp;&nbsp;
+            </b-button>
+          </b-nav-item>
+          
+          <b-nav-item>
             <router-link to="/logout">
-              <font-awesome-icon :icon="['fas', 'sign-out-alt']"/> Logout
+            <b-button class="navbar-btn">
+              <font-awesome-icon :icon="['fas', 'sign-out-alt']"/> &nbsp;Logout
+            </b-button>
             </router-link>
+          </b-nav-item>
+          
+          <b-nav-item v-if="showUploadKey">
+            <b-input-group class="filebar-uploadkey">
+              <b-input-group-prepend>
+                <b-button class="copy-btn" @click="copyUploadKey"><font-awesome-icon icon="copy"/>&nbsp; Copy</b-button>
+              </b-input-group-prepend>
+              <b-form-input id="uploadKey" class="key-field" v-bind:value="$store.state.settings.upload_key" readonly/>
+              &nbsp;&nbsp;
+            </b-input-group>
           </b-nav-item>
         </b-navbar-nav>
 
@@ -169,15 +184,8 @@
     text-decoration: none;
   }
 
-  .btn .btn-secondary .dropdown-toggle {
-    background-color: transparent !important;
-    border: none;
-    color: #969696;
-  }
-
   .filebar-uploadkey {
-    margin-top: 4px;
-    width: 230px;
+    margin: -5px;
     text-align: center;
   }
 
@@ -198,15 +206,39 @@
   .user-dropdown button {
     color: red;
   }
-  .favs-modal-btn,
-  .settings-modal-btn {
-    padding: 0px 10px;
-    border: none;
-    background: transparent;
-    color: #909090;
+
+  input#uploadKey {
+    background-color: #2a2a2a;
+    color: white;
+    border: 1px solid #181818;
   }
-  .favs-modal-btn:hover,
-  .settings-modal-btn:hover {
-    color: #FFFFFF;
+
+  .navbar-btn {
+    margin: -10px !important;
+    padding: 10px 10px !important;
+    border: none !important;
+    background: transparent !important;
+    color: #909090 !important;
+    transition: 0.3s ease-in-out !important;
+  }
+  .navbar-btn:hover {
+    color: #FFFFFF !important;
+  }
+
+  .navbar-btn:focus {
+    box-shadow: none !important;
+  }
+
+  .navbar-dark .navbar-toggler {
+    border-radius: 0px;
+    border: none;
+  }
+  .navbar-dark .navbar-toggler:focus {
+    outline: none;
+  }
+
+  .copy-btn {
+    background-color: #242424 !important;
+    border: 1px solid #181818 !important;
   }
 </style>

@@ -189,7 +189,7 @@ class BanAPIView(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
 
-        reason = request.POST.get('reason', None)
+        reason = request.POST.get('reason', "Not given by admin")
         ban_uid = request.POST.get('warned_user', None)
         ban_user = User.objects.get(id=ban_uid)
 
@@ -207,9 +207,9 @@ class BanAPIView(generics.CreateAPIView):
             banned_user = BannedUser(
                 banned_by=self.request.user,
                 banned_user=ban_user,
-                reason=reason if reason != None else "Reason not given by admin."
+                reason=reason
             )
-            banned_user.save()
+            banned_user.save()            
             log.info(f"[BAN-USER] : USER: {ban_user.username} BANNED BY: {self.request.user.username}")
             return Response({'banned': True}, status=status.HTTP_201_CREATED)
         else:
@@ -226,7 +226,7 @@ class WarnAPIView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         
         autoban = False
-        reason = request.POST.get('reason', None)
+        reason = request.POST.get('reason', "Not given by administrator.")
 
         warned_uid = request.POST.get('warned_user', None)
         warned_user = User.objects.get(id=warned_uid)
@@ -254,12 +254,12 @@ class WarnAPIView(generics.CreateAPIView):
                 ban = BannedUser(
                     banned_by=request.user,
                     banned_user=warned_user,
-                    reason=reason if reason != None else "Reason not given by admin. " \
-                    "You have exceeded 3 warnings and have been auto-banned."
+                    reason="You have exceeded 3 warnings by an administrator and have been auto-banned."
                 )
                 log.info(f"[WARN-USER] : USER: {warned_user.username} AUTO-BANNED DUE TO EXCEEDING 3 WARNINGS.")
                 ban.save()
             warned_user.save()
+            
             log.info(f"[WARN-USER] : USER: {warned_user.username} WARNED BY: {self.request.user.username}")
             return Response({'warned': True, 'autoban': autoban, 'warnings': warned_user.warnings}, status=status.HTTP_201_CREATED)
         else:

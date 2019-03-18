@@ -33,6 +33,14 @@ ALLOWED_HOSTS = []
 DOMAIN_NAME = GENERAL_SETTINGS["BACKEND_URL"]
 HTTPS = GENERAL_SETTINGS["HTTPS"]
 
+#if not DEBUG: # Disable email system while debugging
+EMAIL_USE_TLS = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.noot.tech'
+EMAIL_HOST_PASSWORD='ADD_PASSWORD_HERE'
+EMAIL_HOST_USER='info@noot.tech'
+EMAIL_PORT = 587
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # Application definition
 
