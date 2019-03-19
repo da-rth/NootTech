@@ -19,7 +19,6 @@
           </template>
         </router-link>
       </b-navbar-brand>
-      
 
       <notifications group="FileUpload" />
 
@@ -67,10 +66,6 @@
             </router-link>
           </b-nav-item>
         </b-navbar-nav>
-
-
-
-
 
         <b-navbar-nav class="ml-auto" v-if="$store.state.user">
           <b-nav-item>
