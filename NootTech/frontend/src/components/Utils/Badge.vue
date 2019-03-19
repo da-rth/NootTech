@@ -90,13 +90,29 @@
       getFavouriteIcon() {
         return "star"
       },
+
+      isFavourite() {
+        let favourites = this.$root.favourite_files;
+        for(var i = 0; i < favourites.length; i++) {
+          if(favourites[i].gen == this.value.generated_filename)
+            return favourites[i];
+        }
+        return null;
+      },
       async toggleFavourite() {
-        console.log(this.value)
-        try {
-          await this.$api.AddFavourite(this.$store.state.user.username, this.value.id);
+       try {
+         let curresponding_favourite = this.isFavourite();
+         if(curresponding_favourite != null) {
+          await this.$api.DeleteFavourite(curresponding_favourite.id);
+          console.log("Successfully removed link from the favourites");
+         }
+         else {
+          await this.$api.AddFavourite(this.value.id);
           console.log("Successfully added link to the favourites");
+         }
+         EventBus.$emit('refreshFavourites');
         } catch(error) {
-          console.log(error.response);
+          console.log(error);
         }
       }
     }
