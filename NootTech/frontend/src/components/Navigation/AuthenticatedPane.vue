@@ -1,6 +1,7 @@
 <template>
   <div>
     <nt-modal/>
+    <notifications group="FileLoading"/>
     <LoadingFiles :multiple="true" v-if="isLoading"></LoadingFiles>
     <template v-else>
       <FilePanel></FilePanel>
@@ -21,6 +22,7 @@
         gsize: null,
         files: null,
         searched_files: null,
+        favourite_files: null,
         filesToDelete: [],
         isLoading: true
       }
@@ -31,16 +33,31 @@
       NtModal
     },
     methods: {
+      async loadFavourites() {
+        try {
+          let response = await this.$api.GetFavourites();
+          this.$root.favourite_files = response.data;
+        } catch(e) {
+          this.$notify({
+            group: 'FileLoading',
+            type: "error",
+            title: `Couldn't fetch favourites!`
+          })
+          console.log('GET FAVOURITE ERROR', e);
+        }
+      },
       async loadFiles() {
         this.isLoading = true;
         await this.$api.GetFiles()
         .then(response => {
-          console.log('GET FILES SUCCESS', response);
           this.files = response.data;
+          this.$root.files = response.data;
           this.searched_files = response.data;
+          this.$root.searched_files = response.data;
+          this.loadFavourites();
         })
         .catch(e => {
-          console.log('GET FILES ERROR', e.response);
+          console.log('GET FILES ERROR', e);
         })
         .finally(() => {
           this.isLoading = false;
@@ -48,9 +65,10 @@
           this.$root.colour = this.$store.state.settings.colour;
         })
       },
-   },
+    },
     created() {
       EventBus.$on('refreshFilePanel', this.loadFiles);
+      EventBus.$on('refreshFavourites', this.loadFavourites);
     },
     mounted() {
       // it is safe to emit after mouting everything

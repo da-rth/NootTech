@@ -16,7 +16,7 @@
 
       <ReportFileModal :file="file"/>
 
-      <div v-if="this.$store.state.user.username != this.username" class="report-btn-container">
+      <div v-if="this.$store.state.user && this.$store.state.user.username != this.username" class="report-btn-container">
         <b-button class="report-btn" @click="onClick"><font-awesome-icon icon="flag"/>&nbsp; Report this file</b-button>
       </div>
     </template>
