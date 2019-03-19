@@ -24,13 +24,16 @@
      class="large-fa-icon"
     />
 
-    <div class="overlay" @click="onClick">
+    <div class="overlay" @click.stop="onClick">
       <h2>{{value.original_filename}}</h2>
       <div class="overlay-footer">
         <div class="icon">
           <font-awesome-icon :icon="getIcon()" v-if="value.file_thumbnail != null"/>
           <font-awesome-icon icon="file-archive" v-else/>
           <span style="padding-left: 2px">{{ value.file_size_str }}</span>
+        </div>
+        <div class="favoured" @click.stop="toggleFavourite()">
+          <font-awesome-icon :icon="getFavouriteIcon()"/>
         </div>
 
         <div class="views">
@@ -83,6 +86,18 @@
         else {
           EventBus.$emit('filePopup', this.value);
         }
+      },
+      getFavouriteIcon() {
+        return "star"
+      },
+      async toggleFavourite() {
+        console.log(this.value)
+        try {
+          await this.$api.AddFavourite(this.$store.state.user.username, this.value.id);
+          console.log("Successfully added link to the favourites");
+        } catch(error) {
+          console.log(error.response);
+        }
       }
     }
   }
@@ -117,6 +132,10 @@
   }
   .icon {
     float: left;
+  }
+  .favoured {
+    float: left;
+    margin-left: 4px;
   }
   .views {
     float:right;

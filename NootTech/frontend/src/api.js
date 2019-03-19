@@ -283,10 +283,11 @@ export async function GetFavourites() {
 
 /**
  * Given a file ID, add the file to the user's favourites list.
- * @param {int} fileID
+ * @param {string} username the username that wants the file name ot be stored in the favourites
+ * @param {int} file_id the file ID they refer to
  */
-export async function AddFavourite(fileID) {
-  return await axios.post(`${FAV_ADD_URL}/${fileID}`)
+export async function AddFavourite(username, file_id) {
+  return await axios_unauth.post(FAV_ADD_URL, {user: username, file: file_id})
 }
 
 /**
@@ -297,4 +298,7 @@ export async function DeleteFavourite(fileID) {
   return await axios.delete(`${FAV_DEL_URL}/${fileID}`)
 }
 
+/**
+ * Export the current state of axios. USE WITH CARE!
+ */
 export const _axios = axios;
