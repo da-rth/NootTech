@@ -11,38 +11,45 @@
       @ok="saveSettings"
       @hidden="resetSettings"
       >
-      <h1>Settings</h1>
+      <h1>Settings of {{$store.state.user.username}}</h1>
 
       <b-form>
         <b-form-group
-          label="Select a new colour"
+          class="col-lg-12"
+          label="Pick a new colour"
           label-for="colourSettingsField">
-          <slider id="colourSettingsField" v-model="colour" />
+          <b-input-group>
+            <slider id="colourSettingsField" v-model="colour" />
+          </b-input-group>
         </b-form-group>
 
         <b-form-group
-          class="form-inline"
-          label="insert a new email"
+          class="col-lg-12"
+          label="Your email"
           label-for="emailSettingsField"
           >
-          <b-form-input
-            id="emailSettingsField"
-            v-model="settings.email"
-            :placeholder="$store.state.settings.email"
-            type="email"
-            />
+          <b-input-group>
+
+            <b-input
+              id="emailSettingsField"
+              v-model="settings.email"
+              :placeholder="$store.state.settings.email"
+              type="email"/>
+          </b-input-group>
         </b-form-group>
 
         <b-form-group
-          class="form-inline"
-          label="Your upload key">
-          <label for="uploadkeySettingsField">Your upload key</label><br/>
-          <b-input
-          id="uploadkeySettingsField"
-          disabled
-          :value="$store.state.settings.upload_key"
-          class="form-control" />
-          <b-button variant="success">Copy</b-button>
+          class="col-lg-12"
+          label="Your upload key"
+          label-for="uploadkeySettingsField">
+          <b-input-group>
+            <b-input
+            id="uploadkeySettingsField"
+            disabled
+            :value="$store.state.settings.upload_key"
+            class="form-control" />
+            <b-button variant="success" @click="copyUploadKey">Copy</b-button>
+          </b-input-group>
         </b-form-group>
       </b-form>
     </b-modal>
@@ -57,26 +64,44 @@ import {SETTINGS} from '../../store/mutation-types.js'
 export default {
     name: 'NtSettingsModal',
     components: { Slider },
-    computed: {
-      getColour() {
-        var colour = this.colour
-        if(typeof (colour) !== "string")
-          colour = colour.hex;
-        return colour;
-      }
-    },
     watch: {
-      colour() {
-        this.$root.colour = this.getColour
+      colour(newValue) {
+          if(newValue != null && typeof(newValue) !== "string") {
+            console.log(newValue)
+            this.$root.colour = newValue.hex;
+          }
       }
     },
     methods: {
       show() {
         this.$refs.modal.show()
       },
+      copyUploadKey() {
+        let testingCodeToCopy = document.querySelector("#uploadkeySettingsField")
+        testingCodeToCopy.removeAttribute("disabled")
+        testingCodeToCopy.select()
+        
+        try {
+          var successful = document.execCommand('copy');
+          console.log(successful)
+          this.$notify({
+            group: 'SettingsUpdate',
+            title: `Copied the key to clipboard!`,
+            text: 'Go ahead! Paste it like crazy!',
+          });
+        } catch (err) {
+          this.$notify({
+            group: 'SettingsUpdate',
+            title: 'Oh no! We couldn\'t copy the key',
+            text: 'Sorry about that...',
+          });
+        }
+        testingCodeToCopy.setAttribute("disabled", "disabled")
+      },
+	
       async saveSettings() {
         try{
-          this.settings.colour = this.getColour;
+          this.settings.colour = this.$root.colour;
 
           // avoid filling a null entry
           if(this.settings.email == "")
