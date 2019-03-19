@@ -25,7 +25,7 @@
     />
 
     <div class="overlay" @click.stop="onClick">
-      <h2>{{value.original_filename}}</h2>
+      <h2 class="overlay-title">{{value.original_filename}}</h2>
       <div class="overlay-footer">
         <div class="icon">
           <font-awesome-icon :icon="getIcon()" v-if="value.file_thumbnail != null"/>
@@ -33,7 +33,10 @@
           <span style="padding-left: 2px">{{ value.file_size_str }}</span>
         </div>
         <div class="favoured" @click.stop="toggleFavourite()">
-          <font-awesome-icon :icon="getFavouriteIcon()"/>
+          <span v-if="is_favourite" class="favourite">⭐</span>
+          <font-awesome-icon
+            v-else
+            :icon="getFavouriteIcon()"/>
         </div>
 
         <div class="views">
@@ -57,11 +60,17 @@
     data() {
       return {
         popup_id: 'popup-' + this.value.id,
+        is_favourite: this.getFavouriteElement() != null
       }
     },
     methods: {
-      isImage() {
-        return this.value.file_mime_type.startsWith("image/")
+      getFavouriteElement() {
+        let favourites = this.$root.favourite_files;
+        for(var i = 0; i < favourites.length; i++) {
+          if(favourites[i].gen == this.value.generated_filename)
+            return favourites[i];
+        }
+        return null;
       },
       getIcon() {
         // split into prefix and second name
@@ -91,25 +100,18 @@
         return "star"
       },
 
-      isFavourite() {
-        let favourites = this.$root.favourite_files;
-        for(var i = 0; i < favourites.length; i++) {
-          if(favourites[i].gen == this.value.generated_filename)
-            return favourites[i];
-        }
-        return null;
-      },
       async toggleFavourite() {
        try {
-         let curresponding_favourite = this.isFavourite();
-         if(curresponding_favourite != null) {
-          await this.$api.DeleteFavourite(curresponding_favourite.id);
+         let favourite = this.getFavouriteElement();
+         if(favourite != null) {
+          await this.$api.DeleteFavourite(favourite.id);
           console.log("Successfully removed link from the favourites");
          }
          else {
           await this.$api.AddFavourite(this.value.id);
           console.log("Successfully added link to the favourites");
          }
+         this.is_favourite ^= true;
          EventBus.$emit('refreshFavourites');
         } catch(error) {
           console.log(error);
@@ -138,6 +140,10 @@
     -webkit-transition: all .4s ease-in-out;
     transition: all .4s ease-in-out;
   }
+  .overlay-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   .overlay-footer {
     background: rbga(0, 0, 0, 0.6);
     color: lightgray;
@@ -152,6 +158,11 @@
   .favoured {
     float: left;
     margin-left: 4px;
+  }
+
+  .favourite {
+    color: yellow;
+    font-family: Dejavu Sans;
   }
   .views {
     float:right;
