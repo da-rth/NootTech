@@ -430,7 +430,8 @@ class UploadView(View):
                     user=upload_user,
                     generated_filename=id_gen,
                     ip=ip,
-                    file_content=user_file
+                    file_content=user_file,
+                    file_thumbnail=user_file if ext in exts else None
                 )
                 
                 uploaded_file.save()
