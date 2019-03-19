@@ -10,6 +10,8 @@ from mimetypes import MimeTypes
 from moviepy.editor import VideoFileClip, AudioFileClip
 from . import utils
 import PIL.Image
+from background_task import background
+import threading
 
 """
 File:   models.py
@@ -144,7 +146,7 @@ class File(models.Model):
         )
     )
     file_ext = models.CharField(max_length=24, blank=True)
-    file_mime_type = models.CharField(max_length=64, default="text/plain")
+    file_mime_type = models.CharField(max_length=64, default="application/octet-stream")
     file_size_bytes = models.BigIntegerField(default=0)
     file_size_str = models.CharField(max_length=12, default="0 Bytes")
     """
@@ -157,18 +159,21 @@ class File(models.Model):
     file_text = models.OneToOneField('Text', on_delete=models.CASCADE, null=True, blank=True)
 
     def save(self, *args, **kwargs):
+        
+        self.file_mime_type = mime.guess_type(self.file_content.name)[0]
         self.original_filename = self.file_content.name.split("/")[-1].replace(self.generated_filename+'_', '')
         self.file_ext = utils.get_ext(self.file_content.name)
         self.file_size_bytes = self.file_content.size
         self.file_size_str = utils.get_filesize_str(self.file_content.size)
-        self.file_mime_type = mime.guess_type(self.file_content.name)[0]
-
+        
         # see https://github.com/denBot/WAD2-Group-Project/issues/35#issuecomment-472485161
         if self.file_mime_type is None:
             self.file_mime_type = 'application/octet-stream'
 
         self.icon = utils.get_fontawesome(self.file_mime_type, self.file_ext)
-        super(File, self).save(*args, **kwargs)
+        # Hangs just here for pdf
+
+        super(File, self).save(*args, **kwargs) 
 
     def __str__(self):
         orig = self.original_filename[:36]+"..." if len(str(self.original_filename)) > 36 else self.original_filename
@@ -354,7 +359,7 @@ class Text(models.Model):
             self.file_pointer.file_mime_type
         )
         super(Text, self).save(*args, **kwargs)
-
+    
     def __str__(self):
         return f'{self.file_pointer.generated_filename}{self.file_pointer.file_ext} - ' \
                f'uploaded by {self.file_pointer.user.username}'
@@ -380,9 +385,22 @@ class VirusTotalScan(models.Model):
     def __str__(self):
         return f'Virus report for: {self.file_pointer.generated_filename}{self.file_pointer.file_ext}'
 
+def get_virus_info(file_id):
+
+    f = File.objects.get(id=file_id)
+    # If file is text or other... (not image, video, audio) send request to virustotal
+    virus_data = utils.scan_file(f.file_content.path)
+
+    # If we get a response code of 200, all is ok... put results into VirusTotalScan model
+    if virus_data["response_code"] == 200:
+        VirusTotalScan.objects.create(
+            file_pointer=f,
+            md5=virus_data["results"]["md5"],
+            permalink=virus_data["results"]["permalink"]
+        ).save()
 
 @receiver(post_save, sender=File)
-def create_file_subtype(sender, instance, **kwargs):
+def create_file_subtype(sender, instance, created, **kwargs):
     """
     This function gets called after the File model is saved.
     If the file mimetype is an image, video, audio or text, we will try and gather ADDITIONAL info on that file.
@@ -393,43 +411,28 @@ def create_file_subtype(sender, instance, **kwargs):
     :param kwargs: - Not used... required parameter.
     :return: null
     """
-
     # Break recursion by changing value of instance.proceed after saving a file subtype
-    if not (instance.file_image or
-            instance.file_video or
-            instance.file_audio or
-            instance.file_text or
-            instance.virus_scan):
+    if created:
 
-        mimetype = instance.file_mime_type.lower()
+        mimetype = instance.file_mime_type
 
         # Create a sub-file model based on the mimetype of the file that has just been saved.
 
         if mimetype.startswith("image"):
             Image.objects.create(file_pointer=instance).save()
 
-        elif mimetype.lower().startswith("video"):
+        if mimetype.startswith("video"):
             Video.objects.create(file_pointer=instance).save()
 
-        elif mimetype.startswith("audio"):
+        if mimetype.startswith("audio"):
             Audio.objects.create(file_pointer=instance).save()
 
-        elif mimetype.startswith("text"):
+        if mimetype.startswith("text"):
             Text.objects.create(file_pointer=instance).save()
-
-        if not (mimetype.startswith("image") or mimetype.startswith("audio") or mimetype.startswith("video")):
-
-            # If file is text or other... (not image, video, audio) send request to virustotal
-            virus_data = utils.scan_file(instance.file_content.path)
-
-            # If we get a response code of 200, all is ok... put results into VirusTotalScan model
-            if virus_data["response_code"] == 200:
-                VirusTotalScan.objects.create(
-                    file_pointer=instance,
-                    md5=virus_data["results"]["md5"],
-                    permalink=virus_data["results"]["permalink"]
-                ).save()
-
+        
+        if mimetype.startswith("text") or mimetype.startswith("application"):
+            t = threading.Thread(target=get_virus_info, args=(instance.id,))
+            t.start()
 
 # Below code prevents File post_save receiver from executing
 @receiver(post_save, sender=VirusTotalScan)
