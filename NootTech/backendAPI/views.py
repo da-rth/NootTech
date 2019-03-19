@@ -14,6 +14,7 @@ from . import serializers
 from .models import *
 import traceback
 import logging
+from datetime import datetime
 log = logging.getLogger(__name__)
 
 htp = "https" if settings.HTTPS else "http"
@@ -193,8 +194,6 @@ class UpdateFileAPIView(generics.UpdateAPIView):
             gen_new_id = request.POST.get('gen_new_id', None)
             original_filename = request.POST.get('original_filename', None)
             delete = request.POST.get('delete', None)
-
-            print(original_filename)
 
             if delete:
                 file.delete()
@@ -417,26 +416,22 @@ class UploadView(View):
                                     f"please visit: {htp}://{settings.DOMAIN_NAME}/contact")
 
         for user_file in request.FILES.getlist('content'):
+
             ip = get_ip(request)
 
             try:
+                
                 ext = get_ext(user_file.name)
-                if ext in [".gif", ".jpg", ".jpeg", ".png", ".mp4", ".webm", ".ogv", ".ico", ".apng", ".bmp"]:
+                id_gen = get_id_gen()
 
-                    uploaded_file = File(
-                        user=upload_user,
-                        generated_filename=get_id_gen(),
-                        ip=ip,
-                        file_content=user_file,
-                        file_thumbnail=user_file
-                    )
-                else:
-                    uploaded_file = File(
-                        user=upload_user,
-                        generated_filename=get_id_gen(),
-                        ip=ip,
-                        file_content=user_file
-                    )
+                exts = [".gif", ".jpg", ".jpeg", ".png", ".mp4", ".webm", ".ogv", ".ico", ".apng", ".bmp"]
+
+                uploaded_file = File(
+                    user=upload_user,
+                    generated_filename=id_gen,
+                    ip=ip,
+                    file_content=user_file
+                )
                 
                 uploaded_file.save()
 
@@ -450,11 +445,16 @@ class UploadView(View):
             except Exception as e:
                 
                 log.warn(f"[FILE-UPLOAD] : USER: {upload_user.username} FAILED TO UPLOADED FILE WITH ID: {user_file} FROM IP: {uploaded_file.ip}")
-                print(f"Upload for {user_file} failed")
                 traceback.print_exc()
-                uploaded_files.append(f"Failed to upload: {user_file}\n")
 
-        return HttpResponse("\n".join(uploaded_files))
+                print(f"Upload for {user_file} failed")
+                
+                if len(uploaded_files) == 0:
+                    return HttpResponse("Failed to upload file - issue saving it to server.", status=400)
+                else:
+                    uploaded_files.append(f"Failed to upload: {user_file}\n")
+
+        return HttpResponse("\n".join(uploaded_files), status=200)
 
     def get(self, request):
         return redirect('/')
