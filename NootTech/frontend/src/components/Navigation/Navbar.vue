@@ -69,14 +69,6 @@
             </b-button>
           </b-nav-item>
 
-          <b-nav-item v-on:click="showUploadKey = !showUploadKey">
-            <b-button class="navbar-btn">
-              <font-awesome-icon icon="eye-slash" v-if="showUploadKey"/>
-              <font-awesome-icon icon="eye" v-else/>&nbsp;
-              {{ showUploadKey ? "&nbsp;Hide Key" : "Show Key" }}
-            </b-button>
-          </b-nav-item>
-          
           <b-nav-item>
             <router-link to="/logout">
             <b-button class="navbar-btn">
@@ -84,18 +76,8 @@
             </b-button>
             </router-link>
           </b-nav-item>
-          
-          <b-nav-item v-if="showUploadKey">
-            <b-input-group class="filebar-uploadkey">
-              <b-input-group-prepend>
-                <b-button class="copy-btn" @click="copyUploadKey"><font-awesome-icon icon="copy"/>&nbsp; Copy</b-button>
-              </b-input-group-prepend>
-              <b-form-input id="uploadKey" class="key-field" v-bind:value="$store.state.settings.upload_key" readonly/>
-              &nbsp;&nbsp;
-            </b-input-group>
-          </b-nav-item>
         </b-navbar-nav>
-
+          
         <b-navbar-nav class="ml-auto" v-else>
           <b-nav-item>
             <router-link to="/login">

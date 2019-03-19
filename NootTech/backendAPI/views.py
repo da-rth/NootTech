@@ -128,20 +128,27 @@ class GetSetSettingsAPIView(generics.ListCreateAPIView):
         # Update user object with these values...
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        response = dict()
 
         if serializer.validated_data.get('colour'):
             # if "colour" exists and isn't an empty string
             u.colour = serializer.validated_data.get('colour')
+            response["colour"] = u.colour
         
         if serializer.validated_data.get('email'):
             # If "email" exists and isn't an empty string
             u.email = serializer.validated_data.get('email')
+            response["email"] = u.email
         
         if serializer.validated_data.get('gen_upload_key'):
             # If "upload_key" exists and is set to True
             u.upload_key = get_upload_key()
-        
-        u.save()
+            response["upload_key"] = u.upload_key
+        if response:
+            u.save()
+            return Response(response, status=status.HTTP_200_OK)
+        else:
+            return Response({'detail': 'Invalid parameters. Try `colour`, `email`, etc...'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CreateUserAPIView(generics.ListCreateAPIView):
