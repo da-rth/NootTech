@@ -6,6 +6,7 @@ from rest_framework import status
 from django.utils.decorators import method_decorator
 from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.hashers import check_password
 from django.views import View
 from django.conf import settings
 from django.http import HttpResponse
@@ -27,6 +28,71 @@ class ErrorVideoAPIView(generics.ListAPIView):
     permission_classes = (AllowAny,)
     serializer_class = serializers.ErrorVideoSerializer
     queryset = ErrorVideo.objects.all()
+
+class DeleteAccountAPIView(generics.CreateAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.DeleteAccountSerializer
+
+    def get_queryset(self):
+        return User.objects.filter(id=self.request.user.id)
+    
+    def create(self, request, *args, **kwargs):
+
+        u = User.objects.get(id=self.request.user.id)
+        password = request.POST.get('confirmation_password', None)
+
+        if password:
+            # if "colour" exists and isn't an empty string
+            current_password = request.user.password
+            match = check_password(password, current_password)
+            if match:
+                user = User.objects.get(id=request.user.id)
+                files = File.objects.filter(user=user)
+                files.delete()
+                user.delete()
+
+                log.info(f"[ACCOUNT-DELETED] : USER: {user.username} DELETED ACCOUNT AND ALL FILES.")
+
+                return Response({'detail': 'Account successfully deleted'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'detail': 'Account could not be deleted. Is password confirmation correct?'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'detail': 'Password confirmation is required.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        u.save()
+
+class ChangePasswordAPIView(generics.CreateAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.ChangePasswordSerializer
+
+    def get_queryset(self):
+        return User.objects.filter(id=self.request.user.id)
+    
+    def create(self, request, *args, **kwargs):
+
+        u = User.objects.get(id=self.request.user.id)
+        old_password = request.POST.get('old_password', None)
+        new_password = request.POST.get('new_password', None)
+
+        if old_password and new_password:
+
+            current_password = request.user.password
+            match = check_password(old_password, current_password)
+            
+            if match:
+                user = User.objects.get(id=request.user.id)
+                user.set_password(new_password)
+                user.save()
+                log.info(f"[PASSWORD-CHANGED] : USER: {user.username} CHANGED THEIR PASSWORD.")
+
+                return Response({'detail': 'Password successfully changed'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'detail': 'Password could not be changed. Is old_password correct?'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'detail': 'old_password and new_password is required.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        u.save()
+
 
 
 class ListFilesAPIView(generics.ListAPIView):
@@ -53,26 +119,36 @@ class GetSetSettingsAPIView(generics.ListCreateAPIView):
         # So a member cannot get other members settings (upload key, etc...).
         return User.objects.filter(id=self.request.user.id)
 
-    def perform_create(self, serializer):
+    def create(self, request, *args, **kwargs):
         # Override the perform_create method to UPDATE a user instead of CREATE one.
         # Get the object for the current authenticated user (logged in)
         u = User.objects.get(id=self.request.user.id)
 
         # If the variables colour, email or upload_key have been recieved via POST request
         # Update user object with these values...
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        response = dict()
+
         if serializer.validated_data.get('colour'):
             # if "colour" exists and isn't an empty string
             u.colour = serializer.validated_data.get('colour')
+            response["colour"] = u.colour
         
         if serializer.validated_data.get('email'):
             # If "email" exists and isn't an empty string
             u.email = serializer.validated_data.get('email')
+            response["email"] = u.email
         
         if serializer.validated_data.get('gen_upload_key'):
             # If "upload_key" exists and is set to True
             u.upload_key = get_upload_key()
-        
-        u.save()
+            response["upload_key"] = u.upload_key
+        if response:
+            u.save()
+            return Response(response, status=status.HTTP_200_OK)
+        else:
+            return Response({'detail': 'Invalid parameters. Try `colour`, `email`, etc...'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CreateUserAPIView(generics.ListCreateAPIView):
@@ -101,14 +177,83 @@ class ListFavouritesAPIView(generics.ListCreateAPIView):
     def get_queryset(self):
         return FavouritedFile.objects.filter(user=self.request.user)
 
+class UpdateFileAPIView(generics.UpdateAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.UpdateFileSerializer
+
+    def get_queryset(self):
+        return File.objects.filter(user=self.request.user)
+    
+    def update(self, request, pk):
+        try:
+            file = File.objects.get(user=self.request.user, id=pk)
+            response = dict()
+
+            toggle_private = request.POST.get('toggle_private', None)
+            gen_new_id = request.POST.get('gen_new_id', None)
+            original_filename = request.POST.get('original_filename', None)
+            delete = request.POST.get('delete', None)
+
+            print(original_filename)
+
+            if delete:
+                file.delete()
+                log.info(f"[FILE-DELETED] : USER: {self.request.user.username} DELETED FILE WITH ID {pk}")
+                return Response({'detail': "File successfully deleted!"}, status=status.HTTP_200_OK)
+            
+            if toggle_private:
+                file.is_private = not file.is_private
+                log.info(f"[FILE-PRIVACY] : USER: {self.request.user.username} TOGGLED PRIVACY FOR FILE WITH ID {pk}")
+                response["is_private"] = file.is_private
+            
+            if gen_new_id:
+                file.generated_filename = utils.get_id_gen()
+                log.info(f"[FILE-GEN-NAME] : USER: {self.request.user.username} GENERATED NEW UNIQUE ID FOR FILE WITH ID {pk}")
+                response["generated_filename"] = file.generated_filename
+            
+            if original_filename:
+                old = file.original_filename
+                file.original_filename = original_filename
+                log.info(f"[FILENAME-CHANGE] : USER: {self.request.user.username} CHANGED FILENAME FROM `{old}` TO `{original_filename}` FOR FILE WITH ID: {pk}")
+                response["original_filename"] = original_filename
+            
+            if response:
+                file.save()
+                return Response(response, status=status.HTTP_200_OK)
+            else:
+                return Response({'detail': f'The file with id {pk} uploaded by {self.request.user.username} could not be updated with provided information.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        except File.DoesNotExist:
+            return Response({'detail':f'The file with id {pk} uploaded by {self.request.user.username} could not be found.'}, status=status.HTTP_404_NOT_FOUND)
+
 
 class AddFavouriteAPIView(generics.CreateAPIView):
     permission_classes = (IsAuthenticated,)
-    serializer_class = serializers.SerializeFavourite
+    serializer_class = serializers.AddFavSerializer
 
     def get_queryset(self):
         return FavouritedFile.objects.filter(user=self.request.user)
+    
+    def create(self, request, pk):
+        f = File.objects.get(id=pk)
 
+        if f:
+            try:
+                fav_exists = FavouritedFile.objects.get(file=f, user=request.user)
+            except FavouritedFile.DoesNotExist:
+                fav_exists = False
+            
+            if fav_exists:
+                return Response({'detail': 'Favourite already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            fav = FavouritedFile(
+                user=request.user,
+                file=f
+            )
+            fav.save()
+            return Response({'detail': 'Favourite successfully added.'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'detail': 'Could not add favourite for file. File may not exist or may already be favourited.'}, status=status.HTTP_404_NOT_FOUND)
 
 class DeleteFavouriteAPIView(generics.DestroyAPIView):
     permission_classes = (IsAuthenticated,)
@@ -141,26 +286,6 @@ class DeleteFileAPIView(generics.DestroyAPIView):
 
     def get_queryset(self):
         return File.objects.filter(user=self.request.user)
-
-class ToggleFilePrivacyAPIView(generics.UpdateAPIView):
-    permission_classes = (IsAuthenticated,)
-    serializer_class = serializers.PrivacyFile
-
-    def get_queryset(self):
-        return File.objects.filter(user=self.request.user)
-
-    def update(self, request, pk):
-        try:
-            file = File.objects.get(user=self.request.user, id=pk)
-            file.is_private = not file.is_private
-            file.save()
-            log.info(f"[FILE-PRIVACY] : USER: {self.request.user.username} TOGGLED PRIVACY FOR FILE WITH ID {pk}")
-            return Response({'is_private': file.is_private}, status=status.HTTP_200_OK)
-        except File.DoesNotExist:
-            log.warn(f"[FILE-PRIVACY] : USER: {self.request.user.username} TRIED TO TOGGLE PRIVACY FOR NON EXISTING FILE WITH ID {pk}")
-            return Response({'detail':f'The file with id {pk} uploaded by {self.request.user.username} could not be found.'},
-                            status=status.HTTP_404_NOT_FOUND
-            )
 
 
 class SubdomainViewSet(viewsets.ViewSet):

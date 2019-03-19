@@ -13,14 +13,24 @@ class VirusSerializer(serializers.ModelSerializer):
         model = VirusTotalScan
         fields = '__all__'
 
-class PrivacyFile(serializers.ModelSerializer):
-    """
-    Serializer used for File Sub-type : Image
-    Exclusdes the file-pointer and id fields from being serialized
-    """
+class DeleteAccountSerializer(serializers.ModelSerializer):
+    confirmation_password = serializers.CharField(style = {'input_type': 'password'}, write_only=True)
     class Meta:
-        model = File
-        fields = ('is_private',)
+        model = User
+        fields = ('confirmation_password',)
+
+class ChangePasswordSerializer(serializers.ModelSerializer):
+    old_password = serializers.CharField(style = {'input_type': 'password'}, write_only=True)
+    new_password = serializers.CharField(style = {'input_type': 'password'}, write_only=True)
+    class Meta:
+        model = User
+        fields = ('old_password', 'new_password')
+
+class AddFavSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = FavouritedFile
+        fields = '__all__'
 
 class ImageFileSerializer(serializers.ModelSerializer):
     """
@@ -85,7 +95,16 @@ class ListFilesSerializer(serializers.ModelSerializer):
         result = super(ListFilesSerializer, self).to_representation(instance)
         return OrderedDict([(key, result[key]) for key in result if result[key] is not None])
 
+class UpdateFileSerializer(serializers.ModelSerializer):
 
+    gen_new_id = serializers.BooleanField(default=False)
+    toggle_private = serializers.BooleanField(default=False)
+    delete = serializers.BooleanField(default=False)
+    
+    class Meta:
+        model = File
+        fields = ('gen_new_id', 'toggle_private', 'delete', 'original_filename')
+    
 class PublicFileSerializer(serializers.ModelSerializer):
     file_image_info = ImageFileSerializer(source='file_image')
     file_video_info = VideoFileSerializer(source='file_video')
@@ -174,9 +193,9 @@ class SettingsSerializer(serializers.ModelSerializer):
     This serializer is used to convert colour, email, warnings and upload_key of the currently authenticated user
     The aforementioned fields can also be set through a POST request
     """
-    gen_upload_key = serializers.BooleanField(default=False, allow_null=True, write_only=True)
-    email = serializers.CharField(validators =[validators.validate_email], allow_null=True)
-    colour = serializers.CharField(validators =[validators.validate_colour], allow_null=True)
+    gen_upload_key = serializers.BooleanField(default=False, allow_null=True, write_only=True, required=False)
+    email = serializers.CharField(validators =[validators.validate_email], allow_null=True, required=False)
+    colour = serializers.CharField(validators =[validators.validate_colour], allow_null=True, required=False)
 
     class Meta:
         model = User
