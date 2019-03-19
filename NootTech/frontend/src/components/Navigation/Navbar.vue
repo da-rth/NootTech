@@ -10,14 +10,14 @@
 
       <!-- Keep this centered -->
       <b-navbar-brand>
-        <a class="navbar-brand" v-bind:href="this.$site_url">
+        <router-link to="/">
           <template v-if="$root.sharelinkName">
             {{ $root.sharelinkName }}.<span v-bind:style="{color: $root.colour}">Noot</span>.Tech
           </template>
           <template v-else>
             Noot<span v-bind:style="{color: $root.colour}" class="tech">Tech</span>
           </template>
-        </a>
+        </router-link>
       </b-navbar-brand>
       
 
@@ -42,7 +42,15 @@
                 <font-awesome-icon icon="bookmark"/>&nbsp;&nbsp;&nbsp; Favourites
             </b-button>
           </b-nav-item>
+          <b-nav-item>
+            <router-link to="/admin">
+              <b-button class="navbar-btn">
+                <font-awesome-icon icon="tachometer-alt"/> &nbsp;Admin panel
+              </b-button>
+            </router-link>
+          </b-nav-item>
         </b-navbar-nav>
+
 
         <b-navbar-nav v-else>
 
@@ -59,6 +67,8 @@
             </router-link>
           </b-nav-item>
         </b-navbar-nav>
+
+
 
 
 

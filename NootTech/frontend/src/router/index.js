@@ -3,6 +3,7 @@ import Router from 'vue-router'
 //import store from '../store'
 
 //import Subdomain from '@/components/Subdomain'
+import AdminPanel from '../components/Authentication/AdminPanel'
 import Base from '../components/Index'
 import SharePage from '../components/Navigation/SharePage'
 import About from '../components/About'
@@ -30,6 +31,11 @@ const routes = [
     path: '/logout',
     name: 'Logout',
     component: Logout
+  },
+  {
+    path: '/admin',
+    name: 'AdminPanel',
+    component: AdminPanel
   },
   {
     path: '/how-to',

@@ -196,10 +196,11 @@ class SettingsSerializer(serializers.ModelSerializer):
     gen_upload_key = serializers.BooleanField(default=False, allow_null=True, write_only=True, required=False)
     email = serializers.CharField(validators =[validators.validate_email], allow_null=True, required=False)
     colour = serializers.CharField(validators =[validators.validate_colour], allow_null=True, required=False)
+    is_superuser = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = User
-        fields = ('colour', 'email', 'warnings', 'upload_key', 'gen_upload_key')
+        fields = ('colour', 'email', 'warnings', 'upload_key', 'gen_upload_key', 'is_superuser')
 
 
 class ReportList(serializers.ModelSerializer):
