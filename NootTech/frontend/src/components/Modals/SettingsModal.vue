@@ -12,22 +12,39 @@
       @hidden="resetSettings"
       >
       <h1>Settings</h1>
-      
-      <b-form-group
-        label="select a new colour"
-        label-for="colourSettingsField">
-        <slider id="colourSettingsField" v-model="settings.colour" />
-      </b-form-group>
 
-      <b-form-group
-        label="insert a new email"
-        label-for="emailSettingsField"
-        >
-        <b-form-input id="emailSettingsField" v-model="settings.email" type="email" required/>
-      </b-form-group>
+      <b-form>
+        <b-form-group
+          label="Select a new colour"
+          label-for="colourSettingsField">
+          <slider id="colourSettingsField" v-model="colour" />
+        </b-form-group>
 
-      <br/>
-      {{ settings.upload_key }}
+        <b-form-group
+          class="form-inline"
+          label="insert a new email"
+          label-for="emailSettingsField"
+          >
+          <b-form-input
+            id="emailSettingsField"
+            v-model="settings.email"
+            :placeholder="$store.state.settings.email"
+            type="email"
+            />
+        </b-form-group>
+
+        <b-form-group
+          class="form-inline"
+          label="Your upload key">
+          <label for="uploadkeySettingsField">Your upload key</label><br/>
+          <b-input
+          id="uploadkeySettingsField"
+          disabled
+          :value="$store.state.settings.upload_key"
+          class="form-control" />
+          <b-button variant="success">Copy</b-button>
+        </b-form-group>
+      </b-form>
     </b-modal>
   </div>
 </template>
@@ -42,10 +59,15 @@ export default {
     components: { Slider },
     computed: {
       getColour() {
-        var colour = this.settings.colour;
+        var colour = this.colour
         if(typeof (colour) !== "string")
           colour = colour.hex;
         return colour;
+      }
+    },
+    watch: {
+      colour() {
+        this.$root.colour = this.getColour
       }
     },
     methods: {
@@ -55,7 +77,11 @@ export default {
       async saveSettings() {
         try{
           this.settings.colour = this.getColour;
-          console.log(this.settings);
+
+          // avoid filling a null entry
+          if(this.settings.email == "")
+            delete this.settings.email;
+
           let response = await this.$api.UpdateSettings(this.settings)
           console.log('SETTINGS UPDATE SUCCESS:', response);
           this.$notify({
@@ -71,29 +97,22 @@ export default {
         }
       },
       resetSettings() {
-        this.settings.email = this.original.email;
-        this.settings.colour = this.$root.colour = this.original.colour;
-
+        this.settings.colour = this.colour = this.$root.colour = this.$store.state.colour;
       }
     },
     data() {
       return {
         settings: {
-          email: this.$store.state.settings.email,
-          colour: this.$root.colour,
-          upload_key: this.$store.state.settings.upload_key
+          email: "",
+          colour: ""
         },
-        original: {}
+        colour: this.$root.colour
       };
     },
     mounted() {
       EventBus.$on('settingsModal', () => {this.show()})
-      this.original = {
-        email: this.$store.state.settings.email,
-        colour: this.$root.colour,
-        upload_key: this.$store.state.settings.upload_key
-      }
-    }
+      resetSettings()
+   }
 }
 </script>
 
