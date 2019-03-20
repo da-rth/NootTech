@@ -15,7 +15,7 @@
             {{report.date}}
           </td>
           <td scope="col">
-            <a :href="`http://localhost:8000/media/${report.file_url}`">{{report.file_gen_name}}</a>
+            <a :href="`${config.BACKEND_URL}/media/${report.file_url}`">{{report.file_gen_name}}</a>
           </td>
           <td scope="col">
             To implement!
@@ -32,13 +32,15 @@ export default {
   name: "AdminPanel",
   data() {
     return {
-      reports: []
+      reports: [],
+      config: config
     }
   },
-  async mounted() {
+ async mounted() {
     try {
       let response = await this.$api.GetReports();
-        this.reports = response.data;
+      this.reports = response.data;
+      console.log(this.reports);
     } catch(e) {
       console.log(e.response);
     }
