@@ -505,7 +505,7 @@ def create_user_acc(sender, instance, created, **kwargs):
         send_mail(
             title,
             '',
-            'info@noot.tech',
+            'no-reply@noot.tech',
             [instance.email],
             html_message=msg_html,
         )
@@ -524,7 +524,7 @@ def new_report_submitted(sender, instance, created, **kwargs):
         send_mail(
             title,
             '',
-            'info@noot.tech',
+            'no-reply@noot.tech',
             ['contact@noot.tech'],
             html_message=msg_html,
         )
@@ -542,7 +542,7 @@ def notify_warned_user(sender, instance, created, **kwargs):
         send_mail(
             title,
             '',
-            'info@noot.tech',
+            'no-reply@noot.tech',
             [instance.warned_user.email],
             html_message=msg_html,
         )
@@ -560,7 +560,7 @@ def notify_banned_user(sender, instance, created, **kwargs):
         send_mail(
             title,
             '',
-            'info@noot.tech',
+            'no-reply@noot.tech',
             [instance.banned_user.email],
             html_message=msg_html,
         )
