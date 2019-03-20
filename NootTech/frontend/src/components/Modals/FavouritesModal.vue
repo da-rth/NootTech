@@ -7,10 +7,15 @@
       footer-bg-variant='dark'
       @shown="loadFavourites"
       size="lg"
+      ok-only="true"
+      ok-title="Close Favourites"
       scrollable
+      centered
       >
       <h3 v-if="favourites.length == 0">You currently have no favourites.</h3>
-      <b-card v-for="fav in favourites" no-body class="overflow-hidden fav-card" style="background-color: #242424; margin: 5px;">
+      <b-card v-for="fav in favourites" no-body class="overflow-hidden fav-card">
+
+        <a class="fav-href" :href="getShareLink(fav.username, fav.gen)">
         
         <b-row no-gutters>
 
@@ -18,7 +23,7 @@
             <div class="img-container-background">
               <div class="img-container">
                 <img v-if="fav.thumbnail" :src="$backend_url+'/media/'+fav.thumbnail" class="img-responsive">
-                <font-awesome-icon v-else :icon="getIcon(fav.icon)" style="font-size: 120px; padding: 10px;"/>
+                <font-awesome-icon v-else :icon="getIcon(fav.icon)" style="font-size: 110px; padding: 10px;"/>
               </div>
             </div>
           </b-col>
@@ -27,25 +32,16 @@
             <b-card-body :title="fav.original">
               <b-card-text>
                 Generated Filename: {{ fav.gen }}<br/>
-                Uploaded by: {{ fav.username }}<br/>
-                File extension: {{ fav.ext }}
+                Uploaded by: {{ fav.username }}
               </b-card-text>
             </b-card-body>
 
-            <div class="fav-options">
-              <b-row>
-                <b-button class="delete-fav-btn" v-on:click="deleteFavourite(fav.id)"> <font-awesome-icon icon="trash-alt"/> </b-button>
-              </b-row>
-              <b-row>
-                <b-button class="copy-fav-btn"> <font-awesome-icon icon="external-link-alt"/> </b-button>
-              </b-row>
-              <b-row>
-                <b-button class="open-fav-btn"> <font-awesome-icon icon="copy"/> </b-button>
-              </b-row>
-            </div>
-
           </b-col>
         </b-row>
+        </a>
+
+        <b-button title="Delete favourite" class="delete-fav-btn" v-on:click="deleteFavourite(fav.id)"><font-awesome-icon icon="trash-alt"/></b-button>
+
       </b-card>
 
     </b-modal>
@@ -62,6 +58,16 @@ export default {
       show() {
         this.$refs.modal.show()
       },
+
+
+      getShareLink (username, gen_id) {
+        if (this.$subdomain_enabled) {
+          return `${this.$site_url.replace("//","//"+username+".")}/${gen_id}`
+        } else {
+          return `${this.$site_url}/u/${username}/${gen_id}`
+        }
+      },
+
       async deleteFavourite(fileID) {
         await this.$api.DeleteFavourite(fileID)
           .then(response => {
@@ -146,25 +152,38 @@ export default {
   max-height: 100%;
 }
 
-.fav-options {
-  display: none;
-  position: absolute;
-  top: 15%;
-  right: 20px;
-}
-
-.delete-fav-btn, .copy-fav-btn, .open-fav-btn {
+.delete-fav-btn {
   background: transparent;
   border: none;
   transition: opacity 1s ease-in-out;
+  display: none;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 999;
 }
 
 .delete-fav-btn:hover {
   background-color: #b50101;
 }
 
-.fav-card:hover .fav-options {
+.fav-card:hover .delete-fav-btn {
+  display: block;
+}
+.fav-card {
+  background-color: #242424;
+  margin: 5px;
+}
+.fav-href:hover {
+  border: 2px solid #121212;
+}
+
+.fav-href:hover .delete-fav-btn {
   display: block;
 }
 
+.fav-href, .fav-href:visited, .fav-href:active {
+  border: 2px solid transparent;
+  color: transparent;
+}
 </style>

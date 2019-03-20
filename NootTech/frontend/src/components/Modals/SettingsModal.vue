@@ -10,6 +10,7 @@
       ok-title="Save Settings"
       @ok="saveSettings"
       @hidden="resetSettings"
+      centered
       >
 
       <b-form>
@@ -50,10 +51,12 @@
             <b-button variant="success" @click="copyUploadKey">Copy</b-button>
           </b-input-group>
         </b-form-group>
+
         <b-form-group
           class="col-lg-12"
           label="Click the button below to delete your account.">
         <b-button>Delete Account</b-button>
+        
         </b-form-group>
 
       </b-form>
