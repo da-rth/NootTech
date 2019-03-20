@@ -389,9 +389,9 @@ def get_virus_info(file_id):
     f = File.objects.get(id=file_id)
     # If file is text or other... (not image, video, audio) send request to virustotal
     virus_data = utils.scan_file(f.file_content.path)
-
+    
     # If we get a response code of 200, all is ok... put results into VirusTotalScan model
-    if virus_data["response_code"] == 200:
+    if virus_data.get("response_code", None) == 200:
         VirusTotalScan.objects.create(
             file_pointer=f,
             md5=virus_data["results"]["md5"],

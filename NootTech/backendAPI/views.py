@@ -20,6 +20,45 @@ log = logging.getLogger(__name__)
 htp = "https" if settings.HTTPS else "http"
 
 # Get List of user uploads
+from django.views.generic import View
+from django.shortcuts import render
+from django.conf import settings
+
+
+
+
+class IndexView(View):
+
+    def get(self, request, *args):
+
+        context = dict()
+        context["debug"] = settings.DEBUG
+        context["subdomain"] = False
+
+        subdomain = request.META['HTTP_HOST'].replace((settings.DOMAIN_NAME), "")[:-1]
+        
+        sharelink = '/u/' in request.build_absolute_uri()
+
+        url = request.build_absolute_uri()
+
+        context["sharelink"] = sharelink
+        context["url"] = ('https://' if settings.HTTPS else 'http://') + settings.DOMAIN_NAME+settings.MEDIA_URL
+
+        if subdomain:
+            username = url.split("//")[0].split(".")[0]
+            genid = url.split("/")[-1]
+            u = User.objects.get(username=username)
+            f = File.objects.get(generated_filename=genid, user=u)
+            context["file"] = f
+        
+        elif sharelink:
+            username = url.split("/u/")[1].split("/")[0]
+            genid = url.split("/")[-1]
+            u = User.objects.get(username=username)
+            f = File.objects.get(generated_filename=genid, user=u)
+            context["file"] = f
+        
+        return render(request, 'index.html', context=context)
 
 
 class ErrorVideoAPIView(generics.ListAPIView):
