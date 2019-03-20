@@ -64,11 +64,11 @@
       onSlideEnd(slide) { this.sliding = false}
     },
     async updated() {
-      this.$root.colour = this.$default_colour;
+      this.$root.colour = this.$root.default_colour;
       this.$root.sharelinkName = null;
     },
     async mounted() {
-      this.$root.colour = this.$default_colour;
+      this.$root.colour = this.$root.default_colour;
       this.$root.sharelinkName = null;
     }
   }

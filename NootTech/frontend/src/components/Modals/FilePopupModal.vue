@@ -9,22 +9,30 @@
         <AudioPlayer :file="file" v-else-if="file.file_audio_info" class="fo-container"/>
         <ImagePreview :file="file" v-else-if="file.file_image_info" class="fo-container img"/>
         <TextPreview :file="file" v-else-if="file.file_text_info" class="fo-container"/>
-        <br/>
+        <div class="popup-file-icon" v-else>
+          <font-awesome-icon :icon="getIcon(file)"/>
+        </div>
         
-        <b-button v-b-toggle.collapseA.collapseB>Toggle File Information</b-button>
+        <b-button v-b-toggle.collapseA.collapseB class="file-info-btn">Toggle File Information</b-button>
         <b-collapse id="collapseA" class="mt-2">
           <b-card><FileInformation :file="file"/></b-card>
         </b-collapse>
 
-        <b-input-group class="copy-sharelink-group" v-if="!file.is_private">
+        <nt-file-settings :file="file"/>
+        
+        <b-input-group prepend="Sharelink:" class="copy-sharelink-group" v-if="!file.is_private">
+          
           <b-form-input :value="getShareLink()" readonly/>
           <b-input-group-append>
-            <a :href="getShareLink()"><b-button>Open</b-button></a>
+            <a :href="getShareLink()"><b-button class="copy-open-btn"><font-awesome-icon icon="link"/></b-button></a>
             <input type="hidden" id="sharelink" :value="getShareLink()">
-            <b-button @click="copySharelink">Copy</b-button>
+          </b-input-group-append>
+          <b-input-group-append>
+            <b-button @click="copySharelink" class="copy-open-btn"><font-awesome-icon icon="copy"/></b-button>
           </b-input-group-append>
         </b-input-group>
-        <nt-file-settings :file="file"/>
+
+        
       </template>
     </b-modal>
 	</div>
@@ -57,6 +65,14 @@ export default {
 		}
 	},
 	methods: {
+
+    getIcon(file) {
+        // split into prefix and second name
+        let src_icon = file.icon.split(" ")
+        // it seems fontawesome is not happy with the fa-prefix
+        src_icon[1] = src_icon[1].replace(/^fa-/gi, "");
+        return src_icon
+      },
     getShareLink () {
       let username = this.$store.state.user.username;
       if (this.$subdomain_enabled) {
@@ -138,7 +154,6 @@ export default {
 
   #collapseA .card {
     background: transparent;
-    min-height: 20vw;
   }
 
   #FileInformation {
@@ -149,5 +164,39 @@ export default {
     text-align: left !important;
     margin: 0 !important;
     min-height: 50% !important;
+  }
+
+  .file-info-btn {
+    margin: 10px;
+    width: 100%;
+    background: transparent !important;
+    border: none !important;
+    color: rgba(255,255,255,0.8) !important;
+    transition: color 0.5s ease-in-out;
+  }
+
+  .file-info-btn:hover {
+    color: rgba(255,255,255, 1) !important;
+  }
+
+  .file-info-btn:focus {
+    box-shadow: none !important;
+  }
+
+  .popup-file-icon {
+    background: #202020;
+    text-align: center;
+    font-size: 140px;
+    border: 1px solid black;
+  }
+
+  .copy-open-btn {
+    border-radius: 0px !important;
+    background: #e9ecef !important;
+    border-color: #d1d6dc !important;
+  }
+
+  .input-group-text {
+    margin-bottom: 1.5px !important;
   }
 </style>
