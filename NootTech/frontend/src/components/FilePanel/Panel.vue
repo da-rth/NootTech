@@ -82,23 +82,18 @@
     <paginate name="searched_files" :list="$parent.searched_files" :per="paginate_by" tag="div" class="row file-row" v-if="$parent.searched_files">
       <b-row class="file-grid justify-content-center">
 
-        <template v-if="paginated('searched_files').length <= 0">
-          <h1>You haven't uploaded any files yet!</h1>
-          <font-awesome-icon icon="sad-tear"/>
-        </template>      
-
-        <template v-else-if="showPrivateFiles && privateFilecount == 0">
-          <h3>You don't have any private files yet!</h3>
-          <h5>Why not go and set some private?</h5>
-          <font-awesome-icon icon="sad-tear"/>
-        </template>
-
-        <template v-else-if="!showPrivateFiles && publicFilecount == 0">
+        <div class="file-message" v-if="paginated('searched_files').length <= 0 || (!showPrivateFiles && publicFilecount == 0)">
           <h3>You don't have any public files yet!</h3>
-          <h5>Start uploading! Upload everything!!!</h5>
-          <h5>Well, maybe not <i>everything</i>...</h5>
-          <font-awesome-icon icon="sad-tear"/>
-        </template>
+          <h5>Why not start uploading? Upload everything!!!</h5>
+          <p>Well, maybe not <i>everything</i>... but something!</p>
+          <font-awesome-icon class="message-icon-big" icon="smile-wink"/>
+        </div>      
+
+        <div class="file-message" v-else-if="showPrivateFiles && privateFilecount == 0">
+          <h3>You don't have any private files yet!</h3>
+          <h5>Why not go and set some as private? No one will know...</h5>
+          <font-awesome-icon class="message-icon-big" icon="user-secret"/>
+        </div>
 
 
         <template v-else>
@@ -366,6 +361,17 @@
 </script>
 
 <style>
+
+  .file-message {
+    text-align: center;
+    width: 100%;
+    padding: 30px;
+  }
+
+  .message-icon-big {
+    font-size: 120px;
+    margin: 20px;
+  }
   .file-panel {
     overflow: hidden !important;
   }
