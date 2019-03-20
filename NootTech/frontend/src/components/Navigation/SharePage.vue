@@ -1,5 +1,6 @@
 <template>
   <div class="justify-content-center">
+
     <template v-if="this.file">
 
       <h2 class="file-header">{{ this.file.original_filename }}</h2>
@@ -20,6 +21,11 @@
         <b-button class="report-btn" @click="onClick"><font-awesome-icon icon="flag"/>&nbsp; Report this file</b-button>
       </div>
     </template>
+
+    <div v-else class="private-container">
+      <h1 class="private-msg">File is set to private or does not exist.</h1>
+      <font-awesome-icon icon="sad-cry" class="big-sad" />
+    </div>
   </div>
 </template>
 
@@ -114,5 +120,15 @@
     background-color: transparent;
     border-color: #FF0000;
     opacity: 0.9;
+  }
+
+  .private-container {
+    padding: 50px;
+    text-align: center;
+  }
+
+  .big-sad {
+    margin: 20px;
+    font-size: 150px;
   }
 </style>
