@@ -414,11 +414,10 @@ class UploadView(View):
                                     f"If you think this is a mistake, "
                                     f"please visit: {htp}://{settings.DOMAIN_NAME}/contact")
 
-        for user_file in request.FILES.getlist('content'):
+        is_private = request.POST.get("is_private", False) == "true"
+        ip = get_ip(request)
 
-            ip = get_ip(request)
-            
-            private = request.POST.get("private", False)
+        for user_file in request.FILES.getlist('content'):
 
             try:
                 
@@ -433,7 +432,7 @@ class UploadView(View):
                     ip=ip,
                     file_content=user_file,
                     file_thumbnail=user_file if ext in exts else None,
-                    is_private=private
+                    is_private=is_private
                 )
                 
                 uploaded_file.save()

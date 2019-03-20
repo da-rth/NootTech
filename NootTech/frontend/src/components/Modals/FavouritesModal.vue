@@ -7,7 +7,7 @@
       footer-bg-variant='dark'
       @shown="loadFavourites"
       size="lg"
-      ok-only="true"
+      :ok-only="true"
       ok-title="Close Favourites"
       scrollable
       centered

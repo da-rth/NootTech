@@ -189,6 +189,7 @@ export async function GetShareData (username, gen_name) {
  * Upload an URL
  * @param {Object} payload the payload to load
  * @param {String} payload.upload_key the upload token required for uploading
+ * @param {Boolean} payload.is_private the private uploading flag
  * @param {Blob[]} payload.files an array of blob resources to load
  * @param {string} payload.username the uploader's username
  */
@@ -198,6 +199,8 @@ export async function UploadFiles(payload) {
   //formData.set('private', Boolean(is_private))
   formData.set('upload_key', payload.upload_key);
   formData.set('username', payload.username);
+  formData.set('is_private', payload.is_private);
+
   payload.files.forEach((file => {
     formData.append(`content`, file, file.name);
   }));
