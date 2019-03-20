@@ -213,7 +213,7 @@
       },
       showPrivateFiles: function (val) {
         this.privateFilecount = this.countPrivateFiles();
-        this.publicFilecount = this.$parent.files.length - this.privateFilecount;
+        this.publicFilecount = this.$root.files.length - this.privateFilecount;
         console.log("private "+this.privateFilecount);
         console.log("public "+this.publicFilecount);
       }
@@ -221,20 +221,20 @@
 
     mounted() {
       this.privateFilecount = this.countPrivateFiles();
-      this.publicFilecount = this.$parent.files.length - this.privateFilecount;
+      this.publicFilecount = this.$root.files.length - this.privateFilecount;
     },
 
     updated() {
       this.privateFilecount = this.countPrivateFiles();
-      this.publicFilecount = this.$parent.files.length - this.privateFilecount;
+      this.publicFilecount = this.$root.files.length - this.privateFilecount;
     },
 
     methods: {
 
       countPrivateFiles() {
         let count = 0;
-        for (var i = 0; i < this.$parent.files.length; i++) {
-          let file = this.$parent.files[i];
+        for (var i = 0; i < this.$root.files.length; i++) {
+          let file = this.$root.files[i];
           if (file.is_private) {
             count+=1;
           }
@@ -274,7 +274,7 @@
             console.log('ERROR', e);
           });
         }
-        await this.$parent.loadFiles()
+        await this.$root.loadFiles()
         this.$notify({
           group: 'FileUpdate',
           title: `Removed <strong>${deleteCount}</strong> files...`,
