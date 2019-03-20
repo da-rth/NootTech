@@ -1,5 +1,8 @@
 <template>
-  <h1 class="text-center">About page...</h1>
+  <div class="about-container">
+    <h1 class="text-center">About page...</h1>
+    <h1>https://github.com/denBot/WAD2-Group-Project</h1>
+  </div>
 </template>
 
 <script>

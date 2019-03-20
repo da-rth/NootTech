@@ -65,8 +65,11 @@ import objectivec from 'highlight.js/lib/languages/objectivec'
 import scilab from 'highlight.js/lib/languages/scilab'
 import vbnet from 'highlight.js/lib/languages/vbnet'
 import vbscript from 'highlight.js/lib/languages/vbscript'
+import GitHubAPI from 'vue-github-api'
+import VueResource from 'vue-resource'
 
-
+Vue.use(VueResource)
+Vue.use(GitHubAPI, { token: config.GITHUB_TOKEN })
 Vue.use(VueHighlightJS, {
   languages: {
     python, html, erlang, java, coffee, javascript, json, perl, xml, lua, ruby, diff,
@@ -75,6 +78,8 @@ Vue.use(VueHighlightJS, {
     scilab, vbnet, vbscript
   }
 });
+
+
 
 // register FontAwesome fonts
 library.add(fas);

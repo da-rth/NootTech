@@ -65,7 +65,7 @@ class Warned(models.Model):
     - DATE : Automatically obtained whenever this model is saved
     - REASON : A text-field expplaining the reason for why a user was banned (maybe can be emailed to user)
 
-    All deleted files and banned users will be logged.
+    All anned users will be logged.
     """
     class Meta:
         verbose_name_plural = 'Warned Users'
@@ -87,7 +87,7 @@ class BannedUser(models.Model):
     - DATE : Automatically obtained whenever this model is saved
     - REASON : A text-field expplaining the reason for why a user was banned (maybe can be emailed to user)
 
-    All deleted files and banned users will be logged.
+    All banned users will be logged.
     """
     class Meta:
         verbose_name_plural = 'Banned Users'
@@ -108,7 +108,7 @@ class File(models.Model):
     - IP : The IP address of the location where the file was uploaded
     - IS_PRIVATE : The privacy status of the file uploaded by the user.
     As well as general info listed below
-    All deleted files and banned users will be logged.
+    All banned users will be logged.
     """
     class Meta:
         verbose_name_plural = 'All Files'
@@ -535,7 +535,7 @@ def notify_warned_user(sender, instance, created, **kwargs):
         title = 'You have recieved a warning from an administrator.'
 
         msg_html = render_to_string('email/user_warned.html', {
-            "username": instance.banned_user.username,
+            "username": instance.warned_user.username,
             "instance": instance
         })
         
