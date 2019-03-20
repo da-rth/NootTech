@@ -40,7 +40,7 @@ class DeleteAccountAPIView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
 
         u = User.objects.get(id=self.request.user.id)
-        password = request.POST.get('confirmation_password', None)
+        password = request.data.get('confirmation_password', None)
 
         if password:
             # if "colour" exists and isn't an empty string
@@ -52,7 +52,7 @@ class DeleteAccountAPIView(generics.CreateAPIView):
                 files.delete()
                 user.delete()
 
-                log.info(f"[ACCOUNT-DELETED] : USER: {user.username} DELETED ACCOUNT AND ALL FILES.")
+                log.info(f"[ACCOUNT-DELETED] : USER: {user.username} DELETED ACCOUNT.")
 
                 return Response({'detail': 'Account successfully deleted'}, status=status.HTTP_200_OK)
             else:
@@ -72,8 +72,8 @@ class ChangePasswordAPIView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
 
         u = User.objects.get(id=self.request.user.id)
-        old_password = request.POST.get('old_password', None)
-        new_password = request.POST.get('new_password', None)
+        old_password = request.data.get('old_password', None)
+        new_password = request.data.get('new_password', None)
 
         if old_password and new_password:
 
@@ -313,8 +313,8 @@ class BanAPIView(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
 
-        reason = request.POST.get('reason', "Not given by admin")
-        ban_uid = request.POST.get('warned_user', None)
+        reason = request.data.get('reason', "Not given by admin")
+        ban_uid = request.data.get('warned_user', None)
         ban_user = User.objects.get(id=ban_uid)
 
         if ban_user:
@@ -350,9 +350,8 @@ class WarnAPIView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         
         autoban = False
-        reason = request.POST.get('reason', "Not given by administrator.")
-
-        warned_uid = request.POST.get('warned_user', None)
+        reason = request.data.get('reason', "Not given by administrator.")
+        warned_uid = request.data.get('warned_user', None)
         warned_user = User.objects.get(id=warned_uid)
 
         if warned_user:
@@ -364,7 +363,7 @@ class WarnAPIView(generics.CreateAPIView):
             warned_user.warnings += 1
             
             warning = Warned(
-                warned_by=self.request.user,
+                warned_by=User.objects.get(id=self.request.user.id),
                 warned_user=warned_user,
                 reason=reason if reason != None else "Reason not given by admin."
             )
@@ -373,8 +372,8 @@ class WarnAPIView(generics.CreateAPIView):
             if warned_user.warnings > 3:
                 autoban = True
                 warned_user.is_active = False
-                files = File.objects.filter(user=warned_user)
-                files.delete()
+                #files = File.objects.filter(user=warned_user)
+                #files.delete()
                 ban = BannedUser(
                     banned_by=request.user,
                     banned_user=warned_user,
