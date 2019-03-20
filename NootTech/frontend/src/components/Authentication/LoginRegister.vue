@@ -93,7 +93,7 @@ export default {
         email: '',
         password: '',
         confirm_password: '',
-        colour: this.$root.colour
+        colour: this.$root.default_colour
       },
       error: null,
       formatted_error: null,
@@ -103,13 +103,6 @@ export default {
     }
   },
   methods: {
-    showFeedback ({suggestions, warning}) {
-      console.log('🙏', suggestions)
-      console.log('⚠', warning)
-    },
-    showScore (score) {
-      console.log('💯', score)
-    },
     getColour() {
       var colour = this.register_credentials.colour
       if(typeof (colour) !== "string")
@@ -165,7 +158,14 @@ export default {
         this.renderErrors(errors.response.data)
       });
     }
-  }
+  },
+
+  mounted() {
+    if (this.$store.state.user != null) {
+      console.log("User already authenticated, redirecting...")
+      this.$router.push("/");
+    }
+  },
 }
 </script>
 
