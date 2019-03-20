@@ -10,16 +10,15 @@
 
       <!-- Keep this centered -->
       <b-navbar-brand>
-        <a class="navbar-brand" v-bind:href="this.$site_url">
+        <router-link to="/">
           <template v-if="$root.sharelinkName">
             {{ $root.sharelinkName }}.<span v-bind:style="{color: $root.colour}">Noot</span>.Tech
           </template>
           <template v-else>
             Noot<span v-bind:style="{color: $root.colour}" class="tech">Tech</span>
           </template>
-        </a>
+        </router-link>
       </b-navbar-brand>
-      
 
       <notifications group="FileUpload" />
 
@@ -42,26 +41,31 @@
                 <font-awesome-icon icon="bookmark"/>&nbsp;&nbsp;&nbsp; Favourites
             </b-button>
           </b-nav-item>
+          <b-nav-item v-if="$store.state.settings.is_superuser">
+            <router-link to="/moderate">
+              <b-button class="navbar-btn">
+                <font-awesome-icon icon="tachometer-alt"/> &nbsp;Admin panel
+              </b-button>
+            </router-link>
+          </b-nav-item>
+          <b-nav-item>
+            <router-link to="/how-to">
+              <b-button class="navbar-btn">
+                <font-awesome-icon icon="question-circle"/> &nbsp;How to...
+              </b-button>
+            </router-link>
+          </b-nav-item>
         </b-navbar-nav>
 
-        <b-navbar-nav v-else>
 
+        <b-navbar-nav v-else>
           <b-nav-item>
             <router-link to="/about">
             <font-awesome-icon icon="info-circle"/>&nbsp; About
             </router-link>
           </b-nav-item>
-          
-          <b-nav-item>
-            <router-link to="/how-to">
-              <font-awesome-icon icon="question-circle"/>
-              &nbsp;How to...
-            </router-link>
-          </b-nav-item>
         </b-navbar-nav>
-
-
-
+          
         <b-navbar-nav class="ml-auto" v-if="$store.state.user">
           <b-nav-item>
             <b-button class="navbar-btn" @click="raiseEvent('uploadFile')">
