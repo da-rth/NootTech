@@ -69,7 +69,7 @@ export default {
       selectedReport: null,
       config: config,
       banPayload: {
-        user: 0,
+        warned_user: 0,
         reason: "",
       }
     }
@@ -98,13 +98,13 @@ export default {
     },
     resetBanPayload() {
       this.banPayload = {
-        user: 0,
+        warned_user: 0,
         reason: "",
       }
     },
     banUserButton(report) {
       this.selectedReport = report;
-      this.banPayload.user = report.reported_file.user.id;
+      this.banPayload.warned_user = report.reported_file.user.id;
       this.$nextTick(() => {
         this.$refs.banModal.show();
       })
