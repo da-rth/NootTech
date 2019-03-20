@@ -1,5 +1,43 @@
 <template>
- <div v-if="$store.state.settings && $store.state.settings.is_superuser" class="container">
+  <div v-if="$store.state.settings && $store.state.settings.is_superuser" class="container">
+    <b-modal
+      v-if="selectedReport"
+      header-bg-variant="dark"
+      body-bg-variant="dark"
+      footer-bg-variant="dark"
+      header-border-variant="dark"
+      footer-border-variant="dark"
+      ref="banModal"
+      :title="`Ban the user ${selectedReport.reported_file.user.username}`"
+      ok-title="Ban"
+      ok-variant="danger"
+      @ok="banUser"
+      @hidden="resetBanPayload">
+      <b-form>
+        <b-form-group
+          label="Reason to ban the user"
+          label-for="banReason"
+          description="Please provide a reason for the ban">
+          <b-form-textarea id="banReason" v-model="banPayload.reason" rows="3" max-rows="10"/>
+        </b-form-group>
+      </b-form>
+    </b-modal>
+  <b-modal
+    v-if="selectedReport"
+    header-bg-variant="dark"
+    body-bg-variant="dark"
+    footer-bg-variant="dark"
+    header-border-variant="dark"
+    footer-border-variant="dark"
+    ref="userModal"
+    :title="`Information on the user ${selectedReport.reported_file.user.username}`"
+    
+    >
+    <p>Username: {{selectedReport.reported_file.user.username}}</p>
+    <p>Email: {{selectedReport.reported_file.user.email}}</p>
+    <p>Warnings: {{selectedReport.reported_file.user.warnings}}</p>
+  </b-modal>
+
    <h2>List of reported files</h2>
     <table class="table bg-dark striped">
       <thead>
@@ -21,12 +59,11 @@
             />
           </td>
           <td scope="col">
-            <a :href="'mailto:'+report.reported_file.user.email">{{report.reported_file.user.username}}</a>
+            <b-button @click="showUserModal(report)">{{report.reported_file.user.username}}</b-button>
           </td>
           <td scope="col">
             <b-button variant="warning" @click="warnUser(report)">Warn user</b-button>
-            <b-button variant="danger">Ban user</b-button>
-            <b-button variant="danger">Delete resource</b-button>
+            <b-button variant="danger" @click="banUserButton(report)">Ban user</b-button>
           </td>
         </tr>
       </tbody>
@@ -42,7 +79,12 @@ export default {
   data() {
     return {
       reports: [],
+      selectedReport: null,
       config: config,
+      banPayload: {
+        warned_user: 0,
+        reason: "",
+      }
     }
   },
   components: {NtBadge},
@@ -59,16 +101,46 @@ export default {
      */
     async warnUser(report) {
       console.log("Warning the user " + report.reported_file.user.username)
-      let response = await this.$api.WarnUser(
+      try {
+        let response = await this.$api.WarnUser(
                       {reason: `${report.reason_title}\n${report.reason_body}`,
                        warned_user: `${report.reported_file.user.id}`})
-    }
+      } catch(e) {
+        console.log("USER WARNING FAILED: ", e.response);
+      }
+    },
+    resetBanPayload() {
+      this.banPayload = {
+        warned_user: 0,
+        reason: "",
+      }
+    },
+    banUserButton(report) {
+      this.selectedReport = report;
+      this.banPayload.warned_user = report.reported_file.user.id;
+      this.$nextTick(() => {
+        this.$refs.banModal.show();
+      })
+    },
+    showUserModal(report) {
+      this.selectedReport = report
+      this.$nextTick(() => {
+        this.$refs.userModal.show();
+      })
+    },
+    async banUser() {
+      try {
+        await this.$api.BanUser(this.banPayload);
+      } catch(e) {
+        console.log("USER BAN FAILED: ", e.response);
+      }
+    },
  },
   async mounted() {
     try {
       let response = await this.$api.GetReports();
+      this.resetBanPayload();
       this.reports = response.data;
-      console.log(this.reports);
     } catch(e) {
       console.log(e.response);
     }

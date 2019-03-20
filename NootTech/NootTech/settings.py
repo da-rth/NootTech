@@ -14,7 +14,8 @@ import os, datetime
 import json
 from urllib.parse import urlparse
 
-GENERAL_SETTINGS = json.load(open("frontend/src/config.json"))
+FRONTEND_SETTINGS = json.load(open("frontend/src/config.json"))
+BACKEND_SETTINGS = json.load(open("NootTech/settings.json"))
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -23,24 +24,23 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-VT_API_KEY = 'cce2a338c4f46b082ab39a88076aa4ab2f8f8da5d850a7e6814e052f75f0d3a0'
-SECRET_KEY = '8lixf+hs1+go!pu#cg95dwpr7ye!kx^zi2(-7$bciyiq#^fir#'
+VT_API_KEY = BACKEND_SETTINGS["VT_API_KEY"]
+SECRET_KEY = BACKEND_SETTINGS["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-
-DEBUG = True
-SUBDOMAIN = GENERAL_SETTINGS["ENABLE_SUBDOMAINS"]
+DEBUG = BACKEND_SETTINGS["DEBUG"]
+SUBDOMAIN = FRONTEND_SETTINGS["ENABLE_SUBDOMAINS"]
 ALLOWED_HOSTS = []
-DOMAIN_NAME = urlparse(GENERAL_SETTINGS["BACKEND_URL"]).netloc
-HTTPS = GENERAL_SETTINGS["HTTPS"]
+DOMAIN_NAME = urlparse(FRONTEND_SETTINGS["BACKEND_URL"]).netloc
+HTTPS = FRONTEND_SETTINGS["HTTPS"]
 
 #if not DEBUG: # Disable email system while debugging
-EMAIL_USE_TLS = True
+EMAIL_USE_TLS = BACKEND_SETTINGS["EMAIL_USE_TLS"]
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.noot.tech'
-EMAIL_HOST_PASSWORD='EVPQNXXV4'
-EMAIL_HOST_USER='info@noot.tech'
-EMAIL_PORT = 587
+EMAIL_HOST = BACKEND_SETTINGS["EMAIL_HOST"]
+EMAIL_HOST_PASSWORD = BACKEND_SETTINGS["EMAIL_HOST_PASSWORD"]
+EMAIL_HOST_USER = BACKEND_SETTINGS["EMAIL_HOST_USER"]
+EMAIL_PORT = BACKEND_SETTINGS["EMAIL_PORT"]
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # Application definition
