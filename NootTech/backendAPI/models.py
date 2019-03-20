@@ -10,7 +10,6 @@ from mimetypes import MimeTypes
 from moviepy.editor import VideoFileClip, AudioFileClip
 from . import utils
 import PIL.Image
-from background_task import background
 import threading
 
 """

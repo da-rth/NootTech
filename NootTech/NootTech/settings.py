@@ -53,7 +53,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'admin_reorder',
-    'background_task',
     'corsheaders',
     'easy_thumbnails',
     'rest_framework',
