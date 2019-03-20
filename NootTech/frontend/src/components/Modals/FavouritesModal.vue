@@ -13,7 +13,7 @@
       centered
       >
       <h3 v-if="favourites.length == 0">You currently have no favourites.</h3>
-      <b-card v-for="fav in favourites" no-body class="overflow-hidden fav-card">
+      <b-card v-for="fav in favourites" :key="fav" no-body class="overflow-hidden fav-card">
 
         <a class="fav-href" :href="getShareLink(fav.username, fav.gen)">
         
@@ -23,7 +23,7 @@
             <div class="img-container-background">
               <div class="img-container">
                 <img v-if="fav.thumbnail" :src="$backend_url+'/media/'+fav.thumbnail" class="img-responsive">
-                <font-awesome-icon v-else :icon="getIcon(fav.icon)" style="font-size: 110px; padding: 10px;"/>
+                <font-awesome-icon v-else :icon="getIcon(fav.icon)" style="font-size: 100px; padding: 10px;"/>
               </div>
             </div>
           </b-col>
@@ -126,7 +126,7 @@ export default {
 <style scoped>
 
 .img-container-background {
-  height: 150px;
+  height: 130px;
   width: 100%;
   overflow: hidden;
   display:block;
@@ -137,7 +137,7 @@ export default {
 }
 
 .img-container {  
-  height: 150px;
+  height: 130px;
   width: 100%;
   display: table-cell;  
   vertical-align: middle;

@@ -24,7 +24,7 @@
      class="large-fa-icon"
     />
     
-    <span class="gen-name">{{ value.generated_filename }}</span>
+    <span class="gen-name" v-if="!value.file_thumbnail">{{ value.generated_filename }}</span>
 
     <div class="overlay" @click.stop="onClick">
       <h2 class="overlay-title">{{value.original_filename}}</h2>

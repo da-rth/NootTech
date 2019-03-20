@@ -81,13 +81,31 @@
 
     <paginate name="searched_files" :list="$parent.searched_files" :per="paginate_by" tag="div" class="row file-row" v-if="$parent.searched_files">
       <b-row class="file-grid justify-content-center">
+
         <template v-if="paginated('searched_files').length <= 0">
-          <h1>You haven't uploaded any files yet! <font-awesome-icon icon="sad-tear"/></h1>
+          <h1>You haven't uploaded any files yet!</h1>
+          <font-awesome-icon icon="sad-tear"/>
+        </template>      
+
+        <template v-else-if="showPrivateFiles && privateFilecount == 0">
+          <h3>You don't have any private files yet!</h3>
+          <h5>Why not go and set some private?</h5>
+          <font-awesome-icon icon="sad-tear"/>
         </template>
+
+        <template v-else-if="!showPrivateFiles && publicFilecount == 0">
+          <h3>You don't have any public files yet!</h3>
+          <h5>Start uploading! Upload everything!!!</h5>
+          <h5>Well, maybe not <i>everything</i>...</h5>
+          <font-awesome-icon icon="sad-tear"/>
+        </template>
+
 
         <template v-else>
           <template v-for="file in  paginated('searched_files')">
             <template v-if="grid_view">
+
+
               <template v-if="showPrivateFiles">
                 <NtBadge
                   :style="{
@@ -100,6 +118,8 @@
                   :selectionStatus="selectFiles"
                   :selected="isSelected(file.id)"/>
               </template>
+
+
               <template v-else>
                 <NtBadge
                   :style="{
@@ -112,6 +132,7 @@
                   :selectionStatus="selectFiles"
                   :selected="isSelected(file.id)"/>
               </template>
+
             </template>
             <template v-else>
               <template v-if="showPrivateFiles">
@@ -166,7 +187,9 @@
         },
         row_height: 10,
         grid_view: true,
-        openedFile: null
+        openedFile: null,
+        privateFilecount: 0,
+        publicFilecount: 0
       }
     },
     computed: {
@@ -187,12 +210,37 @@
       },
       selectFiles: function (val) {
           this.$store.commit(types.EMPTY_FILE_SELECTION);
+      },
+      showPrivateFiles: function (val) {
+        this.privateFilecount = this.countPrivateFiles();
+        this.publicFilecount = this.$parent.files.length - this.privateFilecount;
+        console.log("private "+this.privateFilecount);
+        console.log("public "+this.publicFilecount);
       }
     },
 
+    mounted() {
+      this.privateFilecount = this.countPrivateFiles();
+      this.publicFilecount = this.$parent.files.length - this.privateFilecount;
+    },
 
+    updated() {
+      this.privateFilecount = this.countPrivateFiles();
+      this.publicFilecount = this.$parent.files.length - this.privateFilecount;
+    },
 
     methods: {
+
+      countPrivateFiles() {
+        let count = 0;
+        for (var i = 0; i < this.$parent.files.length; i++) {
+          let file = this.$parent.files[i];
+          if (file.is_private) {
+            count+=1;
+          }
+        }
+        return count;
+      },
 
       increaseWH() {
         if (this.thumb_size.width < 28 && this.row_height < 18) {

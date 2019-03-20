@@ -12,9 +12,8 @@ const REGISTER_URL = API_URL + '/create-user/';
 const VERIFY_URL = API_URL + '/token/verify/';
 
 // File Management
+const FILE_URL = API_URL + '/file/';
 const FILES_URL = API_URL + '/files/';
-const DELETE_FILE_URL = API_URL + '/file/delete/';
-const PRIVACY_URL = API_URL + '/toggle-privacy';
 
 // User Upload & Settings
 const SETTINGS_URL = API_URL + '/settings/';
@@ -174,7 +173,8 @@ export async function GetFiles () {
  * @param {int} fileID
  */
 export async function DeleteFile (file_id) {
-  return await axios.delete(DELETE_FILE_URL+file_id)}
+  return await axios.put(FILE_URL+file_id, {delete: true});
+}
 
 /**
  * Gets the file informaton needed to display a file preview whenever a user visit's another user's sharelink
@@ -226,7 +226,7 @@ export async function UpdateSettings(settings) {
  * @param {int} fileID the ID of the file to be toggled
  */
 export async function TogglePrivacy(fileID) {
-  return await axios.put(`${PRIVACY_URL}/${fileID}`);
+  return await axios.put(`${FILE_URL}${fileID}`, {toggle_private: true});
 }
 
 /**

@@ -189,12 +189,12 @@ class UpdateFileAPIView(generics.UpdateAPIView):
         try:
             file = File.objects.get(user=self.request.user, id=pk)
             response = dict()
-
-            toggle_private = request.POST.get('toggle_private', None)
-            gen_new_id = request.POST.get('gen_new_id', None)
-            original_filename = request.POST.get('original_filename', None)
-            delete = request.POST.get('delete', None)
-
+            print(request.data)
+            toggle_private = request.data.get("toggle_private", None)
+            gen_new_id = request.data.get("gen_new_id", None)
+            original_filename = request.data.get("original_filename", None)
+            delete = request.data.get("delete", None)
+            
             if delete:
                 file.delete()
                 log.info(f"[FILE-DELETED] : USER: {self.request.user.username} DELETED FILE WITH ID {pk}")
