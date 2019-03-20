@@ -417,6 +417,8 @@ class UploadView(View):
         for user_file in request.FILES.getlist('content'):
 
             ip = get_ip(request)
+            
+            private = request.POST.get("private", False)
 
             try:
                 
@@ -430,7 +432,8 @@ class UploadView(View):
                     generated_filename=id_gen,
                     ip=ip,
                     file_content=user_file,
-                    file_thumbnail=user_file if ext in exts else None
+                    file_thumbnail=user_file if ext in exts else None,
+                    is_private=private
                 )
                 
                 uploaded_file.save()

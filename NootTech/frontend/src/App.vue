@@ -1,5 +1,7 @@
 <template>
-  <div id="NTapp" title="More than meets the mind">
+  <div id="NTapp">
+    <notifications group="Global" />
+    
     <nt-navbar></nt-navbar>
     <router-view/>
     <nt-footer></nt-footer>
