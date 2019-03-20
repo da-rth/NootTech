@@ -221,7 +221,6 @@
   }
 
   .large-fa-icon {
-    z-index: 999;
     font-size: 400%;
     position: absolute;
     left: 50%;
