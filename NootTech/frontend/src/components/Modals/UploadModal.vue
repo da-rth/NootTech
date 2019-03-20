@@ -37,7 +37,7 @@
         <b-button class="set-private-btn" @click="upload_data.is_private = !upload_data.is_private">
           <font-awesome-icon icon="lock" v-if="upload_data.is_private"/>
           <font-awesome-icon icon="lock-open" v-else/>
-          Set Private: {{ upload_data.is_private }}
+          {{ upload_data.is_private ? "Send as private" : "Send as public"}}
         </b-button>
       </b-form>
     </b-modal>
@@ -55,7 +55,8 @@ export default {
       this.$refs.modal.show()
     },
     clearFiles() {
-      this.upload_data.files = new Array()
+      this.upload_data.is_private = false;
+      this.upload_data.files = new Array();
     },
     async uploadFiles() {
       console.log("Trying to upload " + this.upload_data.files);

@@ -143,8 +143,8 @@ export default {
       };
     },
     mounted() {
-      EventBus.$on('settingsModal', () => {this.show()})
-      resetSettings()
+      EventBus.$on('settingsModal', this.show);
+      this.resetSettings();
    }
 }
 </script>
