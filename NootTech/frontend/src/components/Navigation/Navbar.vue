@@ -37,33 +37,31 @@
 
         <b-navbar-nav v-if="$store.state.user != null">
           
-          <b-nav-item>
+          <b-nav-item v-if="$route.path === '/'">
             <b-button class="navbar-btn" @click="raiseEvent('favouriteModal')">
                 <font-awesome-icon icon="bookmark"/>&nbsp;&nbsp;&nbsp; Favourites
             </b-button>
           </b-nav-item>
-        </b-navbar-nav>
-
-        <b-navbar-nav v-else>
-
-          <b-nav-item>
-            <router-link to="/about">
-            <font-awesome-icon icon="info-circle"/>&nbsp; About
-            </router-link>
-          </b-nav-item>
           
-          <b-nav-item>
+          <b-nav-item v-if="$route.path !== '/how-to'">
             <router-link to="/how-to">
               <font-awesome-icon icon="question-circle"/>
               &nbsp;How to...
             </router-link>
           </b-nav-item>
+
+          <b-nav-item v-if="$route.path !== '/about' && $store.state.user == null">
+            <router-link to="/about">
+            <font-awesome-icon icon="info-circle"/>&nbsp; About
+            </router-link>
+          </b-nav-item>
+
         </b-navbar-nav>
 
 
 
         <b-navbar-nav class="ml-auto" v-if="$store.state.user">
-          <b-nav-item>
+          <b-nav-item v-if="$route.path === '/'">
             <b-button class="navbar-btn" @click="raiseEvent('uploadFile')">
               <font-awesome-icon icon="upload"/>&nbsp;&nbsp; Upload
             </b-button>
