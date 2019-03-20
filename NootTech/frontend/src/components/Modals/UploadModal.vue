@@ -5,6 +5,8 @@
       header-bg-variant='dark'
       body-bg-variant='dark'
       footer-bg-variant='dark'
+      header-border-variant="dark"
+      footer-border-variant="dark"
       :ok-disabled='upload_data.files.length == 0'
       ok-title="Upload file(s)"
       @ok="uploadFiles"
@@ -94,7 +96,8 @@ export default {
     this.upload_data.username = this.$store.state.user.username;
     this.upload_data.upload_key = this.$store.state.settings.upload_key;
     EventBus.$on('uploadFile', () => {
-      this.show();
+      if(this.$refs.modal);
+        this.show();
     });
   }
 }

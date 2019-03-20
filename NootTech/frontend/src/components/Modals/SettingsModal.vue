@@ -7,6 +7,9 @@
       header-bg-variant='dark'
       body-bg-variant='dark'
       footer-bg-variant='dark'
+      header-border-variant="dark"
+      footer-border-variant="dark"
+
       ok-title="Save Settings"
       @ok="saveSettings"
       @hidden="resetSettings"
@@ -143,7 +146,10 @@ export default {
       };
     },
     mounted() {
-      EventBus.$on('settingsModal', this.show);
+      EventBus.$on('settingsModal', () => {
+        if(this.$refs.modal)
+          this.show()
+      });
       this.resetSettings();
    }
 }
