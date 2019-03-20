@@ -79,7 +79,7 @@
       </b-collapse>
     </b-navbar>
 
-    <paginate name="searched_files" :list="$parent.searched_files" :per="paginate_by" tag="div" class="row file-row" v-if="$parent.searched_files">
+    <paginate name="searched_files" :list="$root.searched_files" :per="paginate_by" tag="div" class="row file-row" v-if="$root.searched_files">
       <b-row class="file-grid justify-content-center">
 
         <template v-if="paginated('searched_files').length <= 0">
@@ -154,7 +154,7 @@
       :classes="{'ul': 'pagination', 'li': 'page-item', 'a' : 'page-link'}"
       :show-step-links="true"
       :step-links="{next: 'Next', prev: 'Previous'}"
-      v-if="$parent.searched_files"
+      v-if="$root.searched_files"
       >
     </paginate-links>
 
@@ -203,9 +203,9 @@
     watch: {
       searchTerm: function (val) {
         if (val.length !== 0) {
-          this.searchArray(val.toLowerCase(), this.$parent.files)
+          this.searchArray(val.toLowerCase(), this.$root.files)
         } else {
-          this.$parent.searched_files = this.$parent.files
+          this.$root.searched_files = this.$root.files
         }
       },
       selectFiles: function (val) {
@@ -317,8 +317,8 @@
       changedSelectionValue: function(item) {
         let value = item.target.value;
         if (value !== 'default') {
-          this.$parent.searched_files = this.$parent.files.sort(this.dynamicSort(value));
-          console.log(this.$parent.files)
+          this.$root.searched_files = this.$root.files.sort(this.dynamicSort(value));
+          console.log(this.$root.files)
         }
       },
 
@@ -346,14 +346,14 @@
           }
         }
         if (results.length > 0) {
-          this.$parent.searched_files = results;
+          this.$root.searched_files = results;
         } else {
-          this.$parent.searched_files = this.$parent.files
+          this.$root.searched_files = this.$root.files
         }
       },
 
       getCheckedFiles() {
-        let files = this.$parent.files.filter(f => this.selectedFiles.includes(f.id));
+        let files = this.$root.files.filter(f => this.selectedFiles.includes(f.id));
         return files
       },
 
