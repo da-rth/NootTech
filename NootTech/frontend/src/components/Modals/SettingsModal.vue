@@ -11,7 +11,6 @@
       @ok="saveSettings"
       @hidden="resetSettings"
       >
-      <h1>Settings of {{$store.state.user.username}}</h1>
 
       <b-form>
         <b-form-group
@@ -51,6 +50,12 @@
             <b-button variant="success" @click="copyUploadKey">Copy</b-button>
           </b-input-group>
         </b-form-group>
+        <b-form-group
+          class="col-lg-12"
+          label="Click the button below to delete your account.">
+        <b-button>Delete Account</b-button>
+        </b-form-group>
+
       </b-form>
     </b-modal>
   </div>

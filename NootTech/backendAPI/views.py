@@ -176,7 +176,7 @@ class ListFavouritesAPIView(generics.ListCreateAPIView):
     serializer_class = serializers.SerializeFavouritesList
 
     def get_queryset(self):
-        return FavouritedFile.objects.filter(user=self.request.user)
+        return FavouritedFile.objects.filter(user=self.request.user).order_by('-date')
 
 class UpdateFileAPIView(generics.UpdateAPIView):
     permission_classes = (IsAuthenticated,)

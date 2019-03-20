@@ -398,7 +398,12 @@
 
   .file-badge {
     margin: 5px;
-    background-color: transparent;
+    border-color: black !important;
+  }
+
+  .file-badge.border-secondary.text-dark {
+    border-color: black !important;
+    background-color: #242424 !important;
   }
 
   .file-search, .file-sort {

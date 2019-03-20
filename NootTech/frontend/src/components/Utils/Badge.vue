@@ -23,6 +23,8 @@
      v-else-if="value.file_thumbnail == null" 
      class="large-fa-icon"
     />
+    
+    <span class="gen-name">{{ value.generated_filename }}</span>
 
     <div class="overlay" @click.stop="onClick">
       <h2 class="overlay-title">{{value.original_filename}}</h2>
@@ -122,6 +124,19 @@
 </script>
 
 <style>
+
+  .gen-name {
+    opacity: 1;
+    transition: opacity 0.5s;
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+  }
+  .hovereffect:hover .gen-name {
+    opacity: 0;
+  }
+
   .hovereffect {
     background-size: cover;
     overflow: hidden;
@@ -136,7 +151,7 @@
     top: 0;
     left: 0;
     opacity: 0;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0,0,0,0.3);
     -webkit-transition: all .4s ease-in-out;
     transition: all .4s ease-in-out;
   }
@@ -201,11 +216,12 @@
     transform: translatey(0);
   }
   .card-img-overlay {
-    /*background-color: #202020;*/
+    background-color: transparent;
     text-align: center;
   }
 
   .large-fa-icon {
+    z-index: 999;
     font-size: 400%;
     position: absolute;
     left: 50%;
