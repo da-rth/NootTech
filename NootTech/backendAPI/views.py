@@ -419,7 +419,6 @@ class UploadView(View):
 
         for user_file in request.FILES.getlist('content'):
 
-
             try:
                 
                 ext = get_ext(user_file.name)

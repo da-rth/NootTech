@@ -1,6 +1,6 @@
 <template>
   <div>
-    <notifications group="SettingsUpdate" />
+    
     <b-modal
       ref="modal"
       title="Settings"
@@ -96,13 +96,13 @@ export default {
           var successful = document.execCommand('copy');
           console.log(successful)
           this.$notify({
-            group: 'SettingsUpdate',
+            group: 'Global',
             title: `Copied the key to clipboard!`,
             text: 'Go ahead! Paste it like crazy!',
           });
         } catch (err) {
           this.$notify({
-            group: 'SettingsUpdate',
+            group: 'Global',
             title: 'Oh no! We couldn\'t copy the key',
             text: 'Sorry about that...',
           });
@@ -121,7 +121,7 @@ export default {
           let response = await this.$api.UpdateSettings(this.settings)
           console.log('SETTINGS UPDATE SUCCESS:', response);
           this.$notify({
-            group: 'SettingsUpdate',
+            group: 'Global',
             title: `Successfully updated settings!`,
             position: 'bottom right'})
           this.$store.dispatch(SETTINGS);

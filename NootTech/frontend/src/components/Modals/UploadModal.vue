@@ -67,7 +67,7 @@ export default {
       .then(response => {
         console.log('Successful server response:', response);
         this.$notify({
-          group: 'FileUpload',
+          group: 'Global',
           title: `Successfully uploaded file(s)!`,
           text: 'The file panel is now updating...',
           position: 'bottom right'
@@ -78,6 +78,12 @@ export default {
         // Catch the error and notify user that file cant be deleted
         console.log('ERROR', e.response);
         console.log("Could not upload the file...")
+        this.$notify({
+          group: 'Global',
+          title: `Could not uploaded file(s)`,
+          text: 'Something went wrong on our end...',
+          position: 'bottom right'
+        });
         return null
       });
    },

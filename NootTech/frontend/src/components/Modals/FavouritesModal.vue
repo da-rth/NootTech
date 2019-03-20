@@ -80,7 +80,7 @@ export default {
             });
 
             this.$notify({
-              group: 'FavouritesUpdate',
+              group: 'Global',
               title: `Successfully removed from favourites!`,
               position: 'bottom right'
             });
