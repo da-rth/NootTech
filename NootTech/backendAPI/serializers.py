@@ -5,6 +5,51 @@ from django.contrib.auth.password_validation import validate_password
 from django.core import exceptions
 from . import validators
 
+class UserSerializer(serializers.ModelSerializer):
+    """
+    This serializer allows for four fields to be posted; username, email, colour and password
+    All of these fields will then go through validation
+    If successful, the create() method will automatically be called.
+    It will then proceed to validate the password and create the user - validation errors return BadRequest responses
+    """
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'id')
+
+
+class CreateUserSerializer(serializers.ModelSerializer):
+    """
+    This serializer allows for four fields to be posted; username, email, colour and password
+    All of these fields will then go through validation
+    If successful, the create() method will automatically be called.
+    It will then proceed to validate the password and create the user - validation errors return BadRequest responses
+    """
+    email = serializers.CharField(validators =[validators.validate_email],write_only= True )
+    username = serializers.CharField(validators =[validators.validate_username],write_only=True)
+    password = serializers.CharField(style = {'input_type': 'password'}, write_only=True)
+    colour = serializers.CharField(validators =[validators.validate_colour],write_only=True)
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'colour', 'password')
+
+    def create(self, validated_data):
+
+        user = User(username=validated_data['username'], email=validated_data['email'], colour=validated_data['colour'])
+
+        try:
+            # Try to validate password and create account
+            validate_password(password=validated_data['password'], user=user)
+
+        except exceptions.ValidationError as e:
+            raise serializers.ValidationError({'password': list(e.messages)})
+        # If successful, set password and save user (created! woohoo!)
+        user.set_password(validated_data['password'])
+        user.save()
+        return validated_data
+
+
 """
 Sub-File Serializers (Image, Video, Audio, Text)
 """
@@ -86,6 +131,7 @@ class ListFilesSerializer(serializers.ModelSerializer):
     file_audio_info = AudioFileSerializer(source='file_audio')
     file_text_info = TextFileSerializer(source='file_text')
     virus_info = VirusSerializer(source='virus_scan')
+    user = UserSerializer()
 
     class Meta:
         model = File
@@ -146,37 +192,6 @@ class SerializeFavourite(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class CreateUserSerializer(serializers.ModelSerializer):
-    """
-    This serializer allows for four fields to be posted; username, email, colour and password
-    All of these fields will then go through validation
-    If successful, the create() method will automatically be called.
-    It will then proceed to validate the password and create the user - validation errors return BadRequest responses
-    """
-    email = serializers.CharField(validators =[validators.validate_email],write_only= True )
-    username = serializers.CharField(validators =[validators.validate_username],write_only=True)
-    password = serializers.CharField(style = {'input_type': 'password'}, write_only=True)
-    colour = serializers.CharField(validators =[validators.validate_colour],write_only=True)
-
-    class Meta:
-        model = User
-        fields = ('username', 'email', 'colour', 'password')
-
-    def create(self, validated_data):
-
-        user = User(username=validated_data['username'], email=validated_data['email'], colour=validated_data['colour'])
-
-        try:
-            # Try to validate password and create account
-            validate_password(password=validated_data['password'], user=user)
-
-        except exceptions.ValidationError as e:
-            raise serializers.ValidationError({'password': list(e.messages)})
-        # If successful, set password and save user (created! woohoo!)
-        user.set_password(validated_data['password'])
-        user.save()
-        return validated_data
-
 
 class ErrorVideoSerializer(serializers.ModelSerializer):
     """
@@ -210,9 +225,8 @@ class ReportList(serializers.ModelSerializer):
     """
     reported_user_name = serializers.CharField(source="reported_user.username", read_only=True)
     reported_by_name = serializers.CharField(source="reported_by.username", read_only=True)
-    file_gen_name = serializers.CharField(source="reported_file.generated_filename", read_only=True)
-    file_orig_name = serializers.CharField(source="reported_file.original_filename", read_only=True)
-    file_url = serializers.CharField(source="reported_file.file_content", read_only=True)
+    reported_file = ListFilesSerializer()
+
 
     class Meta:
         model = ReportedFile

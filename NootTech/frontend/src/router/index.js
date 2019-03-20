@@ -33,7 +33,7 @@ const routes = [
     component: Logout
   },
   {
-    path: '/admin',
+    path: '/moderate',
     name: 'AdminPanel',
     component: AdminPanel
   },

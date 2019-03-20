@@ -42,7 +42,7 @@
             </b-button>
           </b-nav-item>
           <b-nav-item v-if="$store.state.settings.is_superuser">
-            <router-link to="/admin">
+            <router-link to="/moderate">
               <b-button class="navbar-btn">
                 <font-awesome-icon icon="tachometer-alt"/> &nbsp;Admin panel
               </b-button>
