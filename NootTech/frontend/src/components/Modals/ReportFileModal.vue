@@ -1,6 +1,5 @@
 <template>
 	<div>
-    <notifications group="ReportNotif" />
 		<b-modal size="lg" centered scrollable ref="modal" title="Report file" @hidden="report=null" bodyBgVariant="dark" headerBgVariant="dark" footerBgVariant="dark" :ok-disabled="selected == null || text == ''"
       ok-title="Report File"
       @ok="reportFile">
@@ -73,14 +72,14 @@ export default {
       .then(response => {
           console.log("REPORT SUCCESS", response);
           this.$notify({
-            group: 'ReportNotif',
+            group: 'Global',
             title: 'Success: Thank you for submitting your report!',
             text: 'Our administrators will look into it for you.',
           });
       }).catch(e => {
           console.log('REPORT ERROR...', e);
           this.$notify({
-            group: 'ReportNotif',
+            group: 'Global',
             title: 'Whoops, we had some trouble submitting your report...',
             text: 'Please try again later. Your reports are important to us.',
           });

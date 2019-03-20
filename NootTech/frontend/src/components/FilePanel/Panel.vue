@@ -3,9 +3,6 @@
   <div class="file-panel">
       {{action}}
 
-
-    <notifications group="FileUpdate" />
-
     <b-navbar toggleable="lg" type="dark" class="file-menubar">
       <b-navbar-brand>Files</b-navbar-brand>
       <b-navbar-toggle target="nav_file_collapse" />
@@ -271,7 +268,7 @@
         }
         await this.$root.loadFiles()
         this.$notify({
-          group: 'FileUpdate',
+          group: 'Global',
           title: `Removed <strong>${deleteCount}</strong> files...`,
           text: 'The file panel is now updating...',
           position: 'bottom right'
@@ -298,7 +295,7 @@
         await this.$parent.loadFiles()
 
         this.$notify({
-          group: 'FileUpdate',
+          group: 'Global',
           title: `Toggled the privacy status of <strong>${privateCount}</strong> files...`,
           text: 'The file panel is now updating...',
           position: 'bottom right'

@@ -1,7 +1,5 @@
 <template>
   <div>
-    <notifications group="CopyKey" />
-
     <b-navbar
     toggleable="lg"
     variant="dark"
@@ -19,8 +17,6 @@
           </template>
         </router-link>
       </b-navbar-brand>
-
-      <notifications group="FileUpload" />
 
       <b-navbar-nav v-if="$store.state.user != null">
         <b-nav-item>
@@ -48,13 +44,6 @@
               </b-button>
             </router-link>
           </b-nav-item>
-          <b-nav-item>
-            <router-link to="/how-to">
-              <b-button class="navbar-btn">
-                <font-awesome-icon icon="question-circle"/> &nbsp;How to...
-              </b-button>
-            </router-link>
-          </b-nav-item>
         </b-navbar-nav>
 
 
@@ -62,6 +51,14 @@
           <b-nav-item>
             <router-link to="/about">
             <font-awesome-icon icon="info-circle"/>&nbsp; About
+            </router-link>
+          </b-nav-item>
+          
+          <b-nav-item>
+            <router-link to="/how-to">
+              <b-button class="navbar-btn">
+                <font-awesome-icon icon="question-circle"/> &nbsp;How to...
+              </b-button>
             </router-link>
           </b-nav-item>
         </b-navbar-nav>
@@ -107,28 +104,6 @@
       };
     },
     methods: {
-      copyUploadKey () {
-        let testingCodeToCopy = document.querySelector('#uploadKey')
-        testingCodeToCopy.setAttribute('type', 'text')
-        testingCodeToCopy.select()
-        try {
-          var successful = document.execCommand('copy');
-          this.showUploadKey = false;
-          this.$notify({
-            group: 'CopyKey',
-            title: `Copied Upload Key to clipboard!`,
-            text: 'Remember to keep it safe!',
-          });
-        } catch (err) {
-          this.$notify({
-            group: 'CopyKey',
-            title: 'Oh no! We couldn\'t copy the upload key',
-            text: 'Try using CTRL+C! Sorry about that...',
-          });
-        }
-        testingCodeToCopy.setAttribute('type', 'hidden')
-        window.getSelection().removeAllRanges()
-      },
       raiseEvent(eventType) {
         EventBus.$emit(eventType);
       },
@@ -167,25 +142,6 @@
     text-decoration: none;
   }
 
-  .filebar-uploadkey {
-    margin: -5px;
-    text-align: center;
-  }
-
-  .filebar-uploadkey .btn,
-  .filebar-uploadkey .input-group-text,
-  .filebar-uploadkey .key-field {
-    font-size: 12px;
-  }
-
-  .filebar-uploadkey .input-group-text,
-  .filebar-uploadkey .key-field {
-    color: #242424;
-  }
-
-  .filebar-uploadkey .btn {
-    height: 32px;
-  }
   .user-dropdown button {
     color: red;
   }
@@ -220,8 +176,4 @@
     outline: none;
   }
 
-  .copy-btn {
-    background-color: #242424 !important;
-    border: 1px solid #181818 !important;
-  }
 </style>

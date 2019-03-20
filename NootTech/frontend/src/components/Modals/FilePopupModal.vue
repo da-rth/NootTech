@@ -1,7 +1,5 @@
 <template>
 	<div>
-    <notifications group="CopySharelink" />
-
 		<b-modal size="lg" centered scrollable ref="modal" :title="getTitle" @hidden="file=null" bodyBgVariant="dark" headerBgVariant="dark" footerBgVariant="dark">
 
       <template v-if="file">
@@ -89,13 +87,13 @@ export default {
           var successful = document.execCommand('copy');
           this.showUploadKey = false;
           this.$notify({
-            group: 'CopySharelink',
+            group: 'Global',
             title: `Copied the URL to clipboard!`,
             text: 'Go ahead! Paste it like crazy!',
           });
         } catch (err) {
           this.$notify({
-            group: 'CopySharelink',
+            group: 'Global',
             title: 'Oh no! We couldn\'t copy the URL',
             text: 'Try using CTRL+C! Sorry about that...',
           });
