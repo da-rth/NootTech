@@ -21,9 +21,6 @@
       return {
         gsize: null,
         files: null,
-        searched_files: null,
-        favourite_files: null,
-        filesToDelete: [],
         isLoading: true
       }
     },
@@ -50,9 +47,7 @@
         this.isLoading = true;
         await this.$api.GetFiles()
         .then(response => {
-          this.files = response.data;
           this.$root.files = response.data;
-          this.searched_files = response.data;
           this.$root.searched_files = response.data;
           this.loadFavourites();
         })
