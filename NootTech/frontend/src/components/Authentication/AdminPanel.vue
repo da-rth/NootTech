@@ -1,29 +1,43 @@
 <template>
- <div v-if="$store.state.settings && $store.state.settings.is_superuser" class="container">
-   <b-modal
+  <div v-if="$store.state.settings && $store.state.settings.is_superuser" class="container">
+    <b-modal
+      v-if="selectedReport"
+      header-bg-variant="dark"
+      body-bg-variant="dark"
+      footer-bg-variant="dark"
+      header-border-variant="dark"
+      footer-border-variant="dark"
+      ref="banModal"
+      :title="`Ban the user ${selectedReport.reported_file.user.username}`"
+      ok-title="Ban"
+      ok-variant="danger"
+      @ok="banUser"
+      @hidden="resetBanPayload">
+      <b-form>
+        <b-form-group
+          label="Reason to ban the user"
+          label-for="banReason"
+          description="Please provide a reason for the ban">
+          <b-form-textarea id="banReason" v-model="banPayload.reason" rows="3" max-rows="10"/>
+        </b-form-group>
+      </b-form>
+    </b-modal>
+  <b-modal
     v-if="selectedReport"
     header-bg-variant="dark"
     body-bg-variant="dark"
     footer-bg-variant="dark"
     header-border-variant="dark"
     footer-border-variant="dark"
-    ref="banModal"
-    :title="`Ban the user ${selectedReport.reported_file.user.username}`"
-    ok-title="Ban"
-    ok-variant="danger"
-    @ok="banUser"
-    @hidden="resetBanPayload"
+    ref="userModal"
+    :title="`Information on the user ${selectedReport.reported_file.user.username}`"
+    
     >
-    <b-form>
-      <b-form-group
-        label="Reason to ban the user"
-        label-for="banReason"
-        description="Please provide a reason for the ban">
-        <b-form-textarea id="banReason" v-model="banPayload.reason" rows="3" max-rows="10"/>
-      </b-form-group>
+    <p>Username: {{selectedReport.reported_file.user.username}}</p>
+    <p>Email: {{selectedReport.reported_file.user.email}}</p>
+    <p>Warnings: {{selectedReport.reported_file.user.warnings}}</p>
+  </b-modal>
 
-    </b-form>
-   </b-modal>
    <h2>List of reported files</h2>
     <table class="table bg-dark striped">
       <thead>
@@ -45,12 +59,11 @@
             />
           </td>
           <td scope="col">
-            <a :href="'mailto:'+report.reported_file.user.email">{{report.reported_file.user.username}}</a>
+            <b-button @click="showUserModal(report)">{{report.reported_file.user.username}}</b-button>
           </td>
           <td scope="col">
             <b-button variant="warning" @click="warnUser(report)">Warn user</b-button>
             <b-button variant="danger" @click="banUserButton(report)">Ban user</b-button>
-            <b-button variant="danger" @click="deleteFile(report)">Delete resource</b-button>
           </td>
         </tr>
       </tbody>
@@ -109,6 +122,12 @@ export default {
         this.$refs.banModal.show();
       })
     },
+    showUserModal(report) {
+      this.selectedReport = report
+      this.$nextTick(() => {
+        this.$refs.userModal.show();
+      })
+    },
     async banUser() {
       try {
         await this.$api.BanUser(this.banPayload);
@@ -116,15 +135,6 @@ export default {
         console.log("USER BAN FAILED: ", e.response);
       }
     },
-
-    async deleteFile(report) {
-      try {
-        console.log("Deleting the file " + report.reported_file.id)
-      } catch(e) {
-        console.log("FILE DELETION FAILED: ", e.response)
-      }
-    }
-    
  },
   async mounted() {
     try {

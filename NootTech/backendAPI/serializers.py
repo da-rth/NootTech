@@ -15,7 +15,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'id')
+        fields = ('username', 'email', 'id', 'warnings')
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
@@ -226,7 +226,6 @@ class ReportList(serializers.ModelSerializer):
     reported_user_name = serializers.CharField(source="reported_user.username", read_only=True)
     reported_by_name = serializers.CharField(source="reported_by.username", read_only=True)
     reported_file = ListFilesSerializer()
-
 
     class Meta:
         model = ReportedFile
