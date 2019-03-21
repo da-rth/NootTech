@@ -57,8 +57,12 @@ $ (venv) cd frontend/src
 $ (venv) cp config_example.json config.json
 $ (venv) vim config.json # or any editor you like
 
-# Start django
+# change settings.json
 $ (venv) cd ../../
+$ (venv) cp NootTech/settings{-example,}.json
+$ (venv) vim NootTech/settings.json
+
+# start django
 $ (venv) python manage.py makemigrations 
 $ (venv) python manage.py migrate
 # (venv) python populate.py # populate the database with error videos and mock-users

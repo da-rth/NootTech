@@ -2,7 +2,8 @@
     "SITE_URL": "http://localhost:8080",
     "BACKEND_URL":"http://localhost:8000",
     "API_URL": "http://localhost:8000/api",
+    "GITHUB_TOKEN": "YOUR_GITHUB_TOKEN_HERE",
     "ENABLE_SUBDOMAINS": false,
     "DEFAULT_HIGHLIGHT": "#00cccc",
-    "EMAIL_HOST_PASSWORD": "ADD_PASSWORD_HERE"
+    "LANGUAGE": "en_GB"
 }
