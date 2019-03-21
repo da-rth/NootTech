@@ -38,6 +38,7 @@ Thumbnails/
 # Distribution / packaging
 .Python
 build/
+!*/frontend/dist/build.js
 develop-eggs/
 dist/
 downloads/
