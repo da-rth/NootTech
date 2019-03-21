@@ -9,14 +9,14 @@
       As a NootTech user, you have are given the ability to upload your files off-site, through software such as cURL and ShareX. This allows for many possibilities, such as allowing advanced users to write their own upload scripts.
       <br/><br/>
       However, we strive to create a user-friendly, minimalistic and uncluttered website – ensuring the user is never overwhelmed with uncessary information. All communication to/from our website is encrypted using HTTPS, ensuring that all information is safely transferred between destinastions. 
-    </div>
 
 
-    <br/>
-    <h3 class="contributor-header">Contributors</h3>
+    <br/><br/>
+    <h1 class="contributor-header">Contributors</h1>
 
-    <b-row class="justify-content-center contrib-row">
-    <b-col :key="contributor.id" v-for="contributor in myGitHubData.contributors">
+    <b-row class="contrib-row">
+      <b-col-md-3></b-col-md-3>
+    <b-col-md-2 :key="contributor.id" v-for="contributor in myGitHubData.contributors">
         <a class="git-href" :href="contributor.html_url">
           <b-card
             v-if="contributor.html_url"
@@ -37,13 +37,14 @@
 
           </b-card>
         </a>
-    </b-col>
+    </b-col-md-2>
+    <b-col-md-3></b-col-md-3>
     </b-row>
 
     <br/><br/>
     
-
-    <div class="project-information" v-if="myGitHubData.repository">
+    <div class="info-deps">
+    <div v-if="myGitHubData.repository">
       <h1>Project Information</h1>
       <ul>
         <li>Name: {{ myGitHubData.repository.name }}</li>
@@ -52,17 +53,21 @@
         <li>Last updated: {{ myGitHubData.repository.updated_at }}</li>
         <li>Project URL: <a :href="myGitHubData.repository.html_url">{{  myGitHubData.repository.html_url }}</a></li>
       </ul>
+    </div>
+      <br/>
       <h1>Django Dependancies </h1>
       
       <ul>
         <li :key="dep" v-for="dep in djangoDependancies"><a :href="dep.url">{{ dep.title }}</a></li>
       </ul>
-      
+      <br/>
       <h1>Vue Dependancies</h1>
       <ul>
         <li :key="dep" v-for="dep in vueDependancies"><a :href="dep.url">{{ dep.title }}</a></li>
       </ul>
     </div>
+    </div>
+  </div>
 
     
     
@@ -227,34 +232,38 @@
 </script>
 
 <style scoped>
+.info-deps {
+  background-color: #121212;
+  padding: 20px;
+  border: 1px solid black;
+}
 .about-container {
   background-color: rgba(0,0,0,0.2);
   padding: 50px;
 }
 .git-user {
   max-width: 17rem !important;
+  margin: 0px 10px;
+}
+
+.git-user img {
+  width: 220px;
 }
 .card-title, .card-text {
   color: #242424;
 }
-
 .git-href, .git-href:visited, .git-href:active, .git-href:hover {
   color: transparent;
 }
-
 .project-information {
     margin: 0;
     background-color: #191919;
     padding: 30px;
     border: 1px solid black;
 }
-
 .contributor-header {
   text-align: center;
   padding: 10px;
 }
 
-.contrib-row {
-  padding: 0 5%;
-}
 </style>

@@ -13,17 +13,17 @@ div.carousel-item img {
 }
 
 .footer-copyright {
+  position: fixed;
   font-size: 0.8em;
   background-color: #242424;
   padding-top: 10px;
   padding-bottom: 0px;
-  bottom:0;
   width:100%;
   opacity: 0.9;
 }
 
 footer a {
-  color: #1574d3 !important;
+  color: white !important;
 }
 
 #PrivacyPolicy, #TermsOfService {
