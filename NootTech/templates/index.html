@@ -15,10 +15,10 @@
         <meta name="twitter:description" content="File uploaded by: {{ file.user.username }}">
         <meta name="theme-color" content="{{ file.user.colour }}">
 
-            {% if file.file_image %}
+            {% if file.file_image and not file.is_private %}
                 <meta name="twitter:card" content="summary_large_image" />
                 <meta name="twitter:image" content="{{ url }}{{ file.file_content }}" />
-            {% elif file.file_video %}
+            {% elif file.file_video and not file.is_private %}
                 <meta name="twitter:card" content="player" />
                 <meta name="twitter:image" content="{{ url }}{{ file.file_thumbnail }}" />
                 <meta name="twitter:player" content="{{ url }}{{ file.file_content }}" />
