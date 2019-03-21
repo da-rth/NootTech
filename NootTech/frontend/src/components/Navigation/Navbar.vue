@@ -107,7 +107,13 @@
       raiseEvent(eventType) {
         EventBus.$emit(eventType);
       },
-   },
+    },
+    mounted() {
+      if(this.$store.state.settings)
+        this.$root.colour = this.$store.state.settings.colour;
+      else this.$root.colour = this.$root.default_colour;
+    }
+
   }
 
 </script>
