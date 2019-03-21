@@ -65,6 +65,7 @@
       }
     },
     async beforeMount () {
+      
       if (this.token) {
         this.$store.dispatch('VERIFY', {token: this.token});
         this.checkToken()

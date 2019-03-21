@@ -86,6 +86,12 @@
           router.push('/404');
         });
     },
+    
+    beforeDestroy() {
+      this.$root.sharelinkName = null;
+    },
+
+
   }
 </script>
 
