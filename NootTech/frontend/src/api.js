@@ -16,6 +16,8 @@ const FILES_URL = API_URL + '/files/';
 
 // User Upload & Settings
 const SETTINGS_URL = API_URL + '/settings/';
+const CHANGE_PASSWORD_URL = API_URL + '/change-password/';
+const DELETE_ACCOUNT_URL = API_URL + '/delete-account';
 const UPLOAD_URL = API_URL + '/upload/';
 
 // Unauthenticated APIs
@@ -76,8 +78,7 @@ function setToken(token) {
  */
 export async function login(credentials) {
   let response = await axios.post(LOGIN_URL, credentials);
-  const parsedResponse = {};
-  parsedResponse.token = response.data.token;
+  const parsedResponse = {}; parsedResponse.token = response.data.token;
   parsedResponse.user = JSON.parse(atob(response.data.token.split('.')[1]));
   // set the token for future API calls
   setToken(parsedResponse.token);
@@ -301,6 +302,29 @@ export async function AddFavourite(fileID) {
  */
 export async function DeleteFavourite(fileID) {
   return await axios.delete(`${FAV_DEL_URL}/${fileID}`)
+}
+
+/**
+ * Change the user password
+ * 
+ * @param {String} oldPassword Old password (for confirmation purpuoses)
+ * @param {String} newPassword New Password
+ */
+export async function ChangePassword(oldPassword, newPassword) {
+  return await axios.post(CHANGE_PASSWORD_URL, {old_password: oldPassword,
+                                                new_password: newPassword})
+
+}
+
+/**
+ * Delete the user
+ * 
+ * Remember to invoke a logout function as this function does not flush the JWT token.
+ * 
+ * @param {String} confirmationPassword
+ */
+export async function DeleteAccount(confirmationPassword) {
+  return await axios.post(DELETE_ACCOUNT_URL, {confirmation_password: confirmationPassword});
 }
 
 /**

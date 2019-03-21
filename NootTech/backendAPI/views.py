@@ -7,6 +7,8 @@ from django.utils.decorators import method_decorator
 from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.hashers import check_password
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from django.views import View
 from django.conf import settings
 from django.http import HttpResponse
@@ -136,14 +138,17 @@ class ChangePasswordAPIView(generics.CreateAPIView):
             match = check_password(old_password, current_password)
             # If old_password matches current user's password, proceed with password change
             if match:
-                user = User.objects.get(id=request.user.id)
-                user.set_password(new_password)
-                user.save()
-                log.info(f"[PASSWORD-CHANGED] : USER: {user.username} CHANGED THEIR PASSWORD.")
-
-                return Response({'detail': 'Password successfully changed'}, status=status.HTTP_200_OK)
+                try: 
+                    validate_password(new_password)
+                    user = User.objects.get(id=request.user.id)
+                    user.set_password(new_password)
+                    user.save()
+                    log.info(f"[PASSWORD-CHANGED] : USER: {user.username} CHANGED THEIR PASSWORD.")
+                    return Response({'detail': 'Password successfully changed'}, status=status.HTTP_200_OK)
+                except ValidationError as e:
+                    return Response({'detail': e.messages}, status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response({'detail': 'Password could not be changed. Is old_password correct?'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'detail': 'The old password was not correct.'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'detail': 'old_password and new_password is required.'}, status=status.HTTP_400_BAD_REQUEST)
         
