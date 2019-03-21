@@ -16,8 +16,8 @@ __pycache__/
 
 local_settings.py
 db.sqlite3
-media/Uploads/*
-media/Thumbnails/*
+Uploads/
+Thumbnails/
 
 **/migrations/**
 !**/migrations
