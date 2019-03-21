@@ -58,7 +58,7 @@
         <b-form-group
           class="col-lg-12 form-inline">
           <b-button variant="warning" v-b-modal.showPasswordModal>Change password</b-button>
-          <b-button variant="danger">Delete account</b-button>
+          <b-button variant="danger" v-b-modal.showDeleteModal>Delete account</b-button>
         </b-form-group>
       </b-form>
     </b-modal>
@@ -101,6 +101,31 @@
       </b-input>
       </b-form-group>
     </b-modal>
+    <b-modal
+      id="showDeleteModal"
+      ref="DeleteUserModal"
+      title="Delete account"
+      header-bg-variant='dark'
+      body-bg-variant='dark'
+      footer-bg-variant='dark'
+      header-border-variant="dark"
+      footer-border-variant="dark"
+      ok-variant="danger"
+      ok-title="I understand the risk, delete me!"
+      @ok="deleteAccount"
+      >
+      <b-form-group
+        label="Please insert your password"
+        label-for="password">
+        <b-input
+          id="passwordDeleteField"
+          type="password"
+          v-model="password.oldPassword"
+          autocomplete="off"
+          required
+          />
+      </b-form-group>
+    </b-modal>
   </div>
 </template>
 
@@ -138,6 +163,7 @@ export default {
         this.$refs.modal.show()
       },
       async changePassword(evt) {
+        // avoid closing the modal
         evt.preventDefault();
         try {
           await this.$api.ChangePassword(this.password.oldPassword, this.password.newPassword);
@@ -159,7 +185,30 @@ export default {
         }
         finally {
           this.password.oldPassword = this.password.newPassword = ""
-        } },
+        }
+      },
+      async deleteAccount(evt) {
+        // avoid closing the modal
+        evt.preventDefault();
+        try {
+          await this.$api.DeleteAccount(this.password.oldPassword);
+          this.$notify({
+            group: 'Global',
+            title: "The user has been deleted! Unauthenticating...",
+          });
+          this.$router.push('/logout');
+        } catch(e) {
+          console.log("DELETE ACCOUNT ERROR", e);
+          this.$notify({
+            group: 'Global',
+            type: "error",
+            duration: -1,
+            title: "Couldn't delete the user",
+            text: e.response.data.detail
+          })
+        }
+
+      },
       copyUploadKey() {
         let testingCodeToCopy = document.querySelector("#uploadkeySettingsField")
         testingCodeToCopy.removeAttribute("disabled")

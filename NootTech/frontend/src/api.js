@@ -16,7 +16,8 @@ const FILES_URL = API_URL + '/files/';
 
 // User Upload & Settings
 const SETTINGS_URL = API_URL + '/settings/';
-const CHANGE_PASSWORD_URL = API_URL + '/change-password/'
+const CHANGE_PASSWORD_URL = API_URL + '/change-password/';
+const DELETE_ACCOUNT_URL = API_URL + '/delete-account';
 const UPLOAD_URL = API_URL + '/upload/';
 
 // Unauthenticated APIs
@@ -313,6 +314,17 @@ export async function ChangePassword(oldPassword, newPassword) {
   return await axios.post(CHANGE_PASSWORD_URL, {old_password: oldPassword,
                                                 new_password: newPassword})
 
+}
+
+/**
+ * Delete the user
+ * 
+ * Remember to invoke a logout function as this function does not flush the JWT token.
+ * 
+ * @param {String} confirmationPassword
+ */
+export async function DeleteAccount(confirmationPassword) {
+  return await axios.post(DELETE_ACCOUNT_URL, {confirmation_password: confirmationPassword});
 }
 
 /**
