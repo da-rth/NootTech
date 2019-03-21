@@ -1,8 +1,7 @@
 import axios from 'axios'
 import config from './config.json';
 
-// A second instance of axios to be used for unauthenticated requests, such as previewing a sharelink or viewing an error video.
-var axios_unauth = axios.create({ baseURL: config.API_URL });
+
 
 const API_URL = config.API_URL
 // Authentication & Settings
@@ -39,6 +38,10 @@ const FAV_DEL_URL = API_URL + '/favourite/delete'
 
 // Provide CSRF Token for authenticated requests
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
+
+// A second instance of axios to be used for unauthenticated requests, such as previewing a sharelink or viewing an error video.
+var axios_unauth = axios.create({ baseURL: config.API_URL });
+
 
 // Globally Accessable AXIOS Functions
 
