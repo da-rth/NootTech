@@ -46,7 +46,13 @@ $ .\venv\Scripts\activate.bat
 # Configure and run django server
 $ (venv) cd NootTech
 
-# create a config.json file and add your settings
+# create a settings.json in ~/WAD2-Group-Project/NootTech/NootTech
+$ (venv) cd NootTech
+$ (venv) cp settings-example.json settings.json
+$ (venv) vim settings.json # or any editor you like
+
+# create a config.json in ~/WAD2-Group-Project/NootTech/frontend/src
+$ (venv) cd .. # go back to ~/WAD2-Group-Project/NootTech/
 $ (venv) cd frontend/src
 $ (venv) cp config_example.json config.json
 $ (venv) vim config.json # or any editor you like
@@ -56,15 +62,56 @@ $ (venv) cd ../../
 $ (venv) python manage.py makemigrations 
 $ (venv) python manage.py migrate
 $ (venv) python manage.py createsuperuser
+$ (venv) python manage.py collectstatic
 $ (venv) python manage.py runserver
+
+# By now the back-end will be running. If the front-end JS has been pre-built and you can see the website, you can stop here.
+# If you get a blank page, you will need to build the front-end JavaScript:
 
 # Start VueJS dev server or build it
 $ (venv) cd frontend
 $ (venv) npm install
-$ (venv) npm run dev (or npm run build)
+$ (venv) npm run build
+$ (venv) cd ..
+$ (venv) python manage.py collectstatic
 
 Visit localhost:8000 
 ???????
 Profit
 ```
+
+## Django Dependancies
+* Django Dependancies
+* Django 1.11.18
+* Django Rest Framework
+* Django REST Framework - simplejwt
+* Django Cors Headers
+* Django Model Admin Reorder
+* Django Webpack Loader
+* Easy Thumbnails
+* Easy Thumbnails FFMPEG
+* hurry.filesize
+* MailChecker
+* MoviePy
+* Pillow
+* virustotal-api
+
+## Vue Dependancies
+* VueJS
+* Vue FontAwesome
+* Axios
+* Bootstrap Vue
+* highlight.js
+* jwt-decode
+* Video.js
+* VueJS
+* vue-color
+* vue-github-api
+* vue-notification
+* vue-paginate
+* vue-router
+* vue-video-player
+* vuex
+* vue-password-strength-meter
+* wavesurfer.js
 
