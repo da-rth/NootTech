@@ -2,7 +2,6 @@
 # Edit at https://www.gitignore.io/?templates=git,vuejs,django,python,pycharm,intellij,visualstudiocode,node
 
 venv
-media/*
 .idea
 *.hot-update.js
 *.hot-update.json
@@ -17,7 +16,8 @@ __pycache__/
 
 local_settings.py
 db.sqlite3
-media/
+media/Uploads/*
+media/Thumbnails/*
 
 **/migrations/**
 !**/migrations
