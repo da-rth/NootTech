@@ -56,13 +56,50 @@
         </b-form-group>
 
         <b-form-group
-          class="col-lg-12"
-          label="Click the button below to delete your account.">
-        <b-button>Delete Account</b-button>
-        
+          class="col-lg-12 form-inline">
+          <b-button variant="warning" v-b-modal.showPasswordModal>Change password</b-button>
+          <b-button variant="danger">Delete account</b-button>
         </b-form-group>
-
       </b-form>
+    </b-modal>
+    <b-modal id="showPasswordModal"
+      ref="changePasswordModal"
+      title="Change password"
+      header-bg-variant='dark'
+      body-bg-variant='dark'
+      footer-bg-variant='dark'
+      header-border-variant="dark"
+      footer-border-variant="dark"
+      ok-variant="danger"
+      @ok="changePassword"
+      @cancel="password.newPassword = password.oldPassword = ''"
+      >
+      <b-form-group
+        label="Please provide your current password"
+        label-for="oldPasswordField"
+      >
+      <b-input
+        id="oldPasswordField"
+        type="password"
+        v-model="password.oldPassword"
+        autocomplete="off"
+        required
+        >
+      </b-input>
+      </b-form-group>
+      <b-form-group
+        label="Please provide a new password"
+        label-for="newPasswordField"
+      >
+      <b-input
+        id="newPasswordField"
+        type="password"
+        v-model="password.newPassword"
+        required
+        autocomplete="new-password"
+        :state="password.newPassword != password.oldPassword">
+      </b-input>
+      </b-form-group>
     </b-modal>
   </div>
 </template>
@@ -75,6 +112,19 @@ import {SETTINGS} from '../../store/mutation-types.js'
 export default {
     name: 'NtSettingsModal',
     components: { Slider },
+    data() {
+      return {
+        settings: {
+          email: "",
+          colour: ""
+        },
+        password: {
+          oldPassword: "",
+          newPassword: "",
+        },
+        colour: this.$root.colour
+      };
+    },
     watch: {
       colour(newValue) {
           if(newValue != null && typeof(newValue) !== "string") {
@@ -87,6 +137,29 @@ export default {
       show() {
         this.$refs.modal.show()
       },
+      async changePassword(evt) {
+        evt.preventDefault();
+        try {
+          await this.$api.ChangePassword(this.password.oldPassword, this.password.newPassword);
+          this.$notify({
+            group: 'Global',
+            title: `Password changed successfully`,
+          });
+          this.$refs.changePasswordModal.hide();
+        } catch(e) {
+          console.log("CHANGE PASSWORD ERROR", e);
+            this.$notify({
+            group: 'Global',
+            type: "error",
+            duration: -1,
+            title: `Couldn't change the password`,
+            text: typeof(e.response.data.detail) === "string" ?
+                         e.response.data.detail : e.response.data.detail.join("<br>"),
+          });
+        }
+        finally {
+          this.password.oldPassword = this.password.newPassword = ""
+        } },
       copyUploadKey() {
         let testingCodeToCopy = document.querySelector("#uploadkeySettingsField")
         testingCodeToCopy.removeAttribute("disabled")
@@ -136,16 +209,7 @@ export default {
         this.settings.colour = this.colour = this.$root.colour = this.$store.state.colour;
       }
     },
-    data() {
-      return {
-        settings: {
-          email: "",
-          colour: ""
-        },
-        colour: this.$root.colour
-      };
-    },
-    mounted() {
+   mounted() {
       EventBus.$on('settingsModal', () => {
         if(this.$refs.modal)
           this.show()
