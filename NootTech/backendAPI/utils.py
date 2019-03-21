@@ -168,7 +168,11 @@ def get_chars_lines(filename):
 
 
 def upload_authentication_failure(request, User):
-
+    """
+    Checks if the request for a file upload has all required fields (username, upload_key, etc...)
+    :param request: - the request to be checked.
+    :param User: - the User model
+    """
     help_url = f"https://{settings.DOMAIN_NAME}/how-to"
     response_err_msg = ""
 
@@ -193,7 +197,9 @@ def upload_authentication_failure(request, User):
 
 
 def get_ip(request):
-
+    """
+    Gets the IP address of a request.
+    """
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
 
     if x_forwarded_for:

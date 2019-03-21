@@ -21,7 +21,9 @@ leet_speak = (('a', '4'), ('e', '3'), ('i', '1'), ('o', '0'), ('t', '7'), ('g', 
 
 
 class NumberValidator(object):
-
+    '''
+    Checks if a password contains a numerical value
+    '''
     def validate(self, password, user=None):
         if not re.findall('\d', password):
             raise ValidationError(
@@ -33,7 +35,9 @@ class NumberValidator(object):
 
 
 class UppercaseValidator(object):
-
+    '''
+    Checks if a password contains an uppercase letter
+    '''
     def validate(self, password, user=None):
         if not re.findall('[A-Z]', password):
             raise ValidationError(
@@ -45,7 +49,9 @@ class UppercaseValidator(object):
 
 
 class LowercaseValidator(object):
-
+    '''
+    Checks if a password contains a lowercase letter
+    '''
     def validate(self, password, user=None):
         if not re.findall('[a-z]', password):
             raise ValidationError(
@@ -57,7 +63,9 @@ class LowercaseValidator(object):
 
 
 def validate_email(email):
-
+    '''
+    Checks if an email is disposable or incorrectly formatted.
+    '''
     if '@' in email and '.' in email:
 
         if not m.is_valid(email):
@@ -71,8 +79,9 @@ def validate_email(email):
 
 
 def validate_username(username):
-
-
+    '''
+    Checks if a username is reserved, too short, contains cursewords etc...
+    '''
     usernameset = Q(username__icontains=username) | Q(email__icontains=username)
     usernameres = User.objects.filter(usernameset)
     if usernameres:
@@ -98,6 +107,9 @@ def validate_username(username):
 
 
 def validate_colour(colour):
+    '''
+    Checks if the provided colour is in HEX format.
+    '''
     if len(colour) != 7 or not all(c in string.hexdigits for c in colour[1:]):
         raise ValidationError(_(mark_safe("Your chosen colour must in a <strong>6 digit hex-code</strong> format "
                                           "(e.g. #FFFFFF).")))
