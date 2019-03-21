@@ -61,6 +61,7 @@ $ (venv) vim config.json # or any editor you like
 $ (venv) cd ../../
 $ (venv) python manage.py makemigrations 
 $ (venv) python manage.py migrate
+# (venv) python populate.py # populate the database with error videos and mock-users
 $ (venv) python manage.py createsuperuser
 $ (venv) python manage.py collectstatic
 $ (venv) python manage.py runserver
