@@ -1,11 +1,12 @@
-import sys
-sys.path.append(".")
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.conf.urls.static import static
 from django.conf import settings
-from backendAPI.views import IndexView
+import sys
 
+sys.path.append(".")
+
+from backendAPI.views import IndexView
 
 
 urlpatterns = [
