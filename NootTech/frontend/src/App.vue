@@ -1,7 +1,7 @@
 <template>
   <div id="NTapp">
     <notifications group="Global" />
-    
+    <nt-modal/>
     <nt-navbar></nt-navbar>
     <router-view/>
     <nt-footer></nt-footer>
@@ -11,6 +11,7 @@
 <script>
   import NtNavbar from './components/Navigation/Navbar.vue';
   import NtFooter from './components/Navigation/Footer.vue';
+  import NtModal from './components/Modals/Modal.vue';
   import decode from 'jwt-decode';
 
   export default {
@@ -30,7 +31,7 @@
       },
     },
     components: {
-      NtNavbar, NtFooter
+      NtNavbar, NtFooter, NtModal
     },
 
     methods: {

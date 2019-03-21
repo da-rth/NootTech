@@ -1,6 +1,5 @@
 <template>
   <div>
-    <nt-modal/>
     <notifications group="FileLoading"/>
     <LoadingFiles :multiple="true" v-if="isLoading"></LoadingFiles>
     <template v-else>
@@ -13,7 +12,6 @@
   import LoadingFiles from '../FilePanel/LoadingFiles';
   import FilePanel from '../FilePanel/Panel';
   import EventBus from '../../event-bus.js';
-  import NtModal from '../Modals/Modal';
 
   export default {
     name: "AuthenticatedPane",
@@ -27,7 +25,6 @@
     components: {
       FilePanel,
       LoadingFiles,
-      NtModal
     },
     methods: {
       async loadFavourites() {

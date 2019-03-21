@@ -56,7 +56,8 @@ export default {
 
     methods: {
       show() {
-        this.$refs.modal.show()
+        if(this.$refs.modal)
+          this.$refs.modal.show()
       },
 
 
