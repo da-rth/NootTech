@@ -266,7 +266,8 @@
             console.log('ERROR', e);
           });
         }
-        await this.$root.loadFiles()
+        await this.$parent.loadFiles()
+        
         this.$notify({
           group: 'Global',
           title: `Removed <strong>${deleteCount}</strong> files...`,
