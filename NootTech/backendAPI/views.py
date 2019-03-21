@@ -36,27 +36,27 @@ class IndexView(View):
         context["subdomain"] = False
 
         subdomain = request.META['HTTP_HOST'].replace((settings.DOMAIN_NAME), "")[:-1]
-        
         sharelink = '/u/' in request.build_absolute_uri()
-
         url = request.build_absolute_uri()
-
-        context["sharelink"] = sharelink
-        context["url"] = ('https://' if settings.HTTPS else 'http://') + settings.DOMAIN_NAME+settings.MEDIA_URL
-
-        if subdomain:
-            username = url.split("//")[0].split(".")[0]
-            genid = url.split("/")[-1]
-            u = User.objects.get(username=username)
-            f = File.objects.get(generated_filename=genid, user=u)
-            context["file"] = f
         
-        elif sharelink:
-            username = url.split("/u/")[1].split("/")[0]
-            genid = url.split("/")[-1]
-            u = User.objects.get(username=username)
-            f = File.objects.get(generated_filename=genid, user=u)
-            context["file"] = f
+        context["url"] = ('https://' if settings.HTTPS else 'http://') + settings.DOMAIN_NAME+settings.MEDIA_URL
+        
+        try:
+            if subdomain:
+                username = url.split("//")[0].split(".")[0]
+                genid = url.split("/")[-1]
+                u = User.objects.get(username=username)
+                f = File.objects.get(generated_filename=genid, user=u)
+                context["file"] = f
+            
+            elif sharelink:
+                username = url.split("/u/")[1].split("/")[0]
+                genid = url.split("/")[-1]
+                u = User.objects.get(username=username)
+                f = File.objects.get(generated_filename=genid, user=u)
+                context["file"] = f
+        except (User.DoesNotExist, File.DoesNotExist) as e:
+            pass
         
         return render(request, 'index.html', context=context)
 

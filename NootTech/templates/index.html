@@ -5,39 +5,41 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta name="twitter:title" content="NootTech" />
-        <meta name="theme-color" content="{{ file.user.colour }}">
+        <meta content="Noot.Tech" property="og:site_name">
+        <meta name="twitter:site" content="@NootTech">
+        
         {% if file %}
-        <meta name="twitter:site" content="@harry" />
-        <meta content="File uploaded by: {{ file.user.username }}" property="og:description">
-        <meta content="NootTech" property="og:site_name">
-        {% if file.file_image %}
-            <meta name="twitter:card" content="image" />
-            <meta content='{{ url }}{{ file.file_content }}' property='og:image'>
-        {% elif file.file_video %}
-            <meta name="twitter:card" content="player" />
-            <meta name="twitter:image" content="{{ url }}{{ file.file_thumbnail }}" />
-            <meta name="twitter:player" content="{{ url }}{{ file.file_content }}" />
-            <meta name="twitter:player:width" content="320" />
-            <meta name="twitter:player:height" content="180" />
-            <meta name="twitter:player:stream" content="{{ url }}{{ file.file_content }}" />
-            <meta name="twitter:player:stream:content_type" content="video/mp4" />
-        {% endif %}
+        
+        <title>NootTech - {{ file.original_filename }}</title>
+        <meta name="twitter:title" content="{{ file.original_filename }}" />
+        <meta name="twitter:description" content="File uploaded by: {{ file.user.username }}">
+        <meta name="theme-color" content="{{ file.user.colour }}">
+
+            {% if file.file_image %}
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:image" content="{{ url }}{{ file.file_content }}" />
+            {% elif file.file_video %}
+                <meta name="twitter:card" content="player" />
+                <meta name="twitter:image" content="{{ url }}{{ file.file_thumbnail }}" />
+                <meta name="twitter:player" content="{{ url }}{{ file.file_content }}" />
+                <meta name="twitter:player:stream" content="{{ url }}{{ file.file_content }}" />
+                <meta name="twitter:player:stream:content_type" content="video/mp4" />
+            {% endif %}
+        
         {% else %}
-        <meta content="A unique file storage website with the user in mind." property="og:description">
-        {% endif %}
 
         <title>NootTech</title>
-    </head>
-    <body>
-    
-    <div id="app"></div>
+        <meta name="twitter:title" content="A place where uploading is made easy." />
+        <meta name="twitter:description" content="NootTech is a unique file storage service with the user in mind." property="og:description">
+        <meta name="theme-color" content="#00CCCC">
+        
+        {% endif %}
 
-    {% if debug %}
-        {% render_bundle 'main' %}
-    {% else %}
+    </head>
+    
+    <body>
+        <div id="app"></div>
         <script src="{% static 'build.js' %}"></script>
-    {% endif %}
     </body>
 </html>
 
