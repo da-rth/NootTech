@@ -5,7 +5,7 @@ import BootstrapVue from 'bootstrap-vue'
 import router from './router'
 import store from './store'
 import * as backendAPI from './api.js'
-import config from '../src/config.json';
+import config from './config.json';
 import VuePaginate from 'vue-paginate'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'
