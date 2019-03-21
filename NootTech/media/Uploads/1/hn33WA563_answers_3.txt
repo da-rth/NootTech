@@ -1,0 +1,188 @@
+--------------------------------------------------------------------------------
+    LAB 06                                                      GDB & DEBUGGING
+--------------------------------------------------------------------------------
+
+    Answer all questions for Lab06 in this file. Questions or tasks which 
+    require you to edit another file have the name of the file already 
+    entered for you.
+
+--------------------------------------------------------------------------------
+    QUESTIONS
+--------------------------------------------------------------------------------
+
+------------------
+    QUESTION 1 
+------------------
+
+A)									[1]  
+
+On line 9, the field DEBUGCFLAGS has not been set to hold any actual compilation flags.
+Thus, when `make debug` is ran, the empty variable DEBUGFLAGS is appended to CFLAGS, which
+does NOT enable debugging, as a debug flag hasn't been specified. 
+
+Changing DEBUGFLAGS= to DEBUGFLAGS=-g will add the -g parameter to the debug build, 
+enabling debugging. Running `make debug` after doing the above gives the following output:
+
+$ make debug
+gcc -g -c main.c
+gcc -g -c util.c
+gcc  -o myprog main.o util.o 
+
+Thus, main.c and util.c are compiled with debugging enabled - meaning they can also be used by GDB.
+
+
+
+B)  									[2]
+
+Running the program from the command-line results in the following:
+
+$ ./myprog         
+[1]    8161 segmentation fault (core dumped)  ./myprog
+
+We can run the debugger and load a program (such as myprog) through
+entering the following command from the same directory as the program:
+
+$ gdb myprog
+
+C) 									[2]
+
+You can set a breakpoint at line 1 of the executable code by entering the command
+
+(gdb) break 1
+Breakpoint 1 at 0x1181: file main.c, line 6.
+
+Which sets a breakpoint at line 6 of main.c, which is where the main method
+is first defined.
+
+You can then run the code by entering command:
+
+(gdb) run
+
+D) 									[2]
+
+After executing `run`, line 6 is now highlighted:
+
+6	int main(void) {
+
+Thus, execution has been halted at line 6, the first line of the breakpoint.
+
+E) 									[1]
+
+You can advance to the next line to be executed by the code by entering:
+
+(gdb) step
+
+Which executes the code line by line, entering into functions we use.
+    
+F) 									[2]
+
+The error message that occurs is:
+
+Program received signal SIGSEGV, Segmentation fault.
+0x0000555555555246 in generateRandomData (data=0x7fffffffdee0, len=10) at util.c:10
+
+Which tells us that a segmentation fault occurred at line 10 of util.c
+
+G) 									[2]
+
+You can print the contents of the dataptr variable by entering the command:
+
+(gdb) print dataptr
+$1 = (int *) 0x0
+
+This shows the contents of dataptr is an integer with value 0x0 (null).
+    
+H)  									[3]
+
+To print the memory location (address) of dataptr, you can enter:
+
+(gdb) print &dataptr
+$2 = (int **) 0x7fffffffdeb8
+
+This prints the memory address of the contents of dataptr.
+The error hints that there is an issue with the generation of random data, as
+the line `*dataptr = rand() % 100;` appears to be the line causing the seg fault. 
+This error may be caused due to dataptr being set to null on line 6 of util.c
+
+I)  									[1]
+
+After recompiling the program and executing it via gdb, the program now gives
+the output:
+...
+-2096032: 0
+-2096033: 0
+-2096034: 0
+-2096035: 0
+-2096036: 0
+-2096037: 0
+-2096038: 0
+...
+
+Until another segmentation fault occurs at line 14 of main.c:
+
+Program received signal SIGSEGV, Segmentation fault.
+0x00005555555551af in main () at main.c:14
+
+This may be the result of an infinite loop which causes a seg fault when 
+the value exceeds the minimum integer value.
+
+J) 									[2]
+
+As the debugger specifies that the error occurred on line 14 of main.c, 
+it would make the most sense to set a breakpoint where the for loop begins,
+on line 12. Thus, i would set the debugger breakpoint through using the command
+
+(gdb) breakpoint 12
+
+K) 									[2]
+
+The contents of the `data` array can be printed by doing:
+(gdb) run
+(gdb) step   
+(gdb) print data
+$1 = {73, 41, 87, 26, 13, 7, 91, 37, 78, 65}
+
+The contents of the data array are 10 random numbers in the range of 0, 100 (positive)
+
+L)									[1]
+
+A watch point can be set for variable i by entering:
+
+(gdb) watch i
+
+M) 									[2]
+
+When continuing to execute the code, the watch point notifies us that the
+value for i has changed:
+
+Old value = 0
+New value = -1
+
+Thus, we can see that i is being decremented on each iteration of the for loop.
+
+N) 									[2]
+
+The problem lying in main.c (at line 13) appears to be that the variable
+i is being decremented on each loop iteration when it should infact be incremeneted.
+As the loop condition will only break when i > SIZE_OF_DATA (10), if it is being
+decremented then an infinite loop will occur and the code will never break out of
+the for loop.
+
+13              for(i=0; i<SIZE_OF_DATA; i--){ 
+					 ^^^
+
+O) 									[2]
+
+This bug can be resolved by changing i-- in line 13 to i++, ensuring that i
+is incremented from 0 and not decremented.
+
+After changing the for loop on line 13, recompilling and running the program,
+it executes without any errors. 
+
+It would appear that by changing the decrement to an increment in the for loop
+of main.c's line 13, we have prevented an infinite loop from occurring and the code
+now safely breaks after 10 iterations.
+
+--------------------------------------------------------------------------------
+    FINISHED LAB 06                                             MARKS: XX/28
+--------------------------------------------------------------------------------
