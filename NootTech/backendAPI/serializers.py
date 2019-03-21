@@ -49,22 +49,24 @@ class CreateUserSerializer(serializers.ModelSerializer):
         user.save()
         return validated_data
 
-
-"""
-Sub-File Serializers (Image, Video, Audio, Text)
-"""
 class VirusSerializer(serializers.ModelSerializer):
     class Meta:
         model = VirusTotalScan
         fields = '__all__'
 
 class DeleteAccountSerializer(serializers.ModelSerializer):
+    """
+    Serializer for allowing user to delete an account, provided confirmation_password
+    """
     confirmation_password = serializers.CharField(style = {'input_type': 'password'}, write_only=True)
     class Meta:
         model = User
         fields = ('confirmation_password',)
 
 class ChangePasswordSerializer(serializers.ModelSerializer):
+    """
+    Serializer for allowing user to change their password. Input types are set to password.
+    """
     old_password = serializers.CharField(style = {'input_type': 'password'}, write_only=True)
     new_password = serializers.CharField(style = {'input_type': 'password'}, write_only=True)
     class Meta:
@@ -72,7 +74,9 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         fields = ('old_password', 'new_password')
 
 class AddFavSerializer(serializers.ModelSerializer):
-
+    """
+    A serialiser for adding favourited files.
+    """
     class Meta:
         model = FavouritedFile
         fields = '__all__'
@@ -142,7 +146,9 @@ class ListFilesSerializer(serializers.ModelSerializer):
         return OrderedDict([(key, result[key]) for key in result if result[key] is not None])
 
 class UpdateFileSerializer(serializers.ModelSerializer):
-
+    """
+    Used when updating information of a file, or deleting a file.
+    """
     gen_new_id = serializers.BooleanField(default=False)
     toggle_private = serializers.BooleanField(default=False)
     delete = serializers.BooleanField(default=False)
@@ -152,6 +158,9 @@ class UpdateFileSerializer(serializers.ModelSerializer):
         fields = ('gen_new_id', 'toggle_private', 'delete', 'original_filename')
     
 class PublicFileSerializer(serializers.ModelSerializer):
+    """
+    Used by sharelink page for obtaining public info about a file.
+    """
     file_image_info = ImageFileSerializer(source='file_image')
     file_video_info = VideoFileSerializer(source='file_video')
     file_audio_info = AudioFileSerializer(source='file_audio')
