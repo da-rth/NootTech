@@ -31,11 +31,11 @@
         </div>
         
         <div class="col">
-          <b-button class="file-panel-btn" variant="danger" v-if="selectFiles" v-on:click="deleteSelectedFiles()" :disabled="selectedFiles.length < 1">Delete</b-button>
+          <b-button class="file-panel-btn delete-btn" v-if="selectFiles" v-on:click="deleteSelectedFiles()" :disabled="selectedFiles.length < 1">Delete</b-button>
         </div>
 
         <div class="col">
-          <b-button class="file-panel-btn" variant="primary" v-if="selectFiles" v-on:click="privateSelectedFiles()" :disabled="selectedFiles.length < 1">Toggle Privacy</b-button>
+          <b-button class="file-panel-btn toggle-privacy-btn" variant="primary" v-if="selectFiles" v-on:click="privateSelectedFiles()" :disabled="selectedFiles.length < 1">Toggle Privacy</b-button>
         </div>
 
         <div class="col">
@@ -46,11 +46,11 @@
           </b-dropdown>
         </div>
 
-        <div class="col">
+        <div class="col col-lg-2">
           <input v-model="searchTerm" class="form-control file-panel-btn file-search" type="search" :icon="['fas', 'search']" placeholder="Search..." aria-label="Search">
         </div>
 
-        <div class="col">
+        <div class="col col-lg-2">
           <select @change="changedSelectionValue" class="custom-select file-panel-btn file-sort">
             <option class="opt" value="-date">Sorty by...</option>
 
@@ -374,7 +374,7 @@
     overflow: hidden !important;
   }
   * {
-    color: #b8b8b8;
+    color: #999999;
   }
   .filebar-btn-group {
     width: 100%;
@@ -382,11 +382,16 @@
   .file-panel-btn {
     width: 100%;
     background-color: transparent !important;
+    border-color: #373737 !important;
     margin: 5px 0px;
     font-size: 14px;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+  }
+
+  .file-panel-btn:hover {
+    background-color: rgba(0,0,0,0.2) !important;
   }
 
   .file-selection-btn {
@@ -414,6 +419,7 @@
     margin: 20px -14px;
     border: 1px solid #121212;
     background-color: #1e1e1e !important;
+    overflow-x: hidden !important;
   }
   .row {
       display: -ms-flexbox;
@@ -460,17 +466,27 @@
 
   .file-search, .file-sort {
     background-color: rgba(0,0,0,0.2);
-    border: 1px solid #555b60 !important;
+    border: 1px solid #373737 !important;
+  }
+
+  .file-search::placeholder, .file-sort {
+    color: #fff !important;
   }
 
   .filebar-btn-group .filebar-btn {
     background-color: transparent;
-    border: 1px solid #555b60;
+    border: 1px solid #373737;
     border-radius: 5px;
-    margin: 5px 0px;
-    padding: 10px;
-    height: 40px;
+    padding: 0px 10px;
+    height: 36px;
+    margin: 5px 0px !important;
   }
+
+  .filebar-btn-group .filebar-btn:hover {
+    background-color: rgba(0,0,0,0.2);
+    border: 1px solid #373737;
+  }
+
 
   .filebar-btn-group .filebar-btn:focus {
     border: none;
@@ -483,5 +499,13 @@
 
   .opt {
     color: black;
+  }
+
+  .delete-btn {
+    border-color: #ff1028 !important;
+  }
+
+  .toggle-privacy-btn {
+    border-color: #3abcff !important;
   }
 </style>

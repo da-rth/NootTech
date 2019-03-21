@@ -34,30 +34,25 @@
           <h1>Have questions? Contact us!</h1>
           <br/>
           <div class="row">
-            <b-col-md-1></b-col-md-1>
 
-             <b-col-md-3>
             <a href="https://discord.gg/xKquqD9" class="large-icon">
                 <font-awesome-icon :icon="['fab', 'discord']"/>
             </a>
-             </b-col-md-3>
 
-             <b-col-md-3>
             <a href="mailto:contact@noot.tech" class="large-icon">
                <font-awesome-icon :icon="['fas', 'envelope']"/>
             </a>
-             </b-col-md-3>
 
-            <b-col-md-3>
             <a href="https://github.com/denBot/WAD2-Group-Project" class="large-icon">
               <font-awesome-icon :icon="['fab', 'github']"/>
             </a>
-            </b-col-md-3>
-            <b-col-md-1></b-col-md-1>
+
           </div>
         </b-jumbotron>
       </div>
+      <br/><br/>
     </div>
+    
    <!--</nt-main-pane> -->
 </template>
 
