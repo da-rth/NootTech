@@ -39,10 +39,6 @@
                     <td>{{ file.file_image_info.mode }}</td>
                 </tr>
                 <br/>
-                <tr v-if="file.file_image_info.info">
-                    <td><strong>Additional Information:</strong></td>
-                    <td v-html="file.file_image_info.info"></td>
-                </tr>
             </template>
 
             <template v-if="file.file_video_info">
@@ -126,15 +122,22 @@ export default {
 
 #FileInformation {
     margin: 0 auto;
-    width: 500px;
     background-color: rgba(0,0,0,0.2);
     padding: 20px;
-    border: 5px;
     color: #ffffff;
-    margin-bottom: 80px;
     border: 1px solid #121212;
 }
+#FileInformation table {
+    width: 40%;
+    margin: 0 auto;
 
+}
+#FileInformation td {
+  white-space: nowrap; 
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
 .info-table {
     width: 100%;
 }

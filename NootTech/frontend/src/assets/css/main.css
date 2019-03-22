@@ -51,3 +51,26 @@ footer a {
   background-color: #3c3c3c;
   border-radius: 3px;
 }
+
+.modal-header.bg-dark,
+.modal-footer.bg-dark,
+.modal-body.bg-dark
+ {
+  background-color: #242424 !important;
+}
+.modal-footer.bg-dark,
+.modal-header.bg-dark {
+  border-radius: 0px;
+  border: none;
+}
+
+.modal-body.bg-dark {
+  overflow-x: hidden;
+}
+.fo-container .nt-hljs {
+  max-height: 400px;
+}
+
+.copy-open-btn {
+  height: 38px;
+}

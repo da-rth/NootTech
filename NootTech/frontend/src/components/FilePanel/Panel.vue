@@ -508,4 +508,17 @@
   .toggle-privacy-btn {
     border-color: #3abcff !important;
   }
+  .file-pagination {
+    cursor: pointer;
+  }
+
+  .file-pagination .page-link {
+    background-color: #282828 !important;
+    color: #dadada !important;
+    border-color: #575757 !important;
+  }
+
+  .file-pagination .page-item.active .page-link {
+    background-color: #ffffff3d !important;
+  }
 </style>

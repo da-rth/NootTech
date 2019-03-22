@@ -9,8 +9,8 @@
       As a NootTech user, you have are given the ability to upload your files off-site, through software such as cURL and ShareX. This allows for many possibilities, such as allowing advanced users to write their own upload scripts.
       <br/><br/>
       However, we strive to create a user-friendly, minimalistic and uncluttered website – ensuring the user is never overwhelmed with uncessary information. All communication to/from our website is encrypted using HTTPS, ensuring that all information is safely transferred between destinastions. 
-
-
+      <br/><br/><br/><br/>
+      <h3 class="contributor-header">Have questions? Contact us at: <a href="mailto:contact@noot.tech">contact@noot.tech</a></h3>
     <br/><br/>
     <h1 class="contributor-header">Contributors</h1>
 
@@ -232,10 +232,11 @@
 </script>
 
 <style scoped>
+a {
+  color: 
+}
 .info-deps {
-  background-color: #121212;
   padding: 20px;
-  border: 1px solid black;
 }
 .about-container {
   background-color: rgba(0,0,0,0.2);

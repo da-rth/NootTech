@@ -1,6 +1,6 @@
 <template>
   <div id="NTapp">
-    <notifications group="Global" />
+    <notifications position="top center" class="nt-notif" group="Global" />
     <nt-modal/>
     <nt-navbar></nt-navbar>
     <router-view/>
@@ -77,4 +77,17 @@
 </script>
 
 <style>
+
+.vue-notification {
+  margin: -3px 5px 5px;
+  font-size: 14px;
+  color: #dadada;
+  background: #242424 !important;
+  border: 1px solid rgba(255,255,255,0.3) !important;
+}
+
+.nt-notif.success {
+    background: transparent;
+    border-left-color: transparent;
+}
 </style>

@@ -138,7 +138,6 @@ export default {
     },
 
     async register(evt) {
-
       if (this.register_credentials.password != this.register_credentials.confirm_password) {
         this.formatted_error = "<strong>Whoops!</strong> Something went wrong...<br/> - Your passwords don't match!";
         return
