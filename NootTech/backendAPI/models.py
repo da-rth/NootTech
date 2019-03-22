@@ -497,7 +497,7 @@ def create_user_acc(sender, instance, created, **kwargs):
     if created:
         title = 'Woohoo! Your super cool NootTech account has been created!'
 
-        msg_html = render_to_string('email/new_report.html', {
+        msg_html = render_to_string('email/new_user.html', {
             'username': instance.username,
             'upload_key': instance.upload_key,
         })
