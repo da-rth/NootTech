@@ -129,7 +129,7 @@ export default {
           text: this.formatted_error,
           position: 'top right',
           type: "error",
-          duration: 15,
+          duration: 5000,
         });
     },
     async login(evt) {
