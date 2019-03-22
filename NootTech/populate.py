@@ -27,10 +27,15 @@ def populate():
 
     ]
 
-    
+
     # Create 4 mock users with different information
-    
+
     users = [
+        {"username": 'anonymous',
+         "email":    'admin@noot.tech',
+         "colour":   '#00CCCC',
+         "password": 'gC)uvR&7?<'},
+
         {"username": 'carrotman',
          "email": 'randomuser1@noot.tech',
          "colour": '#91829A',
@@ -38,12 +43,12 @@ def populate():
 
         {"username": 'pizzaman',
          "email": 'randomuser2@noot.tech',
-         "colour": '#FF00F',
+         "colour": '#FF00FF',
          "password": 'Random1'},
 
         {"username": 'bigmacman',
          "email": 'randomuser3@noot.tech',
-         "colour": '#FFF123',
+         "colour": '#FFF1230',
          "password": 'Random1'},
 
         {"username": 'hotdogman',
@@ -67,13 +72,13 @@ def populate():
         u.save()
         print('- New user created/updated:', user['username'])
         return u
-    
+
     # Upload a file to user's account given the user object and the file path
 
     def upload_file(user, filepath, private=False):
         try:
             myfile = open(filepath, 'rb')
-            
+
             f = ContentFile(myfile.read())
             f.name = filepath.split("/")[1]
             f.size = os.path.getsize(filepath)
@@ -83,14 +88,14 @@ def populate():
             supported_thumbnail = ext.lower() in ["gif", "png", "jpg", "webm", "mp4", "jpeg"]
 
             f = File.objects.get_or_create(
-                user=user, 
+                user=user,
                 ip='127.0.0.1',
                 file_content=f,
                 file_thumbnail=f if supported_thumbnail else None,
                 generated_filename=get_id_gen(),
                 is_private=private
             )[0]
-            
+
             f.save()
             if private:
                 print('\t* New PRIVATE file uploaded by '+user.username+':', f.original_filename)
@@ -98,13 +103,13 @@ def populate():
                 print('\t* New file uploaded by '+user.username+':', f.original_filename)
         except Exception:
             print("\t* Could not upload file: "+filepath)
-    
+
     for vid in error_videos:
         try:
             add_video(vid)
         except django.db.utils.IntegrityError:
             print("- Error video "+vid["title"]+" already exists.")
-    
+
     for user in users:
         try:
             new_user = add_user(user)
@@ -117,9 +122,9 @@ def populate():
                         upload_file(new_user, entry.path, private=True)
                     else:
                         upload_file(new_user, entry.path)
-        
+
         except django.db.utils.IntegrityError:
             print("- User "+user["username"]+" already exists.")
-        
+
 
 populate()
