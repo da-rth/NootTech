@@ -18,12 +18,11 @@ import Notifications from 'vue-notification'
 import VueHighlightJS from 'vue-highlight.js'
 
 // CSS Imports
-import './assets/css/main.css'
 import 'video.js/dist/video-js.css'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import 'highlight.js/styles/monokai-sublime.css';
-
+import './assets/css/main.css'
 
 // HighlightJS Imports
 import python from 'highlight.js/lib/languages/python'
