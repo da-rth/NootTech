@@ -267,6 +267,11 @@ export default {
    }
 }
 </script>
-
+<style>
+.vc-slider-swatch:last-child {
+  opacity: 0;
+  display: none !important;
+}
+</style>
 <style scoped>
 </style>

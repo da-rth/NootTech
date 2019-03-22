@@ -169,23 +169,32 @@ export default {
 }
 </script>
 
+<style>
+.vc-slider-swatch:last-child {
+  opacity: 0;
+  display: none !important;
+}
 
+.nav-link.active {
+  background-color: #403f3f !important;
+}
+
+.nav-link {
+  color: #dadada !important;
+}
+</style>
 <style scoped>
 
 .container-login {
-  width: 320px;
   margin: 17vh auto;
-  padding: 4px;
+  max-width: 360px;
+  padding: 1px;
   background-color: rgba(0,0,0,0.2);
   border: 1px solid rgba(0,0,0,0.4);
   border-radius: 5px;
   -webkit-box-shadow: 0px 0px 36px 3px rgba(0,0,0,0.7);
   -moz-box-shadow: 0px 0px 36px 3px rgba(0,0,0,0.7);
   box-shadow: 0px 0px 36px 3px rgba(0,0,0,0.7);
-}
-
-.registration-page {
-  width: 464px;
 }
 
 .card {
@@ -199,7 +208,7 @@ export default {
   top: 10vh;
   padding-bottom: 0;
   margin: 0 auto;
-  width: 464px;
+  max-width: 340px;
   background: #191919;
   color: #ffffffbb;
   border: 1px solid rgba(255,0,0,0.6);
@@ -213,7 +222,10 @@ export default {
   opacity: 0.9;
   background: transparent;
 }
-
+.vc-slider-swatch:last-child {
+  opacity: 0;
+  display: none !important;
+}
 .nav-tabs .nav-link.active:hover,
 .nav-tabs .nav-item.show .nav-link:hover {
   opacity: 1;
@@ -236,13 +248,16 @@ export default {
     margin-top: -20px;
   }
 
-  .tab-content:focus {
-    border: none !important;
-    box-shadow: none !important;
+  .tab-content:focus, .tab-pane:focus {
+    outline: none !important;
   }
 .nav-pills .nav-link.active,
 .nav-pills .show > .nav-link a {
     color: #fff !important;
     background-color: #3d3d !important;
+}
+
+.vc-slider {
+  width: auto !important;
 }
 </style>
