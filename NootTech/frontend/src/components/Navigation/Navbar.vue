@@ -30,7 +30,7 @@
 
       <b-collapse is-nav id="nav_collapse">
 
-        <b-navbar-nav v-if="$store.state.user != null">
+        <b-navbar-nav v-if="$store.state.settings">
           
           <b-nav-item>
             <b-button class="navbar-btn" @click="raiseEvent('favouriteModal')">
