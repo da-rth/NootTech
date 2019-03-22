@@ -1,7 +1,7 @@
 <template>
     <b-modal
       ref="modal"
-      title="Upload"
+      title="File Upload"
       header-bg-variant='dark'
       body-bg-variant='dark'
       footer-bg-variant='dark'
@@ -9,14 +9,15 @@
       footer-border-variant="dark"
       :ok-disabled='upload_data.files.length == 0'
       ok-title="Upload file(s)"
+      scrollable
       @ok="uploadFiles"
       @hidden="clearFiles"
       >
-      <h1>File upload</h1>
-      You can select one or more files.
-
+      <h4>You can select one or more files.</h4>
       <b-form class="upload-form">
+         
         <b-form-group>
+          
           <b-form-file
             v-model="upload_data.files"
             class="file-selection-area"
@@ -26,21 +27,22 @@
             browse-text="Select file(s)"
             multiple
           />
-          <div class="mt-3" v-if="upload_data.files.length > 0">
-            <b-button @click="clearFiles" class="mr-2">Clear selected files</b-button>
+          <b-button class="upload-modal-btn" @click="upload_data.is_private = !upload_data.is_private">
+          <font-awesome-icon icon="lock" v-if="upload_data.is_private"/>
+          <font-awesome-icon icon="lock-open" v-else/>
+          {{ upload_data.is_private ? "Send as private" : "Send as public"}}
+          </b-button>
+          <div v-if="upload_data.files.length > 0">
+            <b-button @click="clearFiles" class="upload-modal-btn">Clear selected files</b-button>
             <br/>
+            <div class="selected-files">
             You have selected:
             <ul>
               <li :key="file.id" v-for="file in upload_data.files">{{ file.name }}</li>
             </ul>
+            </div>
           </div>
         </b-form-group>
-
-        <b-button class="set-private-btn" @click="upload_data.is_private = !upload_data.is_private">
-          <font-awesome-icon icon="lock" v-if="upload_data.is_private"/>
-          <font-awesome-icon icon="lock-open" v-else/>
-          {{ upload_data.is_private ? "Send as private" : "Send as public"}}
-        </b-button>
       </b-form>
     </b-modal>
 </template>
@@ -124,5 +126,16 @@ export default {
     overflow-y: hidden;
     height: 35px;
     border-radius: 5px;
+}
+
+.upload-modal-btn {
+  width: 100%;
+  background-color: #202020 !important;
+  margin: 5px 0px;
+}
+
+.selected-files {
+  background-color: rgba(0,0,0,0.2);
+  padding: 10px;
 }
 </style>

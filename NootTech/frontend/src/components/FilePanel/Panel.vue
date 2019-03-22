@@ -52,7 +52,7 @@
 
         <div class="col col-lg-2">
           <select @change="changedSelectionValue" class="custom-select file-panel-btn file-sort">
-            <option class="opt" value="-date">Sorty by...</option>
+            <option class="opt" value="-date">Sort by...</option>
 
             <option class="opt" value="-date">Upload date (Latest)</option>
             <option class="opt" value="date">Upload date (Oldest)</option>
@@ -379,6 +379,9 @@
   .filebar-btn-group {
     width: 100%;
   }
+
+  
+
   .file-panel-btn {
     width: 100%;
     background-color: transparent !important;
@@ -510,6 +513,7 @@
   }
   .file-pagination {
     cursor: pointer;
+    margin-top: -7px;
   }
 
   .file-pagination .page-link {
@@ -520,5 +524,13 @@
 
   .file-pagination .page-item.active .page-link {
     background-color: #ffffff3d !important;
+  }
+
+  @media (pointer:none), (pointer:coarse) {
+  .file-grid {
+    height: auto;
+    max-height: 68vh;
+    overflow: scroll;
+  }
   }
 </style>

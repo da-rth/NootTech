@@ -2,15 +2,28 @@
   <div class="about-container">
 
     <div class="project-information" >
-      <h1>About NootTech...</h1>
+      
+      <b-row>
+        
+        <b-col class="col-md-9">
+        <h1>About NootTech...</h1>
+        We built this website with the aim to incorporate an easy to use uploading system built for instant file sharing, and with the user’s privacy in mind.
+        <br/><br/>
+        As a NootTech user, you have are given the ability to upload your files off-site, through software such as cURL and ShareX. This allows for many possibilities, such as allowing advanced users to write their own upload scripts.
+        <br/><br/>
+        However, we strive to create a user-friendly, minimalistic and uncluttered website – ensuring the user is never overwhelmed with uncessary information. All communication to/from our website is encrypted using HTTPS, ensuring that all information is safely transferred between destinastions. 
+        <br/><br/>
+        <h4>Have questions? Contact us at: <a href="mailto:contact@noot.tech">contact@noot.tech</a> or checkout our Discord Server</h4>
+      </b-col>
+      
+      <b-col class="col-md-3">
+        <iframe class="discord-embed" src="https://discordapp.com/widget?id=558287009584513063&theme=dark" width="100%" height="300px" allowtransparency="true" frameborder="0"></iframe>
+      </b-col>
+      
+      </b-row>
+    
+    
 
-      We built this website with the aim to incorporate an easy to use uploading system built for instant file sharing, and with the user’s privacy in mind.
-      <br/><br/>
-      As a NootTech user, you have are given the ability to upload your files off-site, through software such as cURL and ShareX. This allows for many possibilities, such as allowing advanced users to write their own upload scripts.
-      <br/><br/>
-      However, we strive to create a user-friendly, minimalistic and uncluttered website – ensuring the user is never overwhelmed with uncessary information. All communication to/from our website is encrypted using HTTPS, ensuring that all information is safely transferred between destinastions. 
-      <br/><br/><br/><br/>
-      <h3 class="contributor-header">Have questions? Contact us at: <a href="mailto:contact@noot.tech">contact@noot.tech</a></h3>
     <br/><br/>
     <h1 class="contributor-header">Contributors</h1>
 
@@ -55,15 +68,15 @@
       </ul>
     </div>
       <br/>
-      <h1>Django Dependancies </h1>
+      <h1>Django Dependencies </h1>
       
       <ul>
-        <li :key="dep" v-for="dep in djangoDependancies"><a :href="dep.url">{{ dep.title }}</a></li>
+        <li :key="dep" v-for="dep in djangoDependencies"><a :href="dep.url">{{ dep.title }}</a></li>
       </ul>
       <br/>
-      <h1>Vue Dependancies</h1>
+      <h1>Vue Dependencies</h1>
       <ul>
-        <li :key="dep" v-for="dep in vueDependancies"><a :href="dep.url">{{ dep.title }}</a></li>
+        <li :key="dep" v-for="dep in vueDependencies"><a :href="dep.url">{{ dep.title }}</a></li>
       </ul>
     </div>
     </div>
@@ -89,7 +102,7 @@
           return {
             myGitHubData: {},
 
-            djangoDependancies: 
+            djangoDependencies: 
               [
                 {
                   "title": "Django 1.11.18",
@@ -148,7 +161,7 @@
 
 
               ],
-              vueDependancies: [
+              vueDependencies: [
                 {
                   "title": "VueJS",
                   "url": "https://vuejs.org/"

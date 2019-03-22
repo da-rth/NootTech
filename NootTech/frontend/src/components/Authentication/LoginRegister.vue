@@ -1,10 +1,6 @@
 <template>
   <div>
 
-    <b-alert class="auth-error" show variant="danger" dismissible v-if="formatted_error">
-      <p v-html="formatted_error"></p>
-    </b-alert>
-
     <div class="container-login" :class="{'registration-page': currentTab}" :style="{backgroundColor: getColour()}">
 
       <b-card no-body>
@@ -115,7 +111,8 @@ export default {
     },
     renderErrors (e) {
         console.log(e);
-        this.formatted_error = '<strong>Whoops!</strong> Something went wrong...<br/>';
+        this.formatted_error = ''
+        let title = '<strong>Whoops!</strong> Something went wrong...';
 
           for (var key in e) {
               if (Array.isArray(e[key])) {
@@ -126,6 +123,14 @@ export default {
                   this.formatted_error += `<p>- ${e[key]}</p>`
               }
           }
+        this.$notify({
+          group: 'Global',
+          title: title,
+          text: this.formatted_error,
+          position: 'top right',
+          type: "error",
+          duration: 15,
+        });
     },
     async login(evt) {
       let params = {
