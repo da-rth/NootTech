@@ -206,8 +206,6 @@
       showPrivateFiles: function (val) {
         this.privateFilecount = this.countPrivateFiles();
         this.publicFilecount = this.$root.files.length - this.privateFilecount;
-        console.log("private "+this.privateFilecount);
-        console.log("public "+this.publicFilecount);
       }
     },
 
@@ -257,7 +255,6 @@
           // Make api call to delete file
           await this.$api.DeleteFile(this.selectedFiles[i])
           .then(response => {
-            console.log('DELETE SUCCESS', response);
             // Increment delete count by 1
             deleteCount += 1;
           })
@@ -285,7 +282,6 @@
 
           await this.$api.TogglePrivacy(this.selectedFiles[i])
           .then(response => {
-            console.log('TOGGLE PRIVACY SUCCESS', response);
             privateCount++;
           })
           .catch(e => {
@@ -311,7 +307,6 @@
         let value = item.target.value;
         if (value !== 'default') {
           this.$root.searched_files = this.$root.files.sort(this.dynamicSort(value));
-          console.log(this.$root.files)
         }
       },
 

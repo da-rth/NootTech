@@ -12,7 +12,7 @@
 
       ok-title="Save Settings"
       @ok="saveSettings"
-      @hidden="resetSettings"
+      @cancel="resetSettings"
       centered
       >
 
@@ -152,10 +152,11 @@ export default {
     },
     watch: {
       colour(newValue) {
-          if(newValue != null && typeof(newValue) !== "string") {
-            console.log(newValue)
+          if(newValue == null) return;
+          if(typeof(newValue) !== "string") {
             this.$root.colour = newValue.hex;
           }
+          else this.$root.colour = newValue;
       }
     },
     methods: {
@@ -216,7 +217,6 @@ export default {
         
         try {
           var successful = document.execCommand('copy');
-          console.log(successful)
           this.$notify({
             group: 'Global',
             title: `Copied the key to clipboard!`,
@@ -241,7 +241,6 @@ export default {
             delete this.settings.email;
 
           let response = await this.$api.UpdateSettings(this.settings)
-          console.log('SETTINGS UPDATE SUCCESS:', response);
           this.$notify({
             group: 'Global',
             title: `Successfully updated settings!`,
@@ -250,12 +249,12 @@ export default {
         }
         catch(e) {
           // Catch the error and notify user that file cant be deleted
-          console.log('ERROR', e);
+          console.log('ERROR', e.response.data);
           console.log("Could not change the settings...")
         }
       },
       resetSettings() {
-        this.settings.colour = this.colour = this.$root.colour = this.$store.state.colour;
+        this.settings.colour = this.colour = this.$root.colour = this.$store.state.settings.colour;
       }
     },
    mounted() {

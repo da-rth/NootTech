@@ -87,7 +87,6 @@
 
     methods: {
       onClick () {
-        console.log("test");
         EventBus.$emit('reportPopup', this.file);
       },
       
@@ -103,18 +102,14 @@
       async toggleFavourite() {
        try {
          let favourite = this.getFavouriteElement();
-         console.log(favourite)
          if(favourite != null) {
           await this.$api.DeleteFavourite(favourite.id);
-          console.log("Successfully removed link from the favourites");
          }
          else {
           await this.$api.AddFavourite(this.file.id);
-          console.log("Successfully added link to the favourites");
          }
           await this.$api.GetFavourites()
           .then(response => {
-            console.log("FAVOURITES SUCCESS", response)
             this.$root.favourite_files = response.data;
             this.isFavourited = this.checkFavourited();
           })
@@ -149,7 +144,6 @@
 
         await this.$api.GetShareData(this.username, this.gen_name)
         .then(response => {
-          console.log("SHARELINK SUCCESS", response)
           this.file = response.data.file;
           this.$root.colour = response.data.colour;
           this.LoadingFiles = false;
@@ -164,7 +158,6 @@
 
         await this.$api.GetFavourites()
         .then(response => {
-          console.log("FAVOURITES SUCCESS", response)
           this.$root.favourite_files = response.data;
           this.isFavourited = this.checkFavourited();
         })

@@ -35,10 +35,6 @@
     },
 
     methods: {
-      showMe: function() {
-        console.log("Test from main div");
-      },
-
       getTokenExpirationDate: function (encodedToken) {
         const token = decode(encodedToken);
         if (!token.exp) {

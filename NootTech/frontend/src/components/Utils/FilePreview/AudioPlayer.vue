@@ -93,8 +93,6 @@
       }
     },
     mounted () {
-      console.log("Audio player setup");
-      console.log(this.audioURL);
       this.wavesurfer = WaveSurfer.create(this.waveOptions);
       this.resetPlayer(this.audioURL);
       // Initialise events
@@ -102,7 +100,6 @@
         this.timestamp = parseInt(this.wavesurfer.getCurrentTime());
       });
       this.wavesurfer.on('finish', () => {
-        console.log('Finished playing');
         this.paused = true;
         this.wavesurfer.setCurrentTime(0);
         this.timestamp = 0
@@ -133,7 +130,6 @@
         this.wavesurfer.setVolume(this.volume);
       },
       setVolume (val) {
-        console.log('changing volume to ',val)
         this.wavesurfer.setVolume(val);
       },
       fancyTimeFormat (time) {
@@ -156,7 +152,6 @@
       }
     },
     beforeDestroy() {
-      console.log('destroying audio player')
       this.wavesurfer.pause();
       this.wavesurfer.destroy();
     },

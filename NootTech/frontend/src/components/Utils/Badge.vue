@@ -107,16 +107,20 @@
          let favourite = this.getFavouriteElement();
          if(favourite != null) {
           await this.$api.DeleteFavourite(favourite.id);
-          console.log("Successfully removed link from the favourites");
          }
          else {
           await this.$api.AddFavourite(this.value.id);
-          console.log("Successfully added link to the favourites");
          }
          this.is_favourite ^= true;
          EventBus.$emit('refreshFavourites');
         } catch(error) {
-          console.log(error);
+          this.$notify({
+            title: "Whoops! Couldn't change your favourite settings!",
+            text: "We are sending a team of specialised monkeys to fix this error!",
+            position: "top right",
+            type: "error"
+          })
+          console.log(error.response.data);
         }
       }
     }

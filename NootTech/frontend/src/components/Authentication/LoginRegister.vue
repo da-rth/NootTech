@@ -154,13 +154,13 @@ export default {
       };
       // get the colour as hex
       params.credentials.colour = this.getColour()
-      this.$store.dispatch(types.REGISTER, params).then(response => {
-        console.log("User created!")
-      }).catch(errors => {
+      try {
+        this.$store.dispatch(types.REGISTER, params)
+      } catch(errors) {
         this.error = errors
         console.log("Failed to create user")
         this.renderErrors(errors.response.data)
-      });
+      }
     }
   },
 

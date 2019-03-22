@@ -27,7 +27,6 @@ const mutations = {
   },
   [types.SETTINGS]: (state, settings) => {
     state.settings = settings;
-    console.log("The email is: ", settings.email);
   },
   [types.LOGOUT]: (state, payload) => {
     Object.assign(state, default_state());
@@ -99,7 +98,7 @@ const actions = {
         console.log('The token has been verified');
       }
     } catch(error) {
-      console.log("Can't authenticate the token, cause: ", error);
+      console.log("Can't authenticate the token, cause: ", error.response.data);
       console.log('Un-authenticated token, logging out.');
       commit(types.LOGOUT, {redirect: payload.redirect});
     }

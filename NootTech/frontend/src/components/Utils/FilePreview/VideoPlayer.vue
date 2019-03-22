@@ -19,9 +19,6 @@
         video: this.file.file_content.startsWith('/') ? this.$backend_url+this.file.file_content : this.file.file_content
       }
     },
-    mounted() {
-      console.log('VideoPlayer loaded!', this.player)
-    },
     computed: {
       player() {
         return this.$refs.videoPlayer.player
