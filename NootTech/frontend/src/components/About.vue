@@ -5,7 +5,7 @@
       
       <b-row>
         
-        <b-col class="col-md-9">
+        <b-col md="9">
         <h1>About NootTech...</h1>
         We built this website with the aim to incorporate an easy to use uploading system built for instant file sharing, and with the user’s privacy in mind.
         <br/><br/>
@@ -14,9 +14,10 @@
         However, we strive to create a user-friendly, minimalistic and uncluttered website – ensuring the user is never overwhelmed with uncessary information. All communication to/from our website is encrypted using HTTPS, ensuring that all information is safely transferred between destinastions. 
         <br/><br/>
         <h4>Have questions? Contact us at: <a href="mailto:contact@noot.tech">contact@noot.tech</a> or checkout our Discord Server</h4>
+        <br/>
       </b-col>
       
-      <b-col class="col-md-3">
+      <b-col md="3">
         <iframe class="discord-embed" src="https://discordapp.com/widget?id=558287009584513063&theme=dark" width="100%" height="300px" allowtransparency="true" frameborder="0"></iframe>
       </b-col>
       
