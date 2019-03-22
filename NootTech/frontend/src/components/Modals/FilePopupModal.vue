@@ -147,7 +147,7 @@ export default {
   #NTImage {
     margin: 0 auto;
     max-width: 90%;
-    max-height: 50%;
+    max-height: 400px;
   }
 
   #collapseA .card {

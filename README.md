@@ -85,7 +85,7 @@ Visit localhost:8000
 Profit
 ```
 
-## Django Dependancies
+## Django Dependencies
 * Django Dependancies
 * Django 1.11.18
 * Django Rest Framework
@@ -101,7 +101,7 @@ Profit
 * Pillow
 * virustotal-api
 
-## Vue Dependancies
+## Vue Dependencies
 * VueJS
 * Vue FontAwesome
 * Axios

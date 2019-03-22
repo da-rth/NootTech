@@ -230,4 +230,8 @@
         background: #fff;
         cursor: pointer;
     }
+
+    #waveform wave {
+      overflow-x: hidden;
+    }
 </style>

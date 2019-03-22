@@ -1,6 +1,6 @@
 <template>
   <div id="NTapp">
-    <notifications position="top center" class="nt-notif" group="Global" />
+    <notifications position="top right" class="nt-notif" group="Global" />
     <nt-modal/>
     <nt-navbar></nt-navbar>
     <router-view/>
