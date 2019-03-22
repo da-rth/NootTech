@@ -3,6 +3,7 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.conf import settings
 from easy_thumbnails.fields import ThumbnailerImageField
 from django.db import models
 from django.utils import timezone
@@ -502,13 +503,14 @@ def create_user_acc(sender, instance, created, **kwargs):
             'upload_key': instance.upload_key,
         })
         
-        send_mail(
-            title,
-            '',
-            'no-reply@noot.tech',
-            [instance.email],
-            html_message=msg_html,
-        )
+        if settings.EMAIL_ENABLED:
+            send_mail(
+                title,
+                '',
+                'no-reply@noot.tech',
+                [instance.email],
+                html_message=msg_html,
+            )
 
 @receiver(post_save, sender=ReportedFile)
 def new_report_submitted(sender, instance, created, **kwargs):
@@ -521,13 +523,14 @@ def new_report_submitted(sender, instance, created, **kwargs):
             'admin': True
         })
         
-        send_mail(
-            title,
-            '',
-            'no-reply@noot.tech',
-            ['contact@noot.tech'],
-            html_message=msg_html,
-        )
+        if settings.EMAIL_ENABLED:
+            send_mail(
+                title,
+                '',
+                'no-reply@noot.tech',
+                ['contact@noot.tech'],
+                html_message=msg_html,
+            )
 
 @receiver(post_save, sender=Warned)
 def notify_warned_user(sender, instance, created, **kwargs):
@@ -538,14 +541,15 @@ def notify_warned_user(sender, instance, created, **kwargs):
             "username": instance.warned_user.username,
             "instance": instance
         })
-        
-        send_mail(
-            title,
-            '',
-            'no-reply@noot.tech',
-            [instance.warned_user.email],
-            html_message=msg_html,
-        )
+
+        if settings.EMAIL_ENABLED:
+            send_mail(
+                title,
+                '',
+                'no-reply@noot.tech',
+                [instance.warned_user.email],
+                html_message=msg_html,
+            )
 
 @receiver(post_save, sender=BannedUser)
 def notify_banned_user(sender, instance, created, **kwargs):
@@ -557,10 +561,11 @@ def notify_banned_user(sender, instance, created, **kwargs):
             "instance": instance
         })
 
-        send_mail(
-            title,
-            '',
-            'no-reply@noot.tech',
-            [instance.banned_user.email],
-            html_message=msg_html,
-        )
+        if settings.EMAIL_ENABLED:
+            send_mail(
+                title,
+                '',
+                'no-reply@noot.tech',
+                [instance.banned_user.email],
+                html_message=msg_html,
+            )
