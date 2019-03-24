@@ -1,10 +1,9 @@
 <template>
   <div v-if="$store.state.user && $store.state.settings">
-    <!-- Upload File modal -->
-    <nt-upload-modal ref="uploadModal" />
-    <nt-file-popup-modal ref="filePopupModal" />
-    <nt-favourites-modal ref="favouritesPopupModal" />
-    <nt-settings-modal ref="settingsPopupModal" />
+    <nt-upload-modal />
+    <nt-file-popup-modal />
+    <nt-favourites-modal />
+    <nt-settings-modal />
   </div>
 </template>
 
@@ -14,7 +13,6 @@ import NtUploadModal from './UploadModal.vue';
 import NtFilePopupModal from './FilePopupModal.vue';
 import NtFavouritesModal from './FavouritesModal.vue';
 import NtSettingsModal from './SettingsModal.vue';
-import EventBus from '../../event-bus.js';
 
 export default {
   name: 'NtModal',

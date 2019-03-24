@@ -33,7 +33,7 @@
         <b-navbar-nav v-if="$store.state.settings">
           
           <b-nav-item>
-            <b-button class="navbar-btn" @click="raiseEvent('favouriteModal')">
+            <b-button class="navbar-btn" @click="raiseEvent('favouritesModal')">
                 <font-awesome-icon icon="bookmark"/>&nbsp;&nbsp;&nbsp; Favourites
             </b-button>
           </b-nav-item>
@@ -65,7 +65,7 @@
           
         <b-navbar-nav class="ml-auto" v-if="$store.state.user">
           <b-nav-item>
-            <b-button class="navbar-btn" @click="raiseEvent('uploadFile')">
+            <b-button class="navbar-btn" @click="raiseEvent('uploadFileModal')">
               <font-awesome-icon icon="upload"/>&nbsp;&nbsp; Upload
             </b-button>
           </b-nav-item>
@@ -93,8 +93,6 @@
   </div>
 </template>
 <script>
-  import EventBus from '../../event-bus.js';
-
   export default {
     name: 'NtNavbar',
     data() {
@@ -105,7 +103,7 @@
     },
     methods: {
       raiseEvent(eventType) {
-        EventBus.$emit(eventType);
+        this.$root.$emit('bv::show::modal', eventType);
       },
     },
     mounted() {

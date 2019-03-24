@@ -53,8 +53,6 @@
 <script>
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import NtFilePopupModal from '../Modals/FilePopupModal'
-  import EventBus from '../../event-bus.js';
-
   export default {
     name: "NtBadge",
     components: {FontAwesomeIcon, NtFilePopupModal},
@@ -92,11 +90,10 @@
       onClick() {
         if(this.selectionStatus) {
           this.selected ^= true;
-          this.$store.commit('TOGGLE_FILE', this.value.id)
+          this.$root.toggleFile(this.value.id);
         }
-        else {
-          EventBus.$emit('filePopup', this.value);
-        }
+        else
+          this.$root.$emit('filePopupModal', this.value);
       },
       getFavouriteIcon() {
         return "star"
@@ -112,7 +109,7 @@
           await this.$api.AddFavourite(this.value.id);
          }
          this.is_favourite ^= true;
-         EventBus.$emit('refreshFavourites');
+         this.$root.$emit('refreshFavourites');
         } catch(error) {
           this.$notify({
             title: "Whoops! Couldn't change your favourite settings!",

@@ -1,5 +1,6 @@
 <template>
     <b-modal
+      id="uploadFileModal"
       ref="modal"
       title="File Upload"
       header-bg-variant='dark'
@@ -49,16 +50,11 @@
 
 <script>
 
-import EventBus from '../../event-bus.js';
-
 export default {
   name: 'NtUploadModal',
 
   methods: {
-    show() {
-      this.$refs.modal.show()
-    },
-    clearFiles() {
+   clearFiles() {
       this.upload_data.is_private = false;
       this.upload_data.files = new Array();
     },
@@ -74,7 +70,7 @@ export default {
           text: 'The file panel is now updating...',
           position: 'bottom right'
         });
-        EventBus.$emit('refreshFilePanel');
+        this.$root.$emit('refreshFilePanel');
       })
       .catch(e => {
         // Catch the error and notify user that file cant be deleted
@@ -103,11 +99,7 @@ export default {
   mounted() {
     this.upload_data.username = this.$store.state.user.username;
     this.upload_data.upload_key = this.$store.state.settings.upload_key;
-    EventBus.$on('uploadFile', () => {
-      if(this.$refs.modal);
-        this.show();
-    });
-  }
+ }
 }
 </script>
 

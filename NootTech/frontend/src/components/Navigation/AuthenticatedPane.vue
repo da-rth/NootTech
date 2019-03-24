@@ -11,7 +11,6 @@
 <script>
   import LoadingFiles from '../FilePanel/LoadingFiles';
   import FilePanel from '../FilePanel/Panel';
-  import EventBus from '../../event-bus.js';
 
   export default {
     name: "AuthenticatedPane",
@@ -59,12 +58,11 @@
       },
     },
     created() {
-      EventBus.$on('refreshFilePanel', this.loadFiles);
-      EventBus.$on('refreshFavourites', this.loadFavourites);
+      this.$root.$on('refreshFilePanel', this.loadFiles);
+      this.$root.$on('refreshFavourites', this.loadFavourites);
     },
     mounted() {
-      // it is safe to emit after mouting everything
-      EventBus.$emit('refreshFilePanel');
+      this.loadFiles();
     }
  }
 </script>

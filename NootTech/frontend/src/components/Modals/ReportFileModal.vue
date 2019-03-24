@@ -1,6 +1,16 @@
 <template>
 	<div>
-		<b-modal size="lg" centered scrollable ref="modal" title="Report file" @hidden="report=null" bodyBgVariant="dark" headerBgVariant="dark" footerBgVariant="dark" :ok-disabled="selected == null || text == ''"
+		<b-modal
+      size="lg"
+      centered
+      scrollable
+      ref="modal"
+      title="Report file"
+      @hidden="report=null"
+      bodyBgVariant="dark"
+      headerBgVariant="dark"
+      footerBgVariant="dark"
+      :ok-disabled="selected == null || text == ''"
       ok-title="Report File"
       @ok="reportFile">
       
@@ -22,8 +32,6 @@
 </template>
 
 <script>
-import EventBus from '../../event-bus.js';
-
 export default {
 	name: "NtReportFileModal",
 	data() {
@@ -44,21 +52,13 @@ export default {
   props: ['file'],
   
   mounted() {
-    var that = this;
-    EventBus.$on("reportPopup", file => {
-      that.file = file;
-      that.showModal();
+    this.$root.$on("reportPopup", file => {
+      this.file = file;
+      this.$refs.modal.show();
     });
   },
 
 	methods: {
-		// wrappers
-		showModal () {
-			this.$refs.modal.show();
-		},
-		hideModal () {
-      this.$refs.modal.hide();
-    },
     async reportFile() {
       console.log("Submitting report for:");
       let report = {

@@ -1,6 +1,19 @@
 <template>
 	<div>
-		<b-modal size="lg" centered scrollable ref="modal" :title="getTitle" @hidden="file=null" bodyBgVariant="dark" headerBgVariant="dark" footerBgVariant="dark">
+		<b-modal
+      id="filePopupModal"
+      size="lg"
+      centered
+      scrollable
+      ref="modal"
+      :title="getTitle"
+      @hidden="file=null"
+      bodyBgVariant="dark"
+      headerBgVariant="dark"
+      footerBgVariant="dark"
+      header-border-variant="dark"
+      footer-border-variant="dark"
+      >
 
       <template v-if="file">
         <VideoPlayer :file="file" v-if="file.file_video_info" class="fo-container"/>
@@ -37,7 +50,6 @@
 </template>
 <script>
 
-  import EventBus from '../../event-bus.js';
   import VideoPlayer from "../Utils/FilePreview/VideoPlayer.vue";
   import AudioPlayer from "../Utils/FilePreview/AudioPlayer";
   import DownloadFile from "../Utils/FilePreview/DownloadFile";
@@ -63,7 +75,6 @@ export default {
 		}
 	},
 	methods: {
-
     getIcon(file) {
         // split into prefix and second name
         let src_icon = file.icon.split(" ")
@@ -80,40 +91,32 @@ export default {
       }
     },
     copySharelink () {
-        let testingCodeToCopy = document.querySelector('#sharelink')
-        testingCodeToCopy.setAttribute('type', 'text')
-        testingCodeToCopy.select()
-        try {
-          var successful = document.execCommand('copy');
-          this.showUploadKey = false;
-          this.$notify({
-            group: 'Global',
-            title: `Copied the URL to clipboard!`,
-            text: 'Go ahead! Paste it like crazy!',
-          });
-        } catch (err) {
-          this.$notify({
-            group: 'Global',
-            title: 'Oh no! We couldn\'t copy the URL',
-            text: 'Try using CTRL+C! Sorry about that...',
-          });
-        }
-        testingCodeToCopy.setAttribute('type', 'hidden')
-        window.getSelection().removeAllRanges()
-      },
-		// wrappers
-		showModal () {
-			this.$refs.modal.show();
-		},
-		hideModal () {
-      this.$refs.modal.hide();
-    }
+      let testingCodeToCopy = document.querySelector('#sharelink')
+      testingCodeToCopy.setAttribute('type', 'text')
+      testingCodeToCopy.select()
+      try {
+        var successful = document.execCommand('copy');
+        this.showUploadKey = false;
+        this.$notify({
+          group: 'Global',
+          title: `Copied the URL to clipboard!`,
+          text: 'Go ahead! Paste it like crazy!',
+        });
+      } catch (err) {
+        this.$notify({
+          group: 'Global',
+          title: 'Oh no! We couldn\'t copy the URL',
+          text: 'Try using CTRL+C! Sorry about that...',
+        });
+      }
+      testingCodeToCopy.setAttribute('type', 'hidden')
+      window.getSelection().removeAllRanges()
+  },
   },
   mounted() {
-    var that = this;
-    EventBus.$on("filePopup", file => {
-      that.file = file;
-      that.showModal();
+    this.$root.$on("filePopupModal", file => {
+      this.file = file;
+      this.$refs.modal.show();
     });
   },
   computed: {

@@ -1,6 +1,6 @@
 <template>
     <b-modal
-      ref="modal"
+      id="favouritesModal"
       title="Favourited Files"
       header-bg-variant='dark'
       body-bg-variant='dark'
@@ -49,18 +49,10 @@
 
 <script>
 
-import EventBus from "../../event-bus.js";
-
 export default {
     name: 'NtFavouritesModal',
 
     methods: {
-      show() {
-        if(this.$refs.modal)
-          this.$refs.modal.show()
-      },
-
-
       getShareLink (username, gen_id) {
         if (this.$subdomain_enabled) {
           return `${this.$site_url.replace("//","//"+username+".")}/${gen_id}`
@@ -115,12 +107,6 @@ export default {
         favourites: [],
       };
     },
-    mounted() {
-      // register the favourite popup
-      EventBus.$on('favouriteModal', () => {
-        this.show();
-      });
-    }
 }
 </script>
 

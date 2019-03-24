@@ -50,7 +50,6 @@
 </template>
 
 <script>
-  import EventBus from '../../event-bus.js';
   import VideoPlayer from "../Utils/FilePreview/VideoPlayer";
   import AudioPlayer from "../Utils/FilePreview/AudioPlayer";
   import DownloadFile from "../Utils/FilePreview/DownloadFile";
@@ -87,7 +86,7 @@
 
     methods: {
       onClick () {
-        EventBus.$emit('reportPopup', this.file);
+        this.$root.$emit('reportPopup', this.file);
       },
       
       getFavouriteElement() {

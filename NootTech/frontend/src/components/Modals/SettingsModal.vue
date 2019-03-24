@@ -2,7 +2,7 @@
   <div>
     
     <b-modal
-      ref="modal"
+      id="settingsModal"
       title="Settings"
       header-bg-variant='dark'
       body-bg-variant='dark'
@@ -130,140 +130,132 @@
 </template>
 
 <script>
-import EventBus from '../../event-bus.js';
 import {Slider} from 'vue-color';
 import {SETTINGS} from '../../store/mutation-types.js'
 
 export default {
-    name: 'NtSettingsModal',
-    components: { Slider },
-    data() {
-      return {
-        settings: {
-          email: "",
-          colour: ""
-        },
-        password: {
-          oldPassword: "",
-          newPassword: "",
-        },
-        colour: this.$root.colour
-      };
-    },
-    watch: {
-      colour(newValue) {
-          if(newValue == null) return;
-          if(typeof(newValue) !== "string") {
-            this.$root.colour = newValue.hex;
-          }
-          else this.$root.colour = newValue;
+  name: 'NtSettingsModal',
+  components: { Slider },
+  data() {
+    return {
+      settings: {
+        email: "",
+        colour: ""
+      },
+      password: {
+        oldPassword: "",
+        newPassword: "",
+      },
+      colour: this.$root.colour
+    };
+  },
+  watch: {
+    colour(newValue) {
+        if(newValue == null) return;
+        if(typeof(newValue) !== "string") {
+          this.$root.colour = newValue.hex;
+        }
+        else this.$root.colour = newValue;
+    }
+  },
+  methods: {
+   async changePassword(evt) {
+      // avoid closing the modal
+      evt.preventDefault();
+      try {
+        await this.$api.ChangePassword(this.password.oldPassword, this.password.newPassword);
+        this.$notify({
+          group: 'Global',
+          title: `Password changed successfully`,
+        });
+        this.$refs.changePasswordModal.hide();
+      } catch(e) {
+        console.log("CHANGE PASSWORD ERROR", e);
+          this.$notify({
+          group: 'Global',
+          type: "error",
+          duration: -1,
+          title: `Couldn't change the password`,
+          text: typeof(e.response.data.detail) === "string" ?
+                        e.response.data.detail : e.response.data.detail.join("<br>"),
+        });
+      }
+      finally {
+        this.password.oldPassword = this.password.newPassword = ""
       }
     },
-    methods: {
-      show() {
-        this.$refs.modal.show()
-      },
-      async changePassword(evt) {
-        // avoid closing the modal
-        evt.preventDefault();
-        try {
-          await this.$api.ChangePassword(this.password.oldPassword, this.password.newPassword);
-          this.$notify({
-            group: 'Global',
-            title: `Password changed successfully`,
-          });
-          this.$refs.changePasswordModal.hide();
-        } catch(e) {
-          console.log("CHANGE PASSWORD ERROR", e);
-            this.$notify({
-            group: 'Global',
-            type: "error",
-            duration: -1,
-            title: `Couldn't change the password`,
-            text: typeof(e.response.data.detail) === "string" ?
-                         e.response.data.detail : e.response.data.detail.join("<br>"),
-          });
-        }
-        finally {
-          this.password.oldPassword = this.password.newPassword = ""
-        }
-      },
-      async deleteAccount(evt) {
-        // avoid closing the modal
-        evt.preventDefault();
-        try {
-          await this.$api.DeleteAccount(this.password.oldPassword);
-          this.$notify({
-            group: 'Global',
-            title: "The user has been deleted! Unauthenticating...",
-          });
-          this.$router.push('/logout');
-        } catch(e) {
-          console.log("DELETE ACCOUNT ERROR", e);
-          this.$notify({
-            group: 'Global',
-            type: "error",
-            duration: -1,
-            title: "Couldn't delete the user",
-            text: e.response.data.detail
-          })
-        }
+    async deleteAccount(evt) {
+      // avoid closing the modal
+      evt.preventDefault();
+      try {
+        await this.$api.DeleteAccount(this.password.oldPassword);
+        this.$notify({
+          group: 'Global',
+          title: "The user has been deleted! Unauthenticating...",
+        });
+        this.$router.push('/logout');
+      } catch(e) {
+        console.log("DELETE ACCOUNT ERROR", e);
+        this.$notify({
+          group: 'Global',
+          type: "error",
+          duration: -1,
+          title: "Couldn't delete the user",
+          text: e.response.data.detail
+        })
+      }
 
-      },
-      copyUploadKey() {
-        let testingCodeToCopy = document.querySelector("#uploadkeySettingsField")
-        testingCodeToCopy.removeAttribute("disabled")
-        testingCodeToCopy.select()
-        
-        try {
-          var successful = document.execCommand('copy');
-          this.$notify({
-            group: 'Global',
-            title: `Copied the key to clipboard!`,
-            text: 'Go ahead! Paste it like crazy!',
-          });
-        } catch (err) {
-          this.$notify({
-            group: 'Global',
-            title: 'Oh no! We couldn\'t copy the key',
-            text: 'Sorry about that...',
-          });
-        }
-        testingCodeToCopy.setAttribute("disabled", "disabled")
-      },
-	
-      async saveSettings() {
-        try{
-          this.settings.colour = this.$root.colour;
+    },
+    copyUploadKey() {
+      let testingCodeToCopy = document.querySelector("#uploadkeySettingsField")
+      testingCodeToCopy.removeAttribute("disabled")
+      testingCodeToCopy.select()
+      
+      try {
+        var successful = document.execCommand('copy');
+        this.$notify({
+          group: 'Global',
+          title: `Copied the key to clipboard!`,
+          text: 'Go ahead! Paste it like crazy!',
+        });
+      } catch (err) {
+        this.$notify({
+          group: 'Global',
+          title: 'Oh no! We couldn\'t copy the key',
+          text: 'Sorry about that...',
+        });
+      }
+      testingCodeToCopy.setAttribute("disabled", "disabled")
+    },
 
-          // avoid filling a null entry
-          if(this.settings.email == "")
-            delete this.settings.email;
+    async saveSettings() {
+      try{
+        this.settings.colour = this.$root.colour;
 
-          let response = await this.$api.UpdateSettings(this.settings)
-          this.$notify({
-            group: 'Global',
-            title: `Successfully updated settings!`,
-            position: 'bottom right'})
-          this.$store.dispatch(SETTINGS);
-        }
-        catch(e) {
-          // Catch the error and notify user that file cant be deleted
-          console.log('ERROR', e.response.data);
-          console.log("Could not change the settings...")
-        }
-      },
-      resetSettings() {
-        this.settings.colour = this.colour = this.$root.colour = this.$store.state.settings.colour;
+        // avoid filling a null entry
+        if(this.settings.email == "")
+          delete this.settings.email;
+
+        let response = await this.$api.UpdateSettings(this.settings)
+        this.$notify({
+          group: 'Global',
+          title: `Successfully updated settings!`,
+          position: 'bottom right'})
+        this.$store.dispatch(SETTINGS);
+      }
+      catch(e) {
+        // Catch the error and notify user that file cant be deleted
+        console.log('ERROR', e.response.data);
+        console.log("Could not change the settings...")
       }
     },
-   mounted() {
-      EventBus.$on('settingsModal', () => {
-        if(this.$refs.modal)
-          this.show()
-      });
-      this.resetSettings();
-   }
+    resetSettings() {
+      this.settings.colour = this.colour = this.$root.colour = this.$store.state.settings.colour;
+    }
+  },
+  mounted() {
+    this.resetSettings();
+  }
 }
 </script>
 <style>

@@ -1,5 +1,5 @@
 <template>
-  <div id="FileSettings" :ref="fileSettings">
+  <div id="FileSettings" >
 
     <b-form v-if="file">
     <b-input-group prepend="Filename:">
@@ -17,10 +17,6 @@
   export default {
     name: "NtFileSettings",
     props: ["file"],
-    data() {
-      return {
-      }
-    },
     computed: {
       fileName() {
         return this.file.original_filename.split(this.file.file_ext)[0]
@@ -31,9 +27,6 @@
         // TODO: avoid weird characters like tags
       }
     },
-    mounted() {
-      console.log(this.file)
-    }
   }
 </script>
 
