@@ -15,13 +15,11 @@
 </template>
 
 <script>
-  import BButton from "bootstrap-vue/src/components/button/button";
   import axios from 'axios';
 
   export default {
     name: "DownloadFile",
     props: ['file'],
-    components: {BButton},
     computed: {
       // TODO: Possible LFI attacks?
       downloadURL : function () {

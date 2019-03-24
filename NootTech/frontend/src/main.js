@@ -1,7 +1,5 @@
 import Vue from 'vue'
 import App from './App.vue'
-import BootstrapVue from 'bootstrap-vue'
-//import 'babel-polyfill'
 import router from './router'
 import store from './store'
 import * as backendAPI from './api.js'
@@ -91,7 +89,34 @@ Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.use(VuePaginate);
 Vue.use(VueVideoPlayer);
 Vue.use(Notifications);
-Vue.use(BootstrapVue);
+//Vue.use(BootstrapVue);
+
+import { Alert, Button, ButtonGroup, Card, Carousel, Collapse,
+         Dropdown, Form, FormFile, FormGroup, FormInput, FormSelect,
+         FormTextarea, InputGroup, Jumbotron, Layout, Modal, Nav, Navbar,
+         Tabs}
+         from 'bootstrap-vue/es/components';
+
+Vue.use(Alert);
+Vue.use(Button);
+Vue.use(ButtonGroup);
+Vue.use(Card);
+Vue.use(Carousel);
+Vue.use(Collapse);
+Vue.use(Dropdown);
+Vue.use(Form);
+Vue.use(FormFile);
+Vue.use(FormGroup);
+Vue.use(FormInput);
+Vue.use(FormSelect);
+Vue.use(FormTextarea);
+Vue.use(InputGroup);
+Vue.use(Jumbotron);
+Vue.use(Layout);
+Vue.use(Modal);
+Vue.use(Nav);
+Vue.use(Navbar);
+Vue.use(Tabs);
 
 Vue.prototype.$api = backendAPI;
 Vue.prototype.$site_url = config.SITE_URL;
@@ -106,9 +131,17 @@ Vue.mixin({
       sharelinkName: null,
       popupFileModalFile: null,
       files: [],
+      selected_files: [],
       searched_files: [],
       favourite_files: [],
     }
+  },
+  methods: {
+    toggleFile (fileId) {
+      if(this.selected_files.includes(fileId))
+        this.selected_files.splice(this.selected_files.indexOf(fileId), 1);
+      else this.selected_files.push(fileId);
+    },
   }
 })
 
