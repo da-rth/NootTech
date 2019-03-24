@@ -189,7 +189,7 @@
         return this.$store.state.action;
       },
       selectedFiles() {
-        return this.$store.state.selected_files;
+        return this.$root.selected_files;
       }
     },
     watch: {

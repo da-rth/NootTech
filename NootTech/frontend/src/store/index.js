@@ -7,13 +7,11 @@ import * as authentication from '../api.js';
 
 Vue.use(Vuex);
 
-
 function default_state() {
   return {
     user: null,
     token: null,
     settings: null,
-    selected_files: new Array()
   }
 }
 
@@ -39,14 +37,6 @@ const mutations = {
   [types.REGISTER]: (state, payload) => {
     router.push(payload.redirect);
   },
-  [types.TOGGLE_FILE]: (state, fileId) => {
-    if(state.selected_files.includes(fileId))
-      state.selected_files.splice(state.selected_files.indexOf(fileId), 1);
-    else state.selected_files.push(fileId);
-  },
-  [types.EMPTY_FILE_SELECTION]: (state, payload) => {
-    state.selected_files = new Array();
-  }
 };
 
 
