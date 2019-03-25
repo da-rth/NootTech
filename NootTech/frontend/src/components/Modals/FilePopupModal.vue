@@ -122,6 +122,13 @@ export default {
 }
 </script>
 
+<style scoped>
+#NTImage {
+   max-height: 400px;
+}
+</style>
+
+
 <style>
   .preview-image {
     width: 100%;
@@ -147,7 +154,6 @@ export default {
   #NTImage {
     margin: 0 auto;
     max-width: 90%;
-    max-height: 400px;
   }
 
   #collapseA .card {
